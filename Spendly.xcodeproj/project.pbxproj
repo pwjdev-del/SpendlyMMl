@@ -1,0 +1,2029 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		002694442F0A4155D7CD6D56 /* CustomerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F6AF02F08E8CEBBC572852 /* CustomerDetailView.swift */; };
+		0282900BA0139CE451B4A0C7 /* IncidentAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B479816BEBEE3F5C56B5536 /* IncidentAnalysisViewModel.swift */; };
+		02A29CD5F08F5D51F573BB61 /* TerritoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEDD532A7DEBF1A9933DF9C6 /* TerritoryDetailView.swift */; };
+		02BDB2E5ED6240F8756939A0 /* FinancialHubMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D6456725F785A0965B197 /* FinancialHubMockData.swift */; };
+		04CF9A078FBA0B7E4AA51966 /* CustomerProfileMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C064087299001207226EBD /* CustomerProfileMockData.swift */; };
+		08988558723182E9407CFE66 /* TerritoryRegionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AADC728ECC70DABD5BA786 /* TerritoryRegionViewModel.swift */; };
+		09017BB317E163FA86EFDCD4 /* SpendlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C1644037AD9827BB0DCEA6 /* SpendlyApp.swift */; };
+		0943B874CD72D81CB07AF6A4 /* CustomerFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F579CFAB329081EAE1F4DF5E /* CustomerFilterView.swift */; };
+		0955E28F6BFB66D2D757FBF2 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3161824BBC59CC53E31D0ABB /* AppRouter.swift */; };
+		09C63BDBE378F586F27CB4E5 /* SchedulingDispatchRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA8E53348F1379E356DD80 /* SchedulingDispatchRootView.swift */; };
+		0C9561C6CD188DA36E076303 /* MappingOversightViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F28DDD044A28F7729EC873 /* MappingOversightViewModel.swift */; };
+		113C341DEEA151E414AC094B /* EstimateFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0BCF0C5C02E73108657435 /* EstimateFilterView.swift */; };
+		1172E528F4F07660A7DF4899 /* InvoicingBillingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540656336FA8F10B54761301 /* InvoicingBillingViewModel.swift */; };
+		19A03DA9F447ABC998AA1E1C /* SubscriptionPortalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143541F8F2638187ADF8F2D2 /* SubscriptionPortalViewModel.swift */; };
+		1C07B1FD028B9308B57F20C9 /* DiagnosticWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE43FE3B1F48DEBADBA10F0 /* DiagnosticWizardView.swift */; };
+		1CB037D5A5D2175D04B42F06 /* TripReportPDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6C9EC3333E35F3452CF8C1 /* TripReportPDFView.swift */; };
+		1D3FA783BDFE337338B25B30 /* TimesheetReviewRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B7177E33D26086CA35FBC4 /* TimesheetReviewRootView.swift */; };
+		1EA4E64B1CA1B1D65BD20DC1 /* IncidentAnalysisRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F4163692348D5DC705801F /* IncidentAnalysisRootView.swift */; };
+		1F620EA219844BC7D0973851 /* WhiteLabelBrandingRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247CBCC5DBDEB7019A467297 /* WhiteLabelBrandingRootView.swift */; };
+		1F8C9B37E1F29C2C21DD38CE /* AssetTransferRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C6557902CC201FC6FEDE23 /* AssetTransferRootView.swift */; };
+		1FB05768C01DD3E49C246E5A /* TicketManagementMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7690E8444E1BA2CE77C0D8D9 /* TicketManagementMockData.swift */; };
+		21C42A76E9B0DECEFEF3F227 /* OEMTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2508E4B5C7062BB5FB67C648 /* OEMTabRouter.swift */; };
+		2634568003890A10F7111DED /* SchedulingMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082EA93B3F9649BF31A7B8E5 /* SchedulingMockData.swift */; };
+		27B2ECBF6B5C8B59943A99F6 /* JobExecutionTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C6E684B3A03402DBC7C11E /* JobExecutionTimerView.swift */; };
+		2880E5F5AB8E6D5ACA980685 /* SavedGroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F8430CF5A084DCAF4A8A3C /* SavedGroupsView.swift */; };
+		2A2EEAA3B46CC722CF131BA8 /* MappingOversightMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D15C62E5A402092CBB4AE88 /* MappingOversightMockData.swift */; };
+		2BCEC5A3B0A1922EDFB0124B /* SchedulingDispatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2891193B5F6065EA79D6D5A /* SchedulingDispatchViewModel.swift */; };
+		2C812FB1796397031D79C30A /* PhotoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398EB6A53DAF9A33B1BBE542 /* PhotoCaptureView.swift */; };
+		2E0759816C7C0C613B57D7B2 /* OrgPermissionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D9C0DBC80553B283F77E0C /* OrgPermissionsViewModel.swift */; };
+		32B93D29BBAF78E821DB399A /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1852C31414A50303773CB7 /* ExpenseDetailView.swift */; };
+		35CC2F3EC37F55F3CA6BCDDD /* WhiteLabelBrandingMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF30CB9216CA3676FDE8E3FE /* WhiteLabelBrandingMockData.swift */; };
+		36896BE8A582E8101CAE444E /* AIDiagnosticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D5C0366218702E1058647CE /* AIDiagnosticsViewModel.swift */; };
+		39AB1A6E4E00B8AB0D9B8DF4 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85853068615DBB85F26D9AFB /* AuthViewModel.swift */; };
+		3A64C8110973BC8BE65F44F2 /* InitiateTransferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 723025ABD7C7C0BDCFD63EC2 /* InitiateTransferView.swift */; };
+		3AD4CB4DF85A77B19EABAA68 /* WhiteLabelBrandingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A69C1D4A56A530CBF4FD8858 /* WhiteLabelBrandingViewModel.swift */; };
+		3BD06B6D03FCB92C731D860D /* KnowledgeBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA84BEE78ECA47E15F9E9 /* KnowledgeBaseViewModel.swift */; };
+		3E0A78094E29DF7AA4CE84AE /* TerritoryRegionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D60538D806CF23B4805777E /* TerritoryRegionRootView.swift */; };
+		3F52036E2FAA0218325DC8FB /* JobExecutionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EF1BD29FCDC2BCDF4ACE87 /* JobExecutionViewModel.swift */; };
+		445B52B1144647C0C093E56A /* CustomerPortalRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF3AE5DA0B969A44F560624 /* CustomerPortalRootView.swift */; };
+		452A2450337849B30652342C /* AnalyticsDashboardsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11453255587865B6F4680C61 /* AnalyticsDashboardsRootView.swift */; };
+		473825AFF1CEF05378D34577 /* KnowledgeBaseRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E26B5FD9122118686F862DF /* KnowledgeBaseRootView.swift */; };
+		474F708A973868FA43328C7C /* TripReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F5C6E6C36D871D56B84764 /* TripReportViewModel.swift */; };
+		48AD86B25D2457EEEE7468BD /* ResourceManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536A8E0BD47EED1664904B22 /* ResourceManagementViewModel.swift */; };
+		49A62BE73AB8F87DA068D9DE /* IncidentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF2FAAB19EF60EB7960CFD1 /* IncidentDetailView.swift */; };
+		4E337EB51D2D07ABECEBE691 /* InvoicingBillingRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87AB90838F51928D06450BF /* InvoicingBillingRootView.swift */; };
+		4EEB128D3CA267008070BDD6 /* AuthMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF7F23EAD47F0B70CFAF15B /* AuthMockData.swift */; };
+		56A2A9A05825AFAABE38300B /* ManagerDashboardMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6AE61B23BD0DD9763C4612 /* ManagerDashboardMockData.swift */; };
+		57049C12EF1E48486888026C /* MachineVaultRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306600FC97A092369000DE9 /* MachineVaultRootView.swift */; };
+		57844E67FD19AD8D06DE1152 /* OrgPermissionsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F94DAD9E440FAF75EDC866 /* OrgPermissionsMockData.swift */; };
+		586680952626430CE1535F19 /* CompareTechniciansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE0FD40E3872BCD238451ED /* CompareTechniciansView.swift */; };
+		5971E4751C47ADD2BF99435E /* TimesheetReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA50246862B8073FCBEE62C /* TimesheetReviewViewModel.swift */; };
+		60C7FDEFA9B0796FD8397966 /* CreateArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E0C4D0D2E7079321D79A27 /* CreateArticleView.swift */; };
+		61459EB96BAC73E55D198205 /* JobExecutionMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA3062FA47BB8B51D708DF6 /* JobExecutionMockData.swift */; };
+		6240314B40954007DFCD5A22 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F3CC48D276135ECF1B0099 /* ArticleDetailView.swift */; };
+		62B2B43D4A141C22E57F7AF4 /* DispatchConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFAAA484D23477EFB9E6052 /* DispatchConfirmationView.swift */; };
+		6527C39B50C3A599267CDE7B /* IncidentHierarchyRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07B259A982EA6E3347F5846 /* IncidentHierarchyRootView.swift */; };
+		68BBCB3E48F797C94D6CE020 /* TranscriptionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770FB359AFAF2D2D9D34E550 /* TranscriptionResultView.swift */; };
+		68FE92EE15A8F3CC8D9138E8 /* AssetHealthRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD46429504DBF57C4767D4BB /* AssetHealthRootView.swift */; };
+		6D917A501C8FE7040891FD18 /* SettingsNotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03435186645FD35F18CA3516 /* SettingsNotificationsViewModel.swift */; };
+		6D952D750AA3410C51C4F427 /* EmailReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1922F17D8DE967C29598ED3 /* EmailReportView.swift */; };
+		6DF763991C4270A29788237B /* EstimateApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67678663FD8D21555DA111AF /* EstimateApprovalView.swift */; };
+		6E5B52D11E8922143ACC40D0 /* OrgPermissionsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB554291CE911A290CEAC7 /* OrgPermissionsRootView.swift */; };
+		6FC36B4F5B4C0DDDB438A5D8 /* EstimateBuilderRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D1D3ED93547444A0FB1659 /* EstimateBuilderRootView.swift */; };
+		70098A51159E125D8A579EF7 /* EmailPreviewRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3412E0813F403753BDD978BC /* EmailPreviewRootView.swift */; };
+		76194DACA015D423F6E114AF /* BrandingPreviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEABC84A19B65B7A953B174E /* BrandingPreviewCard.swift */; };
+		771091A595911A715A42F3B4 /* IncidentHierarchyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEC5363B184949C8F0F446D /* IncidentHierarchyViewModel.swift */; };
+		77EAD7AE86986DE06C64AB7B /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15479D6AAC2B79DEF92B4BE5 /* ChatRoomView.swift */; };
+		7861322B312D60179D18660B /* AuthRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0E198F889A37C017168DB4 /* AuthRootView.swift */; };
+		7A78879FBC4CB3E91FCDDD69 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01E65572ACB5CC9BAFD977F1 /* Assets.xcassets */; };
+		7C24A2A0B8C5B1EA830BB489 /* InvoicingBillingMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B674A23F1A4DD5EDC1047B6B /* InvoicingBillingMockData.swift */; };
+		7D249F4885FDFE4E571EF2BD /* CustomerProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8631D8CA5A62D502A994795C /* CustomerProfileViewModel.swift */; };
+		7E81308050B9201691B24355 /* TicketDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E579FC9E19E436A8A65CAC4C /* TicketDetailView.swift */; };
+		80F250B1CB75E89B3E281C15 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80C3D8F1D7C972912387DDE /* NotificationSettingsView.swift */; };
+		82D2711E01CAD6A1B003A146 /* WhiteLabelLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525F8EA25B3E318105E8A221 /* WhiteLabelLoginView.swift */; };
+		870E11C96B60B9FA466A6A3D /* MachineFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC85D24483021932171FCF /* MachineFilterView.swift */; };
+		886D0D0EAFBF0657C65F9E07 /* ClientApprovalMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B390F54C377E2A15F7D5BE19 /* ClientApprovalMockData.swift */; };
+		8978D1129EAF4BDB2BE28D20 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C17D2CCA4466EF44A3A926 /* GeneralSettingsView.swift */; };
+		8981D0B1002CB4EC65A99951 /* TeamChatRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45E92AF3C8A601935B403F9 /* TeamChatRootView.swift */; };
+		8AAF9415F43DF869404A6209 /* SubscriptionPortalRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D1AD9CC345DD5CDB5588F /* SubscriptionPortalRootView.swift */; };
+		8F254FEF553EA47549756572 /* MaintenancePredictorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3372D33DD0B969797617AB /* MaintenancePredictorView.swift */; };
+		9141A2157229BC44FE3028B1 /* CustomerPortalMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02955826372EFF7F60DCF0D3 /* CustomerPortalMockData.swift */; };
+		926B1513EA4E2C51876CCD9C /* SettingsNotificationsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5F723267F6B6A51D589A9F /* SettingsNotificationsMockData.swift */; };
+		92BF9ACC9BFF5E70CD2349FF /* EmailPreviewMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 621E51CE9F2F185887D4312D /* EmailPreviewMockData.swift */; };
+		93847D088D30555D3AC36AC3 /* SendSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2243B675839FEC67AA24D9AB /* SendSuccessView.swift */; };
+		95972D3F73EAAF53744174E5 /* AssetTransferViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F0F13AADE3809F46444A09 /* AssetTransferViewModel.swift */; };
+		98D07F59D05D298F8743D001 /* SettingsNotificationsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0DE40788DEECBA006FD263 /* SettingsNotificationsRootView.swift */; };
+		9B2E58D5DB4666709270009F /* EmailPreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E709A3516BD9579D657F6E5D /* EmailPreviewViewModel.swift */; };
+		9E85D639DBFCB2B097D796DB /* EstimateBuilderMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC2C12EE02439011755005E /* EstimateBuilderMockData.swift */; };
+		A00E399E1831DEB027EDC1A9 /* DataImporterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29515C8FC55C295610A26E8 /* DataImporterViewModel.swift */; };
+		A02143E3F513F4ED66610276 /* MachineVaultViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14822BE06A977CC6FB8F8753 /* MachineVaultViewModel.swift */; };
+		A126AEBE5101D3555967A9C8 /* PushNotificationsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F1518450064EA2F6D1FAD7 /* PushNotificationsRootView.swift */; };
+		A2A67F5C52A6AD9216E2ED51 /* MachineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C3E580C169830A520AD76C /* MachineDetailView.swift */; };
+		A56F08C2799D0045B3D3EF5F /* TicketSchedulingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24342369669FBFD08DD10D40 /* TicketSchedulingView.swift */; };
+		A6DA319E8C9D688242C94B7D /* ExpenseLoggingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FD87EEAD2E11C0D213115 /* ExpenseLoggingViewModel.swift */; };
+		A70048A5E054E88F0119A25F /* TerritoryRegionMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8BCD353AFFADB737063A5 /* TerritoryRegionMockData.swift */; };
+		A981ED6D39F3BAD6E4C46F50 /* CustomerProfileRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3376B1AE745F821D17DA165 /* CustomerProfileRootView.swift */; };
+		AA462346C691A148A30F4A04 /* EstimateBuilderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B360A3EFF9C2BAFDEB39C9 /* EstimateBuilderViewModel.swift */; };
+		ADF7DD0801F230B1C7401B77 /* NewTicketFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F50501BB2B73D9C5C61A319 /* NewTicketFormView.swift */; };
+		AE00CF3A08D1A5D8824C5B6E /* MappingOversightRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8558B93505CD7CB3BBEF60 /* MappingOversightRootView.swift */; };
+		AF874A046EFC173CA3656055 /* CustomerTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE7DB6C7E29BBD54099AFAF /* CustomerTabRouter.swift */; };
+		B2DCC9CB7F1981E3DC622DC9 /* DataImporterMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B86793A38D931C5A129036 /* DataImporterMockData.swift */; };
+		B556EA9D80EFE84FA80308F2 /* PushNotificationsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B35DAFD4A83268A2599D8A /* PushNotificationsMockData.swift */; };
+		B5A3F40AB170539651EDE756 /* FinancialHubRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09238EFBF7D377C1C49BD06C /* FinancialHubRootView.swift */; };
+		B7F9D11EECE1BB72B3D5836F /* TeamChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD25006D0AC4FE02C0C9680 /* TeamChatViewModel.swift */; };
+		B9F7F7C35D5567290720D439 /* AssetTransferMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6981ED73B247AD48FB5E52A /* AssetTransferMockData.swift */; };
+		BB26DDFFCB60B7698CCAEECA /* ServiceTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 579482F33C822F6896ABE949 /* ServiceTrackerView.swift */; };
+		BD492501A21AE89706009DA1 /* TripCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B96ED7DBBBB6D9902526CDA /* TripCompletionView.swift */; };
+		BD63004D171C15761E48489C /* ResourceManagementMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5982AC1572DD18E20E9A4E9 /* ResourceManagementMockData.swift */; };
+		BE3C273F00FA34E98C60D519 /* TripReportRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C83EF266D2190617A5D2EB /* TripReportRootView.swift */; };
+		BE8184D8C1B72E8151F5502C /* AIDiagnosticsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25974846E2E42E8EB6D4CAD /* AIDiagnosticsRootView.swift */; };
+		C02F85E0EBE10C5CAC6FB5F4 /* ExpenseLoggingMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21F64767FC18E1F3F5DBD8D /* ExpenseLoggingMockData.swift */; };
+		C0D4A558F0EF90A95A06B33F /* ExpenseLoggingRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3157C7B412A8F2E4536AC2 /* ExpenseLoggingRootView.swift */; };
+		C1458C71FDFA88B98CD022C2 /* ApprovalSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153BD792C6DB75FC96A12EF9 /* ApprovalSuccessView.swift */; };
+		C174DA8D57E86C831A84AABC /* ManagerDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7D9C93C59877CC0710202C /* ManagerDashboardViewModel.swift */; };
+		C1D88E15295C03EB4DB4EA67 /* AssignTechnicianView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC64588B1D0BF554812966C /* AssignTechnicianView.swift */; };
+		C43EC93D7C94FEC79ACA25DB /* CustomerPortalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF42287CA5D2B894F48CF4D /* CustomerPortalViewModel.swift */; };
+		C790C73136DB4D82EC9D8522 /* ClientApprovalRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6C8FEF9B07B311D544EBC2 /* ClientApprovalRootView.swift */; };
+		C7BC76E920766298F93A6CAA /* KnowledgeBaseMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176482B66CB856B6B3AA54D5 /* KnowledgeBaseMockData.swift */; };
+		C949629267A4F04BCE110E63 /* CustodyLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3944662463681A4620E783B0 /* CustodyLogView.swift */; };
+		CB7EE713FF9CAEC075D717EE /* ServiceHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860E0B05CD3AF2FFA695E177 /* ServiceHistoryView.swift */; };
+		CD0C913630EFCB6F1B1FD4D8 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5B658767215BCA8388F5E3 /* SignUpView.swift */; };
+		CD3471A7351E4AEB0BD25B1D /* FinancialHubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C539EE9433847D5470D76B0 /* FinancialHubViewModel.swift */; };
+		CD544873DC461028E8C0797C /* AIDiagnosticsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2166D45111DD372DC97E99 /* AIDiagnosticsMockData.swift */; };
+		CF367CBD03A52FBCB10F875E /* IncidentHierarchyMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B668A4BC4361486866F8A283 /* IncidentHierarchyMockData.swift */; };
+		CF74E57A01BD6BD6E137D94C /* AssetHealthMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD193155601827C258F4FDBE /* AssetHealthMockData.swift */; };
+		D03A7D8D5A3FD6D466452869 /* SubscriptionPortalMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7129A1B5543C13808D205A4 /* SubscriptionPortalMockData.swift */; };
+		D15F23AF3BA141F60B295E84 /* SpendlyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0D82697521A3984711F9A9DE /* SpendlyCore */; };
+		D265336A1120AAF138190FEF /* TicketManagementRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E1122C1F724A1409F05DC /* TicketManagementRootView.swift */; };
+		D268E4F35AF16AE0371BCB8C /* TripReportMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6538722CE1B943499CE4E8FC /* TripReportMockData.swift */; };
+		D376784BA32319EBEB340A40 /* DataImporterRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FE6186EF7B5C871A6A35A1 /* DataImporterRootView.swift */; };
+		D9C424AB98A366DDC2644171 /* ManagerDashboardRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B1CC9583E278FD657D5992 /* ManagerDashboardRootView.swift */; };
+		DA084B62F114FDF220F02ECA /* CurrencySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C156AEFF7A94CBF071701CD1 /* CurrencySettingsView.swift */; };
+		DA79440259EA49CE213F5B65 /* AnalyticsDashboardsMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B37550B5D7E62B5969EC8AE /* AnalyticsDashboardsMockData.swift */; };
+		DAE93536C9D6A339B29E3068 /* TeamChatMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD99BECC4BC511DD3F2F38C6 /* TeamChatMockData.swift */; };
+		DD193E9A7610BBC97F48C033 /* AssetHealthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66560FD1CC566405CA050454 /* AssetHealthViewModel.swift */; };
+		DD845FDAC6C0B0CE231FF6CC /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E10D652D4702323E79816F7 /* ForgotPasswordView.swift */; };
+		DE4098FA4F146DF06781FAC5 /* EstimateEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B7A0E28D21F1078C70D5F6 /* EstimateEditorView.swift */; };
+		E08C1FD529A2515E4B2E0E54 /* IncidentAnalysisMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D907D4FD1F9B10253FA136FA /* IncidentAnalysisMockData.swift */; };
+		E341F5618D1B8B582CE6C61A /* PushNotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7077BCE9C59CCA60C952F0 /* PushNotificationsViewModel.swift */; };
+		E421797A417A61ECEEC6849A /* TimesheetReviewMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7257B70DF247BB68694ABD2A /* TimesheetReviewMockData.swift */; };
+		E5BD0F6E7F086924F157F6E0 /* MachineVaultMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F8D302E3DB888B6B6F8559 /* MachineVaultMockData.swift */; };
+		EE3395FC72FA1FC058A9D637 /* ClientApprovalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC90B4FF229CCEBDE54758A /* ClientApprovalViewModel.swift */; };
+		EE4E05322EAD3805793F1BB0 /* ResourceManagementRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569FB1F7897F350B2845C14D /* ResourceManagementRootView.swift */; };
+		F15F0089736648E16D3EA97F /* JobExecutionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E41C4E3FCCC5949568B124 /* JobExecutionRootView.swift */; };
+		F8AA2FAB045D5C5307A2F944 /* PlanDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F68DE0690E2C37C63DEE82A /* PlanDetailView.swift */; };
+		FB114BD816D805AFB1A225CE /* InvoiceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F20636106514B54543C4C0 /* InvoiceDetailView.swift */; };
+		FCC8F05C2B07FC36674A9A1A /* AnalyticsDashboardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9DF6F0B0EF9B04386F9A97 /* AnalyticsDashboardsViewModel.swift */; };
+		FDC203C04C143A14120BE63B /* TicketManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4771C4C08AB0D56BF23A26F4 /* TicketManagementViewModel.swift */; };
+		FF616B930B9705E1F0372FBF /* AdminTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830B9CAC0723A9B1A6174615 /* AdminTabRouter.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01E65572ACB5CC9BAFD977F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		02955826372EFF7F60DCF0D3 /* CustomerPortalMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerPortalMockData.swift; sourceTree = "<group>"; };
+		03435186645FD35F18CA3516 /* SettingsNotificationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsViewModel.swift; sourceTree = "<group>"; };
+		05B86793A38D931C5A129036 /* DataImporterMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataImporterMockData.swift; sourceTree = "<group>"; };
+		07C83EF266D2190617A5D2EB /* TripReportRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripReportRootView.swift; sourceTree = "<group>"; };
+		082EA93B3F9649BF31A7B8E5 /* SchedulingMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingMockData.swift; sourceTree = "<group>"; };
+		08911FFD69BC591AD304D901 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		09238EFBF7D377C1C49BD06C /* FinancialHubRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialHubRootView.swift; sourceTree = "<group>"; };
+		0CF3AE5DA0B969A44F560624 /* CustomerPortalRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerPortalRootView.swift; sourceTree = "<group>"; };
+		0D5C0366218702E1058647CE /* AIDiagnosticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDiagnosticsViewModel.swift; sourceTree = "<group>"; };
+		0F50501BB2B73D9C5C61A319 /* NewTicketFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTicketFormView.swift; sourceTree = "<group>"; };
+		11453255587865B6F4680C61 /* AnalyticsDashboardsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsDashboardsRootView.swift; sourceTree = "<group>"; };
+		143541F8F2638187ADF8F2D2 /* SubscriptionPortalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPortalViewModel.swift; sourceTree = "<group>"; };
+		14822BE06A977CC6FB8F8753 /* MachineVaultViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineVaultViewModel.swift; sourceTree = "<group>"; };
+		153BD792C6DB75FC96A12EF9 /* ApprovalSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalSuccessView.swift; sourceTree = "<group>"; };
+		15479D6AAC2B79DEF92B4BE5 /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
+		15C6E684B3A03402DBC7C11E /* JobExecutionTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobExecutionTimerView.swift; sourceTree = "<group>"; };
+		16B7177E33D26086CA35FBC4 /* TimesheetReviewRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimesheetReviewRootView.swift; sourceTree = "<group>"; };
+		176482B66CB856B6B3AA54D5 /* KnowledgeBaseMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeBaseMockData.swift; sourceTree = "<group>"; };
+		17FE6186EF7B5C871A6A35A1 /* DataImporterRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataImporterRootView.swift; sourceTree = "<group>"; };
+		1A6C8FEF9B07B311D544EBC2 /* ClientApprovalRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientApprovalRootView.swift; sourceTree = "<group>"; };
+		20F4163692348D5DC705801F /* IncidentAnalysisRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentAnalysisRootView.swift; sourceTree = "<group>"; };
+		2243B675839FEC67AA24D9AB /* SendSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendSuccessView.swift; sourceTree = "<group>"; };
+		24342369669FBFD08DD10D40 /* TicketSchedulingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketSchedulingView.swift; sourceTree = "<group>"; };
+		247CBCC5DBDEB7019A467297 /* WhiteLabelBrandingRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLabelBrandingRootView.swift; sourceTree = "<group>"; };
+		2508E4B5C7062BB5FB67C648 /* OEMTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEMTabRouter.swift; sourceTree = "<group>"; };
+		28E41C4E3FCCC5949568B124 /* JobExecutionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobExecutionRootView.swift; sourceTree = "<group>"; };
+		2D1852C31414A50303773CB7 /* ExpenseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailView.swift; sourceTree = "<group>"; };
+		2E10D652D4702323E79816F7 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
+		2FB8BCD353AFFADB737063A5 /* TerritoryRegionMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryRegionMockData.swift; sourceTree = "<group>"; };
+		3161824BBC59CC53E31D0ABB /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		32B7A0E28D21F1078C70D5F6 /* EstimateEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateEditorView.swift; sourceTree = "<group>"; };
+		33F0F13AADE3809F46444A09 /* AssetTransferViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetTransferViewModel.swift; sourceTree = "<group>"; };
+		3412E0813F403753BDD978BC /* EmailPreviewRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPreviewRootView.swift; sourceTree = "<group>"; };
+		34BA8E53348F1379E356DD80 /* SchedulingDispatchRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingDispatchRootView.swift; sourceTree = "<group>"; };
+		3944662463681A4620E783B0 /* CustodyLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustodyLogView.swift; sourceTree = "<group>"; };
+		398EB6A53DAF9A33B1BBE542 /* PhotoCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureView.swift; sourceTree = "<group>"; };
+		3C213ABDE791E052619EFE24 /* Spendly.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Spendly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D15C62E5A402092CBB4AE88 /* MappingOversightMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappingOversightMockData.swift; sourceTree = "<group>"; };
+		3EA50246862B8073FCBEE62C /* TimesheetReviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimesheetReviewViewModel.swift; sourceTree = "<group>"; };
+		465D6456725F785A0965B197 /* FinancialHubMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialHubMockData.swift; sourceTree = "<group>"; };
+		46F8430CF5A084DCAF4A8A3C /* SavedGroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedGroupsView.swift; sourceTree = "<group>"; };
+		4771C4C08AB0D56BF23A26F4 /* TicketManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketManagementViewModel.swift; sourceTree = "<group>"; };
+		49AADC728ECC70DABD5BA786 /* TerritoryRegionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryRegionViewModel.swift; sourceTree = "<group>"; };
+		4AE0FD40E3872BCD238451ED /* CompareTechniciansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareTechniciansView.swift; sourceTree = "<group>"; };
+		4B96ED7DBBBB6D9902526CDA /* TripCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCompletionView.swift; sourceTree = "<group>"; };
+		4CFAAA484D23477EFB9E6052 /* DispatchConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchConfirmationView.swift; sourceTree = "<group>"; };
+		4E26B5FD9122118686F862DF /* KnowledgeBaseRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeBaseRootView.swift; sourceTree = "<group>"; };
+		525F8EA25B3E318105E8A221 /* WhiteLabelLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLabelLoginView.swift; sourceTree = "<group>"; };
+		5306600FC97A092369000DE9 /* MachineVaultRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineVaultRootView.swift; sourceTree = "<group>"; };
+		536A8E0BD47EED1664904B22 /* ResourceManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManagementViewModel.swift; sourceTree = "<group>"; };
+		540656336FA8F10B54761301 /* InvoicingBillingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicingBillingViewModel.swift; sourceTree = "<group>"; };
+		569FB1F7897F350B2845C14D /* ResourceManagementRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManagementRootView.swift; sourceTree = "<group>"; };
+		579482F33C822F6896ABE949 /* ServiceTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTrackerView.swift; sourceTree = "<group>"; };
+		58E0C4D0D2E7079321D79A27 /* CreateArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateArticleView.swift; sourceTree = "<group>"; };
+		5A5B658767215BCA8388F5E3 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		5BF7F23EAD47F0B70CFAF15B /* AuthMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMockData.swift; sourceTree = "<group>"; };
+		5F0DE40788DEECBA006FD263 /* SettingsNotificationsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsRootView.swift; sourceTree = "<group>"; };
+		5F68DE0690E2C37C63DEE82A /* PlanDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDetailView.swift; sourceTree = "<group>"; };
+		61D9C0DBC80553B283F77E0C /* OrgPermissionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrgPermissionsViewModel.swift; sourceTree = "<group>"; };
+		621E51CE9F2F185887D4312D /* EmailPreviewMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPreviewMockData.swift; sourceTree = "<group>"; };
+		6538722CE1B943499CE4E8FC /* TripReportMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripReportMockData.swift; sourceTree = "<group>"; };
+		66560FD1CC566405CA050454 /* AssetHealthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHealthViewModel.swift; sourceTree = "<group>"; };
+		67678663FD8D21555DA111AF /* EstimateApprovalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateApprovalView.swift; sourceTree = "<group>"; };
+		6A0BCF0C5C02E73108657435 /* EstimateFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateFilterView.swift; sourceTree = "<group>"; };
+		6D60538D806CF23B4805777E /* TerritoryRegionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryRegionRootView.swift; sourceTree = "<group>"; };
+		6FF2FAAB19EF60EB7960CFD1 /* IncidentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentDetailView.swift; sourceTree = "<group>"; };
+		723025ABD7C7C0BDCFD63EC2 /* InitiateTransferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitiateTransferView.swift; sourceTree = "<group>"; };
+		7257B70DF247BB68694ABD2A /* TimesheetReviewMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimesheetReviewMockData.swift; sourceTree = "<group>"; };
+		7690E8444E1BA2CE77C0D8D9 /* TicketManagementMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketManagementMockData.swift; sourceTree = "<group>"; };
+		76C17D2CCA4466EF44A3A926 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
+		770FB359AFAF2D2D9D34E550 /* TranscriptionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionResultView.swift; sourceTree = "<group>"; };
+		796FD87EEAD2E11C0D213115 /* ExpenseLoggingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseLoggingViewModel.swift; sourceTree = "<group>"; };
+		7B37550B5D7E62B5969EC8AE /* AnalyticsDashboardsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsDashboardsMockData.swift; sourceTree = "<group>"; };
+		7FC90B4FF229CCEBDE54758A /* ClientApprovalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientApprovalViewModel.swift; sourceTree = "<group>"; };
+		830B9CAC0723A9B1A6174615 /* AdminTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminTabRouter.swift; sourceTree = "<group>"; };
+		85853068615DBB85F26D9AFB /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		860E0B05CD3AF2FFA695E177 /* ServiceHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceHistoryView.swift; sourceTree = "<group>"; };
+		8631D8CA5A62D502A994795C /* CustomerProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerProfileViewModel.swift; sourceTree = "<group>"; };
+		86B360A3EFF9C2BAFDEB39C9 /* EstimateBuilderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateBuilderViewModel.swift; sourceTree = "<group>"; };
+		8A8D1AD9CC345DD5CDB5588F /* SubscriptionPortalRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPortalRootView.swift; sourceTree = "<group>"; };
+		8C539EE9433847D5470D76B0 /* FinancialHubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialHubViewModel.swift; sourceTree = "<group>"; };
+		8DE43FE3B1F48DEBADBA10F0 /* DiagnosticWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticWizardView.swift; sourceTree = "<group>"; };
+		8EA3062FA47BB8B51D708DF6 /* JobExecutionMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobExecutionMockData.swift; sourceTree = "<group>"; };
+		989DA84BEE78ECA47E15F9E9 /* KnowledgeBaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeBaseViewModel.swift; sourceTree = "<group>"; };
+		98F20636106514B54543C4C0 /* InvoiceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceDetailView.swift; sourceTree = "<group>"; };
+		99C064087299001207226EBD /* CustomerProfileMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerProfileMockData.swift; sourceTree = "<group>"; };
+		9AEC5363B184949C8F0F446D /* IncidentHierarchyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentHierarchyViewModel.swift; sourceTree = "<group>"; };
+		9B479816BEBEE3F5C56B5536 /* IncidentAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentAnalysisViewModel.swift; sourceTree = "<group>"; };
+		9B9DF6F0B0EF9B04386F9A97 /* AnalyticsDashboardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsDashboardsViewModel.swift; sourceTree = "<group>"; };
+		A69C1D4A56A530CBF4FD8858 /* WhiteLabelBrandingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLabelBrandingViewModel.swift; sourceTree = "<group>"; };
+		A80C3D8F1D7C972912387DDE /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		AA6AE61B23BD0DD9763C4612 /* ManagerDashboardMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerDashboardMockData.swift; sourceTree = "<group>"; };
+		AA7D9C93C59877CC0710202C /* ManagerDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerDashboardViewModel.swift; sourceTree = "<group>"; };
+		AF30CB9216CA3676FDE8E3FE /* WhiteLabelBrandingMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLabelBrandingMockData.swift; sourceTree = "<group>"; };
+		B17E1122C1F724A1409F05DC /* TicketManagementRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketManagementRootView.swift; sourceTree = "<group>"; };
+		B25974846E2E42E8EB6D4CAD /* AIDiagnosticsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDiagnosticsRootView.swift; sourceTree = "<group>"; };
+		B390F54C377E2A15F7D5BE19 /* ClientApprovalMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientApprovalMockData.swift; sourceTree = "<group>"; };
+		B3CB554291CE911A290CEAC7 /* OrgPermissionsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrgPermissionsRootView.swift; sourceTree = "<group>"; };
+		B45E92AF3C8A601935B403F9 /* TeamChatRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamChatRootView.swift; sourceTree = "<group>"; };
+		B4B1CC9583E278FD657D5992 /* ManagerDashboardRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerDashboardRootView.swift; sourceTree = "<group>"; };
+		B668A4BC4361486866F8A283 /* IncidentHierarchyMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentHierarchyMockData.swift; sourceTree = "<group>"; };
+		B674A23F1A4DD5EDC1047B6B /* InvoicingBillingMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicingBillingMockData.swift; sourceTree = "<group>"; };
+		B69DA0286451C5677D83AC34 /* SpendlyCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SpendlyCore; path = SpendlyCore; sourceTree = SOURCE_ROOT; };
+		B8F1518450064EA2F6D1FAD7 /* PushNotificationsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsRootView.swift; sourceTree = "<group>"; };
+		B8F5C6E6C36D871D56B84764 /* TripReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripReportViewModel.swift; sourceTree = "<group>"; };
+		BBE7DB6C7E29BBD54099AFAF /* CustomerTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerTabRouter.swift; sourceTree = "<group>"; };
+		C07B259A982EA6E3347F5846 /* IncidentHierarchyRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentHierarchyRootView.swift; sourceTree = "<group>"; };
+		C0FC85D24483021932171FCF /* MachineFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineFilterView.swift; sourceTree = "<group>"; };
+		C156AEFF7A94CBF071701CD1 /* CurrencySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySettingsView.swift; sourceTree = "<group>"; };
+		C29515C8FC55C295610A26E8 /* DataImporterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataImporterViewModel.swift; sourceTree = "<group>"; };
+		C3376B1AE745F821D17DA165 /* CustomerProfileRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerProfileRootView.swift; sourceTree = "<group>"; };
+		C5982AC1572DD18E20E9A4E9 /* ResourceManagementMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceManagementMockData.swift; sourceTree = "<group>"; };
+		C6D1D3ED93547444A0FB1659 /* EstimateBuilderRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateBuilderRootView.swift; sourceTree = "<group>"; };
+		C7129A1B5543C13808D205A4 /* SubscriptionPortalMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPortalMockData.swift; sourceTree = "<group>"; };
+		C7C1644037AD9827BB0DCEA6 /* SpendlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendlyApp.swift; sourceTree = "<group>"; };
+		C9F94DAD9E440FAF75EDC866 /* OrgPermissionsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrgPermissionsMockData.swift; sourceTree = "<group>"; };
+		CC0E198F889A37C017168DB4 /* AuthRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRootView.swift; sourceTree = "<group>"; };
+		CC5F723267F6B6A51D589A9F /* SettingsNotificationsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsMockData.swift; sourceTree = "<group>"; };
+		CD99BECC4BC511DD3F2F38C6 /* TeamChatMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamChatMockData.swift; sourceTree = "<group>"; };
+		CDC64588B1D0BF554812966C /* AssignTechnicianView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignTechnicianView.swift; sourceTree = "<group>"; };
+		CF7077BCE9C59CCA60C952F0 /* PushNotificationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsViewModel.swift; sourceTree = "<group>"; };
+		D2F6AF02F08E8CEBBC572852 /* CustomerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerDetailView.swift; sourceTree = "<group>"; };
+		D4EF1BD29FCDC2BCDF4ACE87 /* JobExecutionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobExecutionViewModel.swift; sourceTree = "<group>"; };
+		D907D4FD1F9B10253FA136FA /* IncidentAnalysisMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncidentAnalysisMockData.swift; sourceTree = "<group>"; };
+		DA3157C7B412A8F2E4536AC2 /* ExpenseLoggingRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseLoggingRootView.swift; sourceTree = "<group>"; };
+		DAD25006D0AC4FE02C0C9680 /* TeamChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamChatViewModel.swift; sourceTree = "<group>"; };
+		DD193155601827C258F4FDBE /* AssetHealthMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHealthMockData.swift; sourceTree = "<group>"; };
+		DD2166D45111DD372DC97E99 /* AIDiagnosticsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDiagnosticsMockData.swift; sourceTree = "<group>"; };
+		DE6C9EC3333E35F3452CF8C1 /* TripReportPDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripReportPDFView.swift; sourceTree = "<group>"; };
+		DEDD532A7DEBF1A9933DF9C6 /* TerritoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerritoryDetailView.swift; sourceTree = "<group>"; };
+		E579FC9E19E436A8A65CAC4C /* TicketDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketDetailView.swift; sourceTree = "<group>"; };
+		E6981ED73B247AD48FB5E52A /* AssetTransferMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetTransferMockData.swift; sourceTree = "<group>"; };
+		E709A3516BD9579D657F6E5D /* EmailPreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPreviewViewModel.swift; sourceTree = "<group>"; };
+		E8F28DDD044A28F7729EC873 /* MappingOversightViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappingOversightViewModel.swift; sourceTree = "<group>"; };
+		E9F3CC48D276135ECF1B0099 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
+		ECC2C12EE02439011755005E /* EstimateBuilderMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateBuilderMockData.swift; sourceTree = "<group>"; };
+		F1922F17D8DE967C29598ED3 /* EmailReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailReportView.swift; sourceTree = "<group>"; };
+		F21F64767FC18E1F3F5DBD8D /* ExpenseLoggingMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseLoggingMockData.swift; sourceTree = "<group>"; };
+		F2891193B5F6065EA79D6D5A /* SchedulingDispatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingDispatchViewModel.swift; sourceTree = "<group>"; };
+		F2B35DAFD4A83268A2599D8A /* PushNotificationsMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsMockData.swift; sourceTree = "<group>"; };
+		F2C6557902CC201FC6FEDE23 /* AssetTransferRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetTransferRootView.swift; sourceTree = "<group>"; };
+		F2F8D302E3DB888B6B6F8559 /* MachineVaultMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineVaultMockData.swift; sourceTree = "<group>"; };
+		F579CFAB329081EAE1F4DF5E /* CustomerFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerFilterView.swift; sourceTree = "<group>"; };
+		F87AB90838F51928D06450BF /* InvoicingBillingRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicingBillingRootView.swift; sourceTree = "<group>"; };
+		F8C3E580C169830A520AD76C /* MachineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineDetailView.swift; sourceTree = "<group>"; };
+		FAF42287CA5D2B894F48CF4D /* CustomerPortalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerPortalViewModel.swift; sourceTree = "<group>"; };
+		FB8558B93505CD7CB3BBEF60 /* MappingOversightRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappingOversightRootView.swift; sourceTree = "<group>"; };
+		FC3372D33DD0B969797617AB /* MaintenancePredictorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaintenancePredictorView.swift; sourceTree = "<group>"; };
+		FD46429504DBF57C4767D4BB /* AssetHealthRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetHealthRootView.swift; sourceTree = "<group>"; };
+		FEABC84A19B65B7A953B174E /* BrandingPreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandingPreviewCard.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8B74966073C4C72266E5E416 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D15F23AF3BA141F60B295E84 /* SpendlyCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0003D4C9DB3459365C958985 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				CD99BECC4BC511DD3F2F38C6 /* TeamChatMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		001A55332296EB460073A8CA /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				AA6AE61B23BD0DD9763C4612 /* ManagerDashboardMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		02658BC2154B9742442AEAED /* SubscriptionPortal */ = {
+			isa = PBXGroup;
+			children = (
+				99F58CA5467CEED9AC5E5B14 /* MockData */,
+				CD39DDEC5AE8E6B8720FFF50 /* ViewModels */,
+				2060B6AA7DAB50959E7C678A /* Views */,
+			);
+			path = SubscriptionPortal;
+			sourceTree = "<group>";
+		};
+		06924B27A04EE57ADF954CAC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0F50501BB2B73D9C5C61A319 /* NewTicketFormView.swift */,
+				E579FC9E19E436A8A65CAC4C /* TicketDetailView.swift */,
+				B17E1122C1F724A1409F05DC /* TicketManagementRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0C115E23079461189ED698BD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CC0E198F889A37C017168DB4 /* AuthRootView.swift */,
+				2E10D652D4702323E79816F7 /* ForgotPasswordView.swift */,
+				5A5B658767215BCA8388F5E3 /* SignUpView.swift */,
+				525F8EA25B3E318105E8A221 /* WhiteLabelLoginView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0CF599C7F4C3C106AF4AF547 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B4B1CC9583E278FD657D5992 /* ManagerDashboardRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0F28352655710B6FD0A874E1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FB8558B93505CD7CB3BBEF60 /* MappingOversightRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0FF911EB91C37E37E8229C82 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F2C6557902CC201FC6FEDE23 /* AssetTransferRootView.swift */,
+				3944662463681A4620E783B0 /* CustodyLogView.swift */,
+				723025ABD7C7C0BDCFD63EC2 /* InitiateTransferView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1155BA55C556D474E4877A06 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				ECC2C12EE02439011755005E /* EstimateBuilderMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		13A7E8FAF3FF438553315D33 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				76C17D2CCA4466EF44A3A926 /* GeneralSettingsView.swift */,
+				A80C3D8F1D7C972912387DDE /* NotificationSettingsView.swift */,
+				5F0DE40788DEECBA006FD263 /* SettingsNotificationsRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		14102AEC578054C7389E7763 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				DAD25006D0AC4FE02C0C9680 /* TeamChatViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		17707933ED050903748B721F /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1775F625B6722AB46982AD45 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				465D6456725F785A0965B197 /* FinancialHubMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		1871A30FA3152D505C9C3DCF /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				082EA93B3F9649BF31A7B8E5 /* SchedulingMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		1C0C324D800BDCC631A52966 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A69C1D4A56A530CBF4FD8858 /* WhiteLabelBrandingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1C60C7501ABD8FFC09EE08DF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				85853068615DBB85F26D9AFB /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1EB2F249BF4BD4C322584634 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				F2B35DAFD4A83268A2599D8A /* PushNotificationsMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		1FD92A9752901A5345A933B7 /* AnalyticsDashboards */ = {
+			isa = PBXGroup;
+			children = (
+				9AAEABA3F69F46BDCF36A3B7 /* MockData */,
+				CE43AE7C43DB9CB36EAF52DE /* ViewModels */,
+				CFB71737118B88D3F5FC1278 /* Views */,
+			);
+			path = AnalyticsDashboards;
+			sourceTree = "<group>";
+		};
+		2059184DC63BF3DC84544932 /* TeamChat */ = {
+			isa = PBXGroup;
+			children = (
+				0003D4C9DB3459365C958985 /* MockData */,
+				14102AEC578054C7389E7763 /* ViewModels */,
+				71FA3B231CD0F8C5BC3C1997 /* Views */,
+			);
+			path = TeamChat;
+			sourceTree = "<group>";
+		};
+		2060B6AA7DAB50959E7C678A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5F68DE0690E2C37C63DEE82A /* PlanDetailView.swift */,
+				8A8D1AD9CC345DD5CDB5588F /* SubscriptionPortalRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		22BA36220A301827E1039C6E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				14822BE06A977CC6FB8F8753 /* MachineVaultViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		2479232F84548AA3CDDF6329 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9B479816BEBEE3F5C56B5536 /* IncidentAnalysisViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		26DBDDD6510B09F2F641CA77 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B3CB554291CE911A290CEAC7 /* OrgPermissionsRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		28735CAC853F46E4F682A802 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				8EA3062FA47BB8B51D708DF6 /* JobExecutionMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		2BEFBCC1C0694B500D418AAA /* CustomerPortal */ = {
+			isa = PBXGroup;
+			children = (
+				58C506D995449F53C6F6E081 /* MockData */,
+				F644E4004243D957F4570B32 /* ViewModels */,
+				8193B2BC6E55D5B5AF022344 /* Views */,
+			);
+			path = CustomerPortal;
+			sourceTree = "<group>";
+		};
+		2E166127C640D0E291BC090F /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				B390F54C377E2A15F7D5BE19 /* ClientApprovalMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		2E43F8634B4BDBC098CE8429 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F1922F17D8DE967C29598ED3 /* EmailReportView.swift */,
+				2243B675839FEC67AA24D9AB /* SendSuccessView.swift */,
+				4B96ED7DBBBB6D9902526CDA /* TripCompletionView.swift */,
+				DE6C9EC3333E35F3452CF8C1 /* TripReportPDFView.swift */,
+				07C83EF266D2190617A5D2EB /* TripReportRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		331562A27DC100079F3AF536 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				DD2166D45111DD372DC97E99 /* AIDiagnosticsMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		3440160550704F2DCC58120D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2D1852C31414A50303773CB7 /* ExpenseDetailView.swift */,
+				DA3157C7B412A8F2E4536AC2 /* ExpenseLoggingRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		34FA6072F74B3B362B6AF33D /* JobExecution */ = {
+			isa = PBXGroup;
+			children = (
+				28735CAC853F46E4F682A802 /* MockData */,
+				F326010F58140F26B9DCE9F9 /* ViewModels */,
+				C20946EA98498ECD4FC24E2F /* Views */,
+			);
+			path = JobExecution;
+			sourceTree = "<group>";
+		};
+		35A679281401A7B845DF2D35 /* CustomerProfile */ = {
+			isa = PBXGroup;
+			children = (
+				A8FDEC5B344A43FED29324A1 /* MockData */,
+				81259B125560C4F570516C2F /* ViewModels */,
+				4534DAFE5F06BCEE416C2A5A /* Views */,
+			);
+			path = CustomerProfile;
+			sourceTree = "<group>";
+		};
+		380E40622752BA7B5677763D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				61D9C0DBC80553B283F77E0C /* OrgPermissionsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3BA2296BFA77B7224ED9CDBD /* ExpenseLogging */ = {
+			isa = PBXGroup;
+			children = (
+				8B004B30D55B7F872EA9D019 /* MockData */,
+				98F3B2EBED516C2D5AACC558 /* ViewModels */,
+				3440160550704F2DCC58120D /* Views */,
+			);
+			path = ExpenseLogging;
+			sourceTree = "<group>";
+		};
+		3C2860C0E8492ABB0F66EAFB /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				6538722CE1B943499CE4E8FC /* TripReportMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		3F0870189EF8DDCB7D6EE540 /* PushNotifications */ = {
+			isa = PBXGroup;
+			children = (
+				1EB2F249BF4BD4C322584634 /* MockData */,
+				9F858956DE39285DAD6AF5E3 /* ViewModels */,
+				C87C6E4683AC6540D9F5700E /* Views */,
+			);
+			path = PushNotifications;
+			sourceTree = "<group>";
+		};
+		3F6B2ADDB4640852C7943458 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3412E0813F403753BDD978BC /* EmailPreviewRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4534DAFE5F06BCEE416C2A5A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D2F6AF02F08E8CEBBC572852 /* CustomerDetailView.swift */,
+				F579CFAB329081EAE1F4DF5E /* CustomerFilterView.swift */,
+				C3376B1AE745F821D17DA165 /* CustomerProfileRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		45F92EE6B75EBC6F8FB0DA11 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				2FB8BCD353AFFADB737063A5 /* TerritoryRegionMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		47703DF2CC63A99FAD327D41 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F8C3E580C169830A520AD76C /* MachineDetailView.swift */,
+				C0FC85D24483021932171FCF /* MachineFilterView.swift */,
+				5306600FC97A092369000DE9 /* MachineVaultRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		49B192F6D1FED05162E46BFB /* WhiteLabelBranding */ = {
+			isa = PBXGroup;
+			children = (
+				E75F90392E54D73EA3E22234 /* MockData */,
+				1C0C324D800BDCC631A52966 /* ViewModels */,
+				C5980D15EEED80AB63B13F45 /* Views */,
+			);
+			path = WhiteLabelBranding;
+			sourceTree = "<group>";
+		};
+		542456F404122F2A5F1DB424 /* SchedulingDispatch */ = {
+			isa = PBXGroup;
+			children = (
+				1871A30FA3152D505C9C3DCF /* MockData */,
+				58FE1130451EC7F0E00CBF82 /* ViewModels */,
+				8D2192C1BF551250DB122685 /* Views */,
+			);
+			path = SchedulingDispatch;
+			sourceTree = "<group>";
+		};
+		54E6DDA5435DA823BAA1D160 /* DataImporter */ = {
+			isa = PBXGroup;
+			children = (
+				B08D4070B6DE695A5FEBDDC5 /* MockData */,
+				6CECCC099A8CB07C9FCFC649 /* ViewModels */,
+				E7447ED473460F4B5E2388CD /* Views */,
+			);
+			path = DataImporter;
+			sourceTree = "<group>";
+		};
+		56E2BE6F0CA38D33B1BDB49B /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				7257B70DF247BB68694ABD2A /* TimesheetReviewMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		57D8C6D5B6D2A3B295495B25 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				C5982AC1572DD18E20E9A4E9 /* ResourceManagementMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		58C506D995449F53C6F6E081 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				02955826372EFF7F60DCF0D3 /* CustomerPortalMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		58FE1130451EC7F0E00CBF82 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				F2891193B5F6065EA79D6D5A /* SchedulingDispatchViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		595FD25F9249D053268325C4 /* AIDiagnostics */ = {
+			isa = PBXGroup;
+			children = (
+				331562A27DC100079F3AF536 /* MockData */,
+				BBDFEFEAED3E32696956A298 /* ViewModels */,
+				E87B5F76D5ADAE652E9F4C84 /* Views */,
+			);
+			path = AIDiagnostics;
+			sourceTree = "<group>";
+		};
+		5A672AA81271DB51476CD89A /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				621E51CE9F2F185887D4312D /* EmailPreviewMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		5AC28B2BBA8F15F75ABB2335 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E709A3516BD9579D657F6E5D /* EmailPreviewViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		600A1DA7E90F6309874B0E4D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				16B7177E33D26086CA35FBC4 /* TimesheetReviewRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		61350E237A72B1B727C2DE73 /* AssetTransfer */ = {
+			isa = PBXGroup;
+			children = (
+				A89DF6364ED6CF4DAF8CCA54 /* MockData */,
+				E496F12AE113570199CF50B9 /* ViewModels */,
+				0FF911EB91C37E37E8229C82 /* Views */,
+			);
+			path = AssetTransfer;
+			sourceTree = "<group>";
+		};
+		62234C1BA356E70E8ECF72C8 /* TerritoryRegion */ = {
+			isa = PBXGroup;
+			children = (
+				45F92EE6B75EBC6F8FB0DA11 /* MockData */,
+				8211EE26139D27DD31E48CCF /* ViewModels */,
+				E25496E24174B0AC680DDA4B /* Views */,
+			);
+			path = TerritoryRegion;
+			sourceTree = "<group>";
+		};
+		636EB20C6CBBF310DCD0A748 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				8125DA5C1271365EC8F1B1F2 /* MockData */,
+				1C60C7501ABD8FFC09EE08DF /* ViewModels */,
+				0C115E23079461189ED698BD /* Views */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		662F74AFCEACE09C6B8F0085 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				595FD25F9249D053268325C4 /* AIDiagnostics */,
+				1FD92A9752901A5345A933B7 /* AnalyticsDashboards */,
+				BFE9EEFB526B2BE0746A9BDE /* AssetHealth */,
+				61350E237A72B1B727C2DE73 /* AssetTransfer */,
+				636EB20C6CBBF310DCD0A748 /* Auth */,
+				6D04F9064CBE5D088F8387AC /* ClientApproval */,
+				2BEFBCC1C0694B500D418AAA /* CustomerPortal */,
+				35A679281401A7B845DF2D35 /* CustomerProfile */,
+				54E6DDA5435DA823BAA1D160 /* DataImporter */,
+				B4811A6FD95D9A3711C415E9 /* EmailPreview */,
+				7D25056255046B0F2FB992BB /* EstimateBuilder */,
+				3BA2296BFA77B7224ED9CDBD /* ExpenseLogging */,
+				B55C08B5F99F9F08A54A8BF0 /* FinancialHub */,
+				876F95A2B059ECA5B11C0626 /* IncidentAnalysis */,
+				B189EE5A463A82AA76176A6B /* IncidentHierarchy */,
+				BFC4A13C582C7C42E4763378 /* InvoicingBilling */,
+				34FA6072F74B3B362B6AF33D /* JobExecution */,
+				70F4AD4F80CC0ECDB272FEE4 /* KnowledgeBase */,
+				713AA8806E5D5FB77497D8ED /* MachineVault */,
+				7BF06A8660930977AD1552B1 /* ManagerDashboard */,
+				91EA15385A0BC7A763E486AD /* MappingOversight */,
+				AD3F9E501170CEC3E73EB5CD /* OrgPermissions */,
+				3F0870189EF8DDCB7D6EE540 /* PushNotifications */,
+				D888858506AF102BA2E10A90 /* ResourceManagement */,
+				542456F404122F2A5F1DB424 /* SchedulingDispatch */,
+				D53A7C74C82517EC5449AF3E /* SettingsNotifications */,
+				02658BC2154B9742442AEAED /* SubscriptionPortal */,
+				2059184DC63BF3DC84544932 /* TeamChat */,
+				62234C1BA356E70E8ECF72C8 /* TerritoryRegion */,
+				D810296FF4AB4571E870E1D6 /* TicketManagement */,
+				ADFB0E42AEBAAFEB3B1B3EF4 /* TimesheetReview */,
+				F84CD051B102AFDFA0A9D77D /* TripReport */,
+				49B192F6D1FED05162E46BFB /* WhiteLabelBranding */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		677C42D15AAD61CD6B84ADB2 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				7690E8444E1BA2CE77C0D8D9 /* TicketManagementMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		695BA614F76E5B602834AADE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3C213ABDE791E052619EFE24 /* Spendly.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6CECCC099A8CB07C9FCFC649 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C29515C8FC55C295610A26E8 /* DataImporterViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		6D04F9064CBE5D088F8387AC /* ClientApproval */ = {
+			isa = PBXGroup;
+			children = (
+				2E166127C640D0E291BC090F /* MockData */,
+				C2AE44AEF2BE3CA19F98E6FE /* ViewModels */,
+				D19A9A3D5202C7A53750F45A /* Views */,
+			);
+			path = ClientApproval;
+			sourceTree = "<group>";
+		};
+		70F4AD4F80CC0ECDB272FEE4 /* KnowledgeBase */ = {
+			isa = PBXGroup;
+			children = (
+				8B4DF4CD588C76A71956D6F8 /* MockData */,
+				9BEBDC605E8F8A0363F0F715 /* ViewModels */,
+				89EBD74FFB7C8EE673738743 /* Views */,
+			);
+			path = KnowledgeBase;
+			sourceTree = "<group>";
+		};
+		71348E43F69E82D7CCEFDD78 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				98F20636106514B54543C4C0 /* InvoiceDetailView.swift */,
+				F87AB90838F51928D06450BF /* InvoicingBillingRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		713AA8806E5D5FB77497D8ED /* MachineVault */ = {
+			isa = PBXGroup;
+			children = (
+				C6E833EE8464D5D8027F4EF9 /* MockData */,
+				22BA36220A301827E1039C6E /* ViewModels */,
+				47703DF2CC63A99FAD327D41 /* Views */,
+			);
+			path = MachineVault;
+			sourceTree = "<group>";
+		};
+		717E5A502B782EF04CC32ECF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				66560FD1CC566405CA050454 /* AssetHealthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		71FA3B231CD0F8C5BC3C1997 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				15479D6AAC2B79DEF92B4BE5 /* ChatRoomView.swift */,
+				B45E92AF3C8A601935B403F9 /* TeamChatRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		746A50D530DEEC0E8720FCAD /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		7BF06A8660930977AD1552B1 /* ManagerDashboard */ = {
+			isa = PBXGroup;
+			children = (
+				001A55332296EB460073A8CA /* MockData */,
+				A05B72DB017A23CEDEC67D3A /* ViewModels */,
+				0CF599C7F4C3C106AF4AF547 /* Views */,
+			);
+			path = ManagerDashboard;
+			sourceTree = "<group>";
+		};
+		7D25056255046B0F2FB992BB /* EstimateBuilder */ = {
+			isa = PBXGroup;
+			children = (
+				1155BA55C556D474E4877A06 /* MockData */,
+				BD1EEE0A5CE18FF68F115CDC /* ViewModels */,
+				A93166E15D61F92A9CBF748D /* Views */,
+			);
+			path = EstimateBuilder;
+			sourceTree = "<group>";
+		};
+		81259B125560C4F570516C2F /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8631D8CA5A62D502A994795C /* CustomerProfileViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8125DA5C1271365EC8F1B1F2 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				5BF7F23EAD47F0B70CFAF15B /* AuthMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		8193B2BC6E55D5B5AF022344 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0CF3AE5DA0B969A44F560624 /* CustomerPortalRootView.swift */,
+				579482F33C822F6896ABE949 /* ServiceTrackerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8211EE26139D27DD31E48CCF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				49AADC728ECC70DABD5BA786 /* TerritoryRegionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		876F95A2B059ECA5B11C0626 /* IncidentAnalysis */ = {
+			isa = PBXGroup;
+			children = (
+				E22A45D72EB97A4B7964250B /* MockData */,
+				2479232F84548AA3CDDF6329 /* ViewModels */,
+				960160172C8EB6E65D22CA05 /* Views */,
+			);
+			path = IncidentAnalysis;
+			sourceTree = "<group>";
+		};
+		892815B24047A7C9A0631773 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4AE0FD40E3872BCD238451ED /* CompareTechniciansView.swift */,
+				569FB1F7897F350B2845C14D /* ResourceManagementRootView.swift */,
+				46F8430CF5A084DCAF4A8A3C /* SavedGroupsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		89EBD74FFB7C8EE673738743 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E9F3CC48D276135ECF1B0099 /* ArticleDetailView.swift */,
+				58E0C4D0D2E7079321D79A27 /* CreateArticleView.swift */,
+				4E26B5FD9122118686F862DF /* KnowledgeBaseRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8B004B30D55B7F872EA9D019 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				F21F64767FC18E1F3F5DBD8D /* ExpenseLoggingMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		8B4DF4CD588C76A71956D6F8 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				176482B66CB856B6B3AA54D5 /* KnowledgeBaseMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		8D2192C1BF551250DB122685 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CDC64588B1D0BF554812966C /* AssignTechnicianView.swift */,
+				4CFAAA484D23477EFB9E6052 /* DispatchConfirmationView.swift */,
+				34BA8E53348F1379E356DD80 /* SchedulingDispatchRootView.swift */,
+				24342369669FBFD08DD10D40 /* TicketSchedulingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8E8CA71EB29CF23D5E5E6CB8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				540656336FA8F10B54761301 /* InvoicingBillingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9003C0E4C1C0FA464BECFAAD /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				B668A4BC4361486866F8A283 /* IncidentHierarchyMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		91EA15385A0BC7A763E486AD /* MappingOversight */ = {
+			isa = PBXGroup;
+			children = (
+				BEDF1D171B69FD56F9034238 /* MockData */,
+				FF2DBB76B54A8EF8DB21AB7D /* ViewModels */,
+				0F28352655710B6FD0A874E1 /* Views */,
+			);
+			path = MappingOversight;
+			sourceTree = "<group>";
+		};
+		932542D2337BF946384F3818 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				09238EFBF7D377C1C49BD06C /* FinancialHubRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		933CDD9C80CBDA6E95594E2B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B8F5C6E6C36D871D56B84764 /* TripReportViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		960160172C8EB6E65D22CA05 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				20F4163692348D5DC705801F /* IncidentAnalysisRootView.swift */,
+				6FF2FAAB19EF60EB7960CFD1 /* IncidentDetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9616F74DA16A83AAB0A350E9 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				536A8E0BD47EED1664904B22 /* ResourceManagementViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9619A516EC5E38266E7C3B6A /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				B674A23F1A4DD5EDC1047B6B /* InvoicingBillingMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		98F3B2EBED516C2D5AACC558 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				796FD87EEAD2E11C0D213115 /* ExpenseLoggingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		99F58CA5467CEED9AC5E5B14 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				C7129A1B5543C13808D205A4 /* SubscriptionPortalMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		9AAEABA3F69F46BDCF36A3B7 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				7B37550B5D7E62B5969EC8AE /* AnalyticsDashboardsMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		9BEBDC605E8F8A0363F0F715 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				989DA84BEE78ECA47E15F9E9 /* KnowledgeBaseViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9F858956DE39285DAD6AF5E3 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CF7077BCE9C59CCA60C952F0 /* PushNotificationsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A05B72DB017A23CEDEC67D3A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA7D9C93C59877CC0710202C /* ManagerDashboardViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A0FD7041A12633FB4FEAD9ED /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				CC5F723267F6B6A51D589A9F /* SettingsNotificationsMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		A5626D680D424839AB561C34 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				3EA50246862B8073FCBEE62C /* TimesheetReviewViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A6D80B475599A6FBE309C201 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				DD193155601827C258F4FDBE /* AssetHealthMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		A89DF6364ED6CF4DAF8CCA54 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				E6981ED73B247AD48FB5E52A /* AssetTransferMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		A8FDEC5B344A43FED29324A1 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				99C064087299001207226EBD /* CustomerProfileMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		A93166E15D61F92A9CBF748D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C6D1D3ED93547444A0FB1659 /* EstimateBuilderRootView.swift */,
+				32B7A0E28D21F1078C70D5F6 /* EstimateEditorView.swift */,
+				6A0BCF0C5C02E73108657435 /* EstimateFilterView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AB053E4446525822046B2269 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C7C1644037AD9827BB0DCEA6 /* SpendlyApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AD3F9E501170CEC3E73EB5CD /* OrgPermissions */ = {
+			isa = PBXGroup;
+			children = (
+				BEF1B8CCEF8B074FB468B2AC /* MockData */,
+				380E40622752BA7B5677763D /* ViewModels */,
+				26DBDDD6510B09F2F641CA77 /* Views */,
+			);
+			path = OrgPermissions;
+			sourceTree = "<group>";
+		};
+		ADFB0E42AEBAAFEB3B1B3EF4 /* TimesheetReview */ = {
+			isa = PBXGroup;
+			children = (
+				56E2BE6F0CA38D33B1BDB49B /* MockData */,
+				A5626D680D424839AB561C34 /* ViewModels */,
+				600A1DA7E90F6309874B0E4D /* Views */,
+			);
+			path = TimesheetReview;
+			sourceTree = "<group>";
+		};
+		AF7464AAF3F504CB1BB550F9 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B69DA0286451C5677D83AC34 /* SpendlyCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		B08D4070B6DE695A5FEBDDC5 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				05B86793A38D931C5A129036 /* DataImporterMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		B11E600CAADA322E789C4EF8 = {
+			isa = PBXGroup;
+			children = (
+				AF7464AAF3F504CB1BB550F9 /* Packages */,
+				B8D3FDF3958221CB0261080B /* Spendly */,
+				695BA614F76E5B602834AADE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B189EE5A463A82AA76176A6B /* IncidentHierarchy */ = {
+			isa = PBXGroup;
+			children = (
+				9003C0E4C1C0FA464BECFAAD /* MockData */,
+				E8CA99C74368B3613E9DE76D /* ViewModels */,
+				F07B634D2F89F4A3772D48F3 /* Views */,
+			);
+			path = IncidentHierarchy;
+			sourceTree = "<group>";
+		};
+		B4811A6FD95D9A3711C415E9 /* EmailPreview */ = {
+			isa = PBXGroup;
+			children = (
+				5A672AA81271DB51476CD89A /* MockData */,
+				5AC28B2BBA8F15F75ABB2335 /* ViewModels */,
+				3F6B2ADDB4640852C7943458 /* Views */,
+			);
+			path = EmailPreview;
+			sourceTree = "<group>";
+		};
+		B55C08B5F99F9F08A54A8BF0 /* FinancialHub */ = {
+			isa = PBXGroup;
+			children = (
+				1775F625B6722AB46982AD45 /* MockData */,
+				CBE789FEB08E13F7ED153954 /* ViewModels */,
+				932542D2337BF946384F3818 /* Views */,
+			);
+			path = FinancialHub;
+			sourceTree = "<group>";
+		};
+		B8D3FDF3958221CB0261080B /* Spendly */ = {
+			isa = PBXGroup;
+			children = (
+				01E65572ACB5CC9BAFD977F1 /* Assets.xcassets */,
+				08911FFD69BC591AD304D901 /* Info.plist */,
+				AB053E4446525822046B2269 /* App */,
+				746A50D530DEEC0E8720FCAD /* Fonts */,
+				662F74AFCEACE09C6B8F0085 /* Modules */,
+				E14F6DDFE10D29C168D7209D /* Navigation */,
+				17707933ED050903748B721F /* Preview Content */,
+			);
+			path = Spendly;
+			sourceTree = "<group>";
+		};
+		BBDFEFEAED3E32696956A298 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				0D5C0366218702E1058647CE /* AIDiagnosticsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		BD1EEE0A5CE18FF68F115CDC /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				86B360A3EFF9C2BAFDEB39C9 /* EstimateBuilderViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		BEDF1D171B69FD56F9034238 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				3D15C62E5A402092CBB4AE88 /* MappingOversightMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		BEF1B8CCEF8B074FB468B2AC /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				C9F94DAD9E440FAF75EDC866 /* OrgPermissionsMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		BFC4A13C582C7C42E4763378 /* InvoicingBilling */ = {
+			isa = PBXGroup;
+			children = (
+				9619A516EC5E38266E7C3B6A /* MockData */,
+				8E8CA71EB29CF23D5E5E6CB8 /* ViewModels */,
+				71348E43F69E82D7CCEFDD78 /* Views */,
+			);
+			path = InvoicingBilling;
+			sourceTree = "<group>";
+		};
+		BFE9EEFB526B2BE0746A9BDE /* AssetHealth */ = {
+			isa = PBXGroup;
+			children = (
+				A6D80B475599A6FBE309C201 /* MockData */,
+				717E5A502B782EF04CC32ECF /* ViewModels */,
+				DCE11F8243972DCAD688A382 /* Views */,
+			);
+			path = AssetHealth;
+			sourceTree = "<group>";
+		};
+		C20946EA98498ECD4FC24E2F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				28E41C4E3FCCC5949568B124 /* JobExecutionRootView.swift */,
+				15C6E684B3A03402DBC7C11E /* JobExecutionTimerView.swift */,
+				398EB6A53DAF9A33B1BBE542 /* PhotoCaptureView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C2AE44AEF2BE3CA19F98E6FE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7FC90B4FF229CCEBDE54758A /* ClientApprovalViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C5980D15EEED80AB63B13F45 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FEABC84A19B65B7A953B174E /* BrandingPreviewCard.swift */,
+				C156AEFF7A94CBF071701CD1 /* CurrencySettingsView.swift */,
+				247CBCC5DBDEB7019A467297 /* WhiteLabelBrandingRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C6E833EE8464D5D8027F4EF9 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				F2F8D302E3DB888B6B6F8559 /* MachineVaultMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		C87C6E4683AC6540D9F5700E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B8F1518450064EA2F6D1FAD7 /* PushNotificationsRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C9D02AC918994D041544359D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				03435186645FD35F18CA3516 /* SettingsNotificationsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CBE789FEB08E13F7ED153954 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8C539EE9433847D5470D76B0 /* FinancialHubViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CD39DDEC5AE8E6B8720FFF50 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				143541F8F2638187ADF8F2D2 /* SubscriptionPortalViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CE43AE7C43DB9CB36EAF52DE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9B9DF6F0B0EF9B04386F9A97 /* AnalyticsDashboardsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CFB71737118B88D3F5FC1278 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				11453255587865B6F4680C61 /* AnalyticsDashboardsRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D19A9A3D5202C7A53750F45A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				153BD792C6DB75FC96A12EF9 /* ApprovalSuccessView.swift */,
+				1A6C8FEF9B07B311D544EBC2 /* ClientApprovalRootView.swift */,
+				67678663FD8D21555DA111AF /* EstimateApprovalView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D53A7C74C82517EC5449AF3E /* SettingsNotifications */ = {
+			isa = PBXGroup;
+			children = (
+				A0FD7041A12633FB4FEAD9ED /* MockData */,
+				C9D02AC918994D041544359D /* ViewModels */,
+				13A7E8FAF3FF438553315D33 /* Views */,
+			);
+			path = SettingsNotifications;
+			sourceTree = "<group>";
+		};
+		D810296FF4AB4571E870E1D6 /* TicketManagement */ = {
+			isa = PBXGroup;
+			children = (
+				677C42D15AAD61CD6B84ADB2 /* MockData */,
+				F3D2AFDA38900B0CCCB1E8EA /* ViewModels */,
+				06924B27A04EE57ADF954CAC /* Views */,
+			);
+			path = TicketManagement;
+			sourceTree = "<group>";
+		};
+		D888858506AF102BA2E10A90 /* ResourceManagement */ = {
+			isa = PBXGroup;
+			children = (
+				57D8C6D5B6D2A3B295495B25 /* MockData */,
+				9616F74DA16A83AAB0A350E9 /* ViewModels */,
+				892815B24047A7C9A0631773 /* Views */,
+			);
+			path = ResourceManagement;
+			sourceTree = "<group>";
+		};
+		DCE11F8243972DCAD688A382 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FD46429504DBF57C4767D4BB /* AssetHealthRootView.swift */,
+				FC3372D33DD0B969797617AB /* MaintenancePredictorView.swift */,
+				860E0B05CD3AF2FFA695E177 /* ServiceHistoryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E14F6DDFE10D29C168D7209D /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				830B9CAC0723A9B1A6174615 /* AdminTabRouter.swift */,
+				3161824BBC59CC53E31D0ABB /* AppRouter.swift */,
+				BBE7DB6C7E29BBD54099AFAF /* CustomerTabRouter.swift */,
+				2508E4B5C7062BB5FB67C648 /* OEMTabRouter.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		E22A45D72EB97A4B7964250B /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				D907D4FD1F9B10253FA136FA /* IncidentAnalysisMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		E25496E24174B0AC680DDA4B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DEDD532A7DEBF1A9933DF9C6 /* TerritoryDetailView.swift */,
+				6D60538D806CF23B4805777E /* TerritoryRegionRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E496F12AE113570199CF50B9 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				33F0F13AADE3809F46444A09 /* AssetTransferViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E7447ED473460F4B5E2388CD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				17FE6186EF7B5C871A6A35A1 /* DataImporterRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E75F90392E54D73EA3E22234 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				AF30CB9216CA3676FDE8E3FE /* WhiteLabelBrandingMockData.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
+		E87B5F76D5ADAE652E9F4C84 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B25974846E2E42E8EB6D4CAD /* AIDiagnosticsRootView.swift */,
+				8DE43FE3B1F48DEBADBA10F0 /* DiagnosticWizardView.swift */,
+				770FB359AFAF2D2D9D34E550 /* TranscriptionResultView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E8CA99C74368B3613E9DE76D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9AEC5363B184949C8F0F446D /* IncidentHierarchyViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F07B634D2F89F4A3772D48F3 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C07B259A982EA6E3347F5846 /* IncidentHierarchyRootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F326010F58140F26B9DCE9F9 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				D4EF1BD29FCDC2BCDF4ACE87 /* JobExecutionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F3D2AFDA38900B0CCCB1E8EA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4771C4C08AB0D56BF23A26F4 /* TicketManagementViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F644E4004243D957F4570B32 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				FAF42287CA5D2B894F48CF4D /* CustomerPortalViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F84CD051B102AFDFA0A9D77D /* TripReport */ = {
+			isa = PBXGroup;
+			children = (
+				3C2860C0E8492ABB0F66EAFB /* MockData */,
+				933CDD9C80CBDA6E95594E2B /* ViewModels */,
+				2E43F8634B4BDBC098CE8429 /* Views */,
+			);
+			path = TripReport;
+			sourceTree = "<group>";
+		};
+		FF2DBB76B54A8EF8DB21AB7D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E8F28DDD044A28F7729EC873 /* MappingOversightViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EC1FC32BC24FAF9228B47E1A /* Spendly */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EF0FA5BEB904DD5F7D675B23 /* Build configuration list for PBXNativeTarget "Spendly" */;
+			buildPhases = (
+				D8026EEB1379A4F1855BE31F /* Sources */,
+				B8815D05D324B48540B62016 /* Resources */,
+				8B74966073C4C72266E5E416 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Spendly;
+			packageProductDependencies = (
+				0D82697521A3984711F9A9DE /* SpendlyCore */,
+			);
+			productName = Spendly;
+			productReference = 3C213ABDE791E052619EFE24 /* Spendly.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		16716F2BFFE3B0967C934E86 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					EC1FC32BC24FAF9228B47E1A = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 3AE403D1E34AB61BE78B202C /* Build configuration list for PBXProject "Spendly" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = B11E600CAADA322E789C4EF8;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				391BB9635A1E25B9ECF0A2AD /* XCLocalSwiftPackageReference "SpendlyCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 695BA614F76E5B602834AADE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC1FC32BC24FAF9228B47E1A /* Spendly */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B8815D05D324B48540B62016 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A78879FBC4CB3E91FCDDD69 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D8026EEB1379A4F1855BE31F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD544873DC461028E8C0797C /* AIDiagnosticsMockData.swift in Sources */,
+				BE8184D8C1B72E8151F5502C /* AIDiagnosticsRootView.swift in Sources */,
+				36896BE8A582E8101CAE444E /* AIDiagnosticsViewModel.swift in Sources */,
+				FF616B930B9705E1F0372FBF /* AdminTabRouter.swift in Sources */,
+				DA79440259EA49CE213F5B65 /* AnalyticsDashboardsMockData.swift in Sources */,
+				452A2450337849B30652342C /* AnalyticsDashboardsRootView.swift in Sources */,
+				FCC8F05C2B07FC36674A9A1A /* AnalyticsDashboardsViewModel.swift in Sources */,
+				0955E28F6BFB66D2D757FBF2 /* AppRouter.swift in Sources */,
+				C1458C71FDFA88B98CD022C2 /* ApprovalSuccessView.swift in Sources */,
+				6240314B40954007DFCD5A22 /* ArticleDetailView.swift in Sources */,
+				CF74E57A01BD6BD6E137D94C /* AssetHealthMockData.swift in Sources */,
+				68FE92EE15A8F3CC8D9138E8 /* AssetHealthRootView.swift in Sources */,
+				DD193E9A7610BBC97F48C033 /* AssetHealthViewModel.swift in Sources */,
+				B9F7F7C35D5567290720D439 /* AssetTransferMockData.swift in Sources */,
+				1F8C9B37E1F29C2C21DD38CE /* AssetTransferRootView.swift in Sources */,
+				95972D3F73EAAF53744174E5 /* AssetTransferViewModel.swift in Sources */,
+				C1D88E15295C03EB4DB4EA67 /* AssignTechnicianView.swift in Sources */,
+				4EEB128D3CA267008070BDD6 /* AuthMockData.swift in Sources */,
+				7861322B312D60179D18660B /* AuthRootView.swift in Sources */,
+				39AB1A6E4E00B8AB0D9B8DF4 /* AuthViewModel.swift in Sources */,
+				76194DACA015D423F6E114AF /* BrandingPreviewCard.swift in Sources */,
+				77EAD7AE86986DE06C64AB7B /* ChatRoomView.swift in Sources */,
+				886D0D0EAFBF0657C65F9E07 /* ClientApprovalMockData.swift in Sources */,
+				C790C73136DB4D82EC9D8522 /* ClientApprovalRootView.swift in Sources */,
+				EE3395FC72FA1FC058A9D637 /* ClientApprovalViewModel.swift in Sources */,
+				586680952626430CE1535F19 /* CompareTechniciansView.swift in Sources */,
+				60C7FDEFA9B0796FD8397966 /* CreateArticleView.swift in Sources */,
+				DA084B62F114FDF220F02ECA /* CurrencySettingsView.swift in Sources */,
+				C949629267A4F04BCE110E63 /* CustodyLogView.swift in Sources */,
+				002694442F0A4155D7CD6D56 /* CustomerDetailView.swift in Sources */,
+				0943B874CD72D81CB07AF6A4 /* CustomerFilterView.swift in Sources */,
+				9141A2157229BC44FE3028B1 /* CustomerPortalMockData.swift in Sources */,
+				445B52B1144647C0C093E56A /* CustomerPortalRootView.swift in Sources */,
+				C43EC93D7C94FEC79ACA25DB /* CustomerPortalViewModel.swift in Sources */,
+				04CF9A078FBA0B7E4AA51966 /* CustomerProfileMockData.swift in Sources */,
+				A981ED6D39F3BAD6E4C46F50 /* CustomerProfileRootView.swift in Sources */,
+				7D249F4885FDFE4E571EF2BD /* CustomerProfileViewModel.swift in Sources */,
+				AF874A046EFC173CA3656055 /* CustomerTabRouter.swift in Sources */,
+				B2DCC9CB7F1981E3DC622DC9 /* DataImporterMockData.swift in Sources */,
+				D376784BA32319EBEB340A40 /* DataImporterRootView.swift in Sources */,
+				A00E399E1831DEB027EDC1A9 /* DataImporterViewModel.swift in Sources */,
+				1C07B1FD028B9308B57F20C9 /* DiagnosticWizardView.swift in Sources */,
+				62B2B43D4A141C22E57F7AF4 /* DispatchConfirmationView.swift in Sources */,
+				92BF9ACC9BFF5E70CD2349FF /* EmailPreviewMockData.swift in Sources */,
+				70098A51159E125D8A579EF7 /* EmailPreviewRootView.swift in Sources */,
+				9B2E58D5DB4666709270009F /* EmailPreviewViewModel.swift in Sources */,
+				6D952D750AA3410C51C4F427 /* EmailReportView.swift in Sources */,
+				6DF763991C4270A29788237B /* EstimateApprovalView.swift in Sources */,
+				9E85D639DBFCB2B097D796DB /* EstimateBuilderMockData.swift in Sources */,
+				6FC36B4F5B4C0DDDB438A5D8 /* EstimateBuilderRootView.swift in Sources */,
+				AA462346C691A148A30F4A04 /* EstimateBuilderViewModel.swift in Sources */,
+				DE4098FA4F146DF06781FAC5 /* EstimateEditorView.swift in Sources */,
+				113C341DEEA151E414AC094B /* EstimateFilterView.swift in Sources */,
+				32B93D29BBAF78E821DB399A /* ExpenseDetailView.swift in Sources */,
+				C02F85E0EBE10C5CAC6FB5F4 /* ExpenseLoggingMockData.swift in Sources */,
+				C0D4A558F0EF90A95A06B33F /* ExpenseLoggingRootView.swift in Sources */,
+				A6DA319E8C9D688242C94B7D /* ExpenseLoggingViewModel.swift in Sources */,
+				02BDB2E5ED6240F8756939A0 /* FinancialHubMockData.swift in Sources */,
+				B5A3F40AB170539651EDE756 /* FinancialHubRootView.swift in Sources */,
+				CD3471A7351E4AEB0BD25B1D /* FinancialHubViewModel.swift in Sources */,
+				DD845FDAC6C0B0CE231FF6CC /* ForgotPasswordView.swift in Sources */,
+				8978D1129EAF4BDB2BE28D20 /* GeneralSettingsView.swift in Sources */,
+				E08C1FD529A2515E4B2E0E54 /* IncidentAnalysisMockData.swift in Sources */,
+				1EA4E64B1CA1B1D65BD20DC1 /* IncidentAnalysisRootView.swift in Sources */,
+				0282900BA0139CE451B4A0C7 /* IncidentAnalysisViewModel.swift in Sources */,
+				49A62BE73AB8F87DA068D9DE /* IncidentDetailView.swift in Sources */,
+				CF367CBD03A52FBCB10F875E /* IncidentHierarchyMockData.swift in Sources */,
+				6527C39B50C3A599267CDE7B /* IncidentHierarchyRootView.swift in Sources */,
+				771091A595911A715A42F3B4 /* IncidentHierarchyViewModel.swift in Sources */,
+				3A64C8110973BC8BE65F44F2 /* InitiateTransferView.swift in Sources */,
+				FB114BD816D805AFB1A225CE /* InvoiceDetailView.swift in Sources */,
+				7C24A2A0B8C5B1EA830BB489 /* InvoicingBillingMockData.swift in Sources */,
+				4E337EB51D2D07ABECEBE691 /* InvoicingBillingRootView.swift in Sources */,
+				1172E528F4F07660A7DF4899 /* InvoicingBillingViewModel.swift in Sources */,
+				61459EB96BAC73E55D198205 /* JobExecutionMockData.swift in Sources */,
+				F15F0089736648E16D3EA97F /* JobExecutionRootView.swift in Sources */,
+				27B2ECBF6B5C8B59943A99F6 /* JobExecutionTimerView.swift in Sources */,
+				3F52036E2FAA0218325DC8FB /* JobExecutionViewModel.swift in Sources */,
+				C7BC76E920766298F93A6CAA /* KnowledgeBaseMockData.swift in Sources */,
+				473825AFF1CEF05378D34577 /* KnowledgeBaseRootView.swift in Sources */,
+				3BD06B6D03FCB92C731D860D /* KnowledgeBaseViewModel.swift in Sources */,
+				A2A67F5C52A6AD9216E2ED51 /* MachineDetailView.swift in Sources */,
+				870E11C96B60B9FA466A6A3D /* MachineFilterView.swift in Sources */,
+				E5BD0F6E7F086924F157F6E0 /* MachineVaultMockData.swift in Sources */,
+				57049C12EF1E48486888026C /* MachineVaultRootView.swift in Sources */,
+				A02143E3F513F4ED66610276 /* MachineVaultViewModel.swift in Sources */,
+				8F254FEF553EA47549756572 /* MaintenancePredictorView.swift in Sources */,
+				56A2A9A05825AFAABE38300B /* ManagerDashboardMockData.swift in Sources */,
+				D9C424AB98A366DDC2644171 /* ManagerDashboardRootView.swift in Sources */,
+				C174DA8D57E86C831A84AABC /* ManagerDashboardViewModel.swift in Sources */,
+				2A2EEAA3B46CC722CF131BA8 /* MappingOversightMockData.swift in Sources */,
+				AE00CF3A08D1A5D8824C5B6E /* MappingOversightRootView.swift in Sources */,
+				0C9561C6CD188DA36E076303 /* MappingOversightViewModel.swift in Sources */,
+				ADF7DD0801F230B1C7401B77 /* NewTicketFormView.swift in Sources */,
+				80F250B1CB75E89B3E281C15 /* NotificationSettingsView.swift in Sources */,
+				21C42A76E9B0DECEFEF3F227 /* OEMTabRouter.swift in Sources */,
+				57844E67FD19AD8D06DE1152 /* OrgPermissionsMockData.swift in Sources */,
+				6E5B52D11E8922143ACC40D0 /* OrgPermissionsRootView.swift in Sources */,
+				2E0759816C7C0C613B57D7B2 /* OrgPermissionsViewModel.swift in Sources */,
+				2C812FB1796397031D79C30A /* PhotoCaptureView.swift in Sources */,
+				F8AA2FAB045D5C5307A2F944 /* PlanDetailView.swift in Sources */,
+				B556EA9D80EFE84FA80308F2 /* PushNotificationsMockData.swift in Sources */,
+				A126AEBE5101D3555967A9C8 /* PushNotificationsRootView.swift in Sources */,
+				E341F5618D1B8B582CE6C61A /* PushNotificationsViewModel.swift in Sources */,
+				BD63004D171C15761E48489C /* ResourceManagementMockData.swift in Sources */,
+				EE4E05322EAD3805793F1BB0 /* ResourceManagementRootView.swift in Sources */,
+				48AD86B25D2457EEEE7468BD /* ResourceManagementViewModel.swift in Sources */,
+				2880E5F5AB8E6D5ACA980685 /* SavedGroupsView.swift in Sources */,
+				09C63BDBE378F586F27CB4E5 /* SchedulingDispatchRootView.swift in Sources */,
+				2BCEC5A3B0A1922EDFB0124B /* SchedulingDispatchViewModel.swift in Sources */,
+				2634568003890A10F7111DED /* SchedulingMockData.swift in Sources */,
+				93847D088D30555D3AC36AC3 /* SendSuccessView.swift in Sources */,
+				CB7EE713FF9CAEC075D717EE /* ServiceHistoryView.swift in Sources */,
+				BB26DDFFCB60B7698CCAEECA /* ServiceTrackerView.swift in Sources */,
+				926B1513EA4E2C51876CCD9C /* SettingsNotificationsMockData.swift in Sources */,
+				98D07F59D05D298F8743D001 /* SettingsNotificationsRootView.swift in Sources */,
+				6D917A501C8FE7040891FD18 /* SettingsNotificationsViewModel.swift in Sources */,
+				CD0C913630EFCB6F1B1FD4D8 /* SignUpView.swift in Sources */,
+				09017BB317E163FA86EFDCD4 /* SpendlyApp.swift in Sources */,
+				D03A7D8D5A3FD6D466452869 /* SubscriptionPortalMockData.swift in Sources */,
+				8AAF9415F43DF869404A6209 /* SubscriptionPortalRootView.swift in Sources */,
+				19A03DA9F447ABC998AA1E1C /* SubscriptionPortalViewModel.swift in Sources */,
+				DAE93536C9D6A339B29E3068 /* TeamChatMockData.swift in Sources */,
+				8981D0B1002CB4EC65A99951 /* TeamChatRootView.swift in Sources */,
+				B7F9D11EECE1BB72B3D5836F /* TeamChatViewModel.swift in Sources */,
+				02A29CD5F08F5D51F573BB61 /* TerritoryDetailView.swift in Sources */,
+				A70048A5E054E88F0119A25F /* TerritoryRegionMockData.swift in Sources */,
+				3E0A78094E29DF7AA4CE84AE /* TerritoryRegionRootView.swift in Sources */,
+				08988558723182E9407CFE66 /* TerritoryRegionViewModel.swift in Sources */,
+				7E81308050B9201691B24355 /* TicketDetailView.swift in Sources */,
+				1FB05768C01DD3E49C246E5A /* TicketManagementMockData.swift in Sources */,
+				D265336A1120AAF138190FEF /* TicketManagementRootView.swift in Sources */,
+				FDC203C04C143A14120BE63B /* TicketManagementViewModel.swift in Sources */,
+				A56F08C2799D0045B3D3EF5F /* TicketSchedulingView.swift in Sources */,
+				E421797A417A61ECEEC6849A /* TimesheetReviewMockData.swift in Sources */,
+				1D3FA783BDFE337338B25B30 /* TimesheetReviewRootView.swift in Sources */,
+				5971E4751C47ADD2BF99435E /* TimesheetReviewViewModel.swift in Sources */,
+				68BBCB3E48F797C94D6CE020 /* TranscriptionResultView.swift in Sources */,
+				BD492501A21AE89706009DA1 /* TripCompletionView.swift in Sources */,
+				D268E4F35AF16AE0371BCB8C /* TripReportMockData.swift in Sources */,
+				1CB037D5A5D2175D04B42F06 /* TripReportPDFView.swift in Sources */,
+				BE3C273F00FA34E98C60D519 /* TripReportRootView.swift in Sources */,
+				474F708A973868FA43328C7C /* TripReportViewModel.swift in Sources */,
+				35CC2F3EC37F55F3CA6BCDDD /* WhiteLabelBrandingMockData.swift in Sources */,
+				1F620EA219844BC7D0973851 /* WhiteLabelBrandingRootView.swift in Sources */,
+				3AD4CB4DF85A77B19EABAA68 /* WhiteLabelBrandingViewModel.swift in Sources */,
+				82D2711E01CAD6A1B003A146 /* WhiteLabelLoginView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2934A569654CFD3994FC5B9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Spendly/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spendly.ios;
+				PRODUCT_NAME = Spendly;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		463D2CD48395D3BD696660B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Spendly/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spendly.ios;
+				PRODUCT_NAME = Spendly;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6E0FCAD47AEAA09FC57FF832 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		8D11F9D5B1A18FF682FD1315 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3AE403D1E34AB61BE78B202C /* Build configuration list for PBXProject "Spendly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D11F9D5B1A18FF682FD1315 /* Debug */,
+				6E0FCAD47AEAA09FC57FF832 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EF0FA5BEB904DD5F7D675B23 /* Build configuration list for PBXNativeTarget "Spendly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2934A569654CFD3994FC5B9F /* Debug */,
+				463D2CD48395D3BD696660B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		391BB9635A1E25B9ECF0A2AD /* XCLocalSwiftPackageReference "SpendlyCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SpendlyCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0D82697521A3984711F9A9DE /* SpendlyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpendlyCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 16716F2BFFE3B0967C934E86 /* Project object */;
+}
