@@ -57,35 +57,35 @@ enum AssetTransferMockData {
 
     static let customers: [TransferCustomerOption] = [
         TransferCustomerOption(
-            id: UUID(uuidString: "A1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "A1111111-1111-1111-1111-111111111111") ?? UUID(),
             name: "Hershey Chocolate Co.",
             contactName: "James Rivera",
             city: "Hershey",
             state: "PA"
         ),
         TransferCustomerOption(
-            id: UUID(uuidString: "A2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "A2222222-2222-2222-2222-222222222222") ?? UUID(),
             name: "Mercer Foods LLC",
             contactName: "Sarah Chen",
             city: "Modesto",
             state: "CA"
         ),
         TransferCustomerOption(
-            id: UUID(uuidString: "A3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "A3333333-3333-3333-3333-333333333333") ?? UUID(),
             name: "Albanese Confectionery",
             contactName: "Tom Albanese",
             city: "Merrillville",
             state: "IN"
         ),
         TransferCustomerOption(
-            id: UUID(uuidString: "A4444444-4444-4444-4444-444444444444")!,
+            id: UUID(uuidString: "A4444444-4444-4444-4444-444444444444") ?? UUID(),
             name: "SunChips Manufacturing",
             contactName: "Diana Flores",
             city: "Modesto",
             state: "CA"
         ),
         TransferCustomerOption(
-            id: UUID(uuidString: "A5555555-5555-5555-5555-555555555555")!,
+            id: UUID(uuidString: "A5555555-5555-5555-5555-555555555555") ?? UUID(),
             name: "Kettle Brand Foods",
             contactName: "Ryan Choi",
             city: "Salem",
@@ -97,28 +97,28 @@ enum AssetTransferMockData {
 
     static let machines: [MachineOption] = [
         MachineOption(
-            id: UUID(uuidString: "B1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "B1111111-1111-1111-1111-111111111111") ?? UUID(),
             name: "M-200 FFS Packaging Line",
             model: "M-200",
             serialNumber: "22-42490227",
             currentOwner: "Hershey Chocolate Co."
         ),
         MachineOption(
-            id: UUID(uuidString: "B2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "B2222222-2222-2222-2222-222222222222") ?? UUID(),
             name: "Vega 285 PM Pouch Maker",
             model: "Vega 285 PM",
             serialNumber: "21-38741005",
             currentOwner: "Mercer Foods LLC"
         ),
         MachineOption(
-            id: UUID(uuidString: "B3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "B3333333-3333-3333-3333-333333333333") ?? UUID(),
             name: "Win 750 P Wicketer",
             model: "Win 750 P",
             serialNumber: "23-50128344",
             currentOwner: "Albanese Confectionery"
         ),
         MachineOption(
-            id: UUID(uuidString: "B4444444-4444-4444-4444-444444444444")!,
+            id: UUID(uuidString: "B4444444-4444-4444-4444-444444444444") ?? UUID(),
             name: "M-300 HFFS Line",
             model: "M-300",
             serialNumber: "20-31987620",
@@ -130,25 +130,25 @@ enum AssetTransferMockData {
 
     static let sampleTransfers: [TransferDisplayItem] = [
         TransferDisplayItem(
-            id: UUID(uuidString: "C1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "C1111111-1111-1111-1111-111111111111") ?? UUID(),
             machineName: "M-200 FFS Packaging Line",
             machineSerial: "22-42490227",
             machineModel: "M-200",
             fromCustomerName: "Hershey Chocolate Co.",
             toCustomerName: "Albanese Confectionery",
-            date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!,
+            date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(),
             status: .pending,
             includesAudit: true,
             notes: "Machine sold after warranty period. Buyer requested full audit before handover."
         ),
         TransferDisplayItem(
-            id: UUID(uuidString: "C2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "C2222222-2222-2222-2222-222222222222") ?? UUID(),
             machineName: "Vega 285 PM Pouch Maker",
             machineSerial: "21-38741005",
             machineModel: "Vega 285 PM",
             fromCustomerName: "Mercer Foods LLC",
             toCustomerName: "Kettle Brand Foods",
-            date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
+            date: Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date(),
             status: .completed,
             includesAudit: false,
             notes: nil
@@ -159,7 +159,7 @@ enum AssetTransferMockData {
 
     static let custodyChainForM200: [CustodyEntry] = [
         CustodyEntry(
-            id: UUID(uuidString: "D1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "D1111111-1111-1111-1111-111111111111") ?? UUID(),
             ownerName: "SunChips Manufacturing",
             organizationName: "SunChips Manufacturing Inc.",
             startDate: dateFrom(year: 2020, month: 6, day: 15),
@@ -167,7 +167,7 @@ enum AssetTransferMockData {
             isCurrent: false
         ),
         CustodyEntry(
-            id: UUID(uuidString: "D2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "D2222222-2222-2222-2222-222222222222") ?? UUID(),
             ownerName: "Hershey Chocolate Co.",
             organizationName: "The Hershey Company",
             startDate: dateFrom(year: 2022, month: 3, day: 10),
@@ -175,7 +175,7 @@ enum AssetTransferMockData {
             isCurrent: false
         ),
         CustodyEntry(
-            id: UUID(uuidString: "D3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "D3333333-3333-3333-3333-333333333333") ?? UUID(),
             ownerName: "Albanese Confectionery",
             organizationName: "Albanese Confectionery Group Inc.",
             startDate: dateFrom(year: 2026, month: 3, day: 31),

@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import UniformTypeIdentifiers
 import SpendlyCore
 
 // MARK: - Chat Room View
@@ -19,9 +21,26 @@ struct ChatRoomView: View {
             chatInputBar
         }
         .background(SpendlyColors.background(for: colorScheme))
-        .navigationBarHidden(true)
+        .navigationTitle(room.ticketNumber)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.markRoomAsRead(room)
+        }
+        .onChange(of: viewModel.selectedPhotoItem) { _, newItem in
+            viewModel.handlePhotoSelection(newItem)
+        }
+        .fileImporter(
+            isPresented: $viewModel.isShowingAttachmentPicker,
+            allowedContentTypes: [.pdf, .png, .jpeg, .plainText, .data],
+            allowsMultipleSelection: true
+        ) { result in
+            switch result {
+            case .success(let urls):
+                viewModel.handleFileAttachment(urls)
+            case .failure:
+                break
+            }
         }
     }
 
@@ -136,6 +155,7 @@ struct ChatRoomView: View {
                 }
                 .padding(SpendlySpacing.lg)
             }
+            .scrollDismissesKeyboard(.interactively)
             .onChange(of: viewModel.messages.count) { _, _ in
                 if let lastID = viewModel.messages.last?.id {
                     withAnimation(.easeOut(duration: 0.3)) {
@@ -228,8 +248,9 @@ struct ChatRoomView: View {
                             .strokeBorder(SpendlyColors.secondary.opacity(0.15), lineWidth: 1)
                     )
             }
+            .frame(maxWidth: SpendlyDevice.isPad ? 500 : .infinity, alignment: .leading)
 
-            Spacer(minLength: 40)
+            Spacer(minLength: SpendlyDevice.isPad ? 100 : 40)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -244,6 +265,7 @@ struct ChatRoomView: View {
                 .padding(SpendlySpacing.md)
                 .background(SpendlyColors.primary)
                 .clipShape(OutgoingBubbleShape())
+                .frame(maxWidth: SpendlyDevice.isPad ? 500 : .infinity, alignment: .trailing)
 
             if message.isRead {
                 Text("Read \(viewModel.timeString(from: message.timestamp))")
@@ -253,7 +275,7 @@ struct ChatRoomView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.leading, 40)
+        .padding(.leading, SpendlyDevice.isPad ? 100 : 40)
     }
 
     // MARK: - Incoming Photo Message
@@ -306,7 +328,7 @@ struct ChatRoomView: View {
                 )
             }
 
-            Spacer(minLength: 40)
+            Spacer(minLength: SpendlyDevice.isPad ? 100 : 40)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -335,6 +357,7 @@ struct ChatRoomView: View {
             .padding(SpendlySpacing.sm)
             .background(SpendlyColors.primary)
             .clipShape(OutgoingBubbleShape())
+            .frame(maxWidth: SpendlyDevice.isPad ? 500 : .infinity, alignment: .trailing)
 
             if message.isRead {
                 Text("Read \(viewModel.timeString(from: message.timestamp))")
@@ -344,7 +367,7 @@ struct ChatRoomView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.leading, 40)
+        .padding(.leading, SpendlyDevice.isPad ? 100 : 40)
     }
 
     // MARK: - Typing Indicator
@@ -399,9 +422,10 @@ struct ChatRoomView: View {
                             viewModel.sendMessage()
                         }
 
-                    Button {
-                        viewModel.isShowingImagePicker = true
-                    } label: {
+                    PhotosPicker(
+                        selection: $viewModel.selectedPhotoItem,
+                        matching: .images
+                    ) {
                         Image(systemName: "photo")
                             .font(.system(size: 18))
                             .foregroundStyle(SpendlyColors.secondary)

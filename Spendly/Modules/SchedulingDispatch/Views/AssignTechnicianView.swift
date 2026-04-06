@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 import SpendlyCore
 
 struct AssignTechnicianView: View {
@@ -7,6 +8,13 @@ struct AssignTechnicianView: View {
     let eventID: UUID?
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+    @State private var showMapSheet: Bool = false
+
+    /// Resolves the event associated with this assignment screen.
+    private var event: ScheduleEvent? {
+        guard let eventID else { return nil }
+        return viewModel.events.first(where: { $0.id == eventID })
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -32,6 +40,19 @@ struct AssignTechnicianView: View {
             // Pre-select first available technician
             if viewModel.selectedTechnicianID == nil {
                 viewModel.selectedTechnicianID = viewModel.filteredTechnicians.first?.id
+            }
+        }
+        .sheet(isPresented: $showMapSheet) {
+            if let event {
+                JobLocationMapView(
+                    jobTitle: event.title,
+                    address: event.address ?? "Unknown Address",
+                    latitude: event.latitude,
+                    longitude: event.longitude
+                )
+            } else {
+                // Fallback: dismiss if event is not available
+                Color.clear.onAppear { showMapSheet = false }
             }
         }
     }
@@ -73,11 +94,7 @@ struct AssignTechnicianView: View {
                     .padding(.vertical, SpendlySpacing.md)
                     .padding(.trailing, SpendlySpacing.md)
             }
-            .background(
-                colorScheme == .dark
-                    ? SpendlyColors.surfaceDark
-                    : Color(hex: "#f8fafc")
-            )
+            .background(SpendlyColors.background(for: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous)
@@ -191,7 +208,7 @@ struct AssignTechnicianView: View {
                             ForEach(0..<5, id: \.self) { index in
                                 Image(systemName: starIcon(for: index, rating: tech.rating))
                                     .font(.system(size: 11))
-                                    .foregroundStyle(Color(hex: "#EAB308"))
+                                    .foregroundStyle(SpendlyColors.warning)
                             }
                             Text(String(format: "%.1f", tech.rating))
                                 .font(SpendlyFont.caption())
@@ -216,9 +233,7 @@ struct AssignTechnicianView: View {
                             .background(
                                 isSelected
                                     ? SpendlyColors.surface(for: colorScheme)
-                                    : (colorScheme == .dark
-                                        ? SpendlyColors.surfaceDark
-                                        : Color(hex: "#f8fafc"))
+                                    : SpendlyColors.background(for: colorScheme)
                             )
                             .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.small, style: .continuous))
                             .overlay(
@@ -276,7 +291,7 @@ struct AssignTechnicianView: View {
         HStack {
             Spacer()
             Button {
-                // Map view placeholder
+                showMapSheet = true
             } label: {
                 HStack(spacing: SpendlySpacing.sm) {
                     Image(systemName: SpendlyIcon.map.systemName)
@@ -316,7 +331,8 @@ struct AssignTechnicianView: View {
                         Text("Estimated Arrival")
                             .font(SpendlyFont.caption())
                             .foregroundStyle(SpendlyColors.secondary)
-                        Text("15 - 20 mins")
+                        // Bug 8: Dynamic ETA based on technician distance
+                        Text(viewModel.estimatedETAText(for: tech))
                             .font(SpendlyFont.bodySemibold())
                             .foregroundStyle(SpendlyColors.primary)
                     }

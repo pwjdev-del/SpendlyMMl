@@ -1,5 +1,6 @@
 import SwiftUI
 import SpendlyCore
+import LocalAuthentication
 
 // MARK: - AuthViewModel
 
@@ -8,7 +9,7 @@ public final class AuthViewModel {
     // MARK: Form Fields
     var email: String = ""
     var password: String = ""
-    var keepLoggedIn: Bool = false
+    var rememberMe: Bool = false
     var isPasswordVisible: Bool = false
 
     // MARK: State
@@ -16,6 +17,7 @@ public final class AuthViewModel {
     var errorMessage: String?
     var showForgotPassword: Bool = false
     var biometricError: String?
+    var showBiometricEnrollment: Bool = false
 
     // MARK: Forgot Password
     var forgotPasswordEmail: String = ""
@@ -54,6 +56,28 @@ public final class AuthViewModel {
         biometricAuth.biometricTypeName
     }
 
+    /// The SF Symbol name for the current biometric type (faceid or touchid).
+    var biometricIconName: String {
+        let context = LAContext()
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            return "faceid"
+        }
+        switch context.biometryType {
+        case .faceID:  return "faceid"
+        case .touchID: return "touchid"
+        default:       return "faceid"
+        }
+    }
+
+    /// Whether the biometric login button should be shown on the login screen.
+    /// Requires: device supports biometrics, user has enabled biometric login, and saved credentials exist.
+    var shouldShowBiometricLogin: Bool {
+        canUseBiometrics
+        && UserDefaults.standard.bool(forKey: "biometricEnabled")
+        && UserDefaults.standard.string(forKey: "spendly_biometric_email") != nil
+    }
+
     // MARK: App Version
 
     var appVersion: String {
@@ -81,15 +105,6 @@ public final class AuthViewModel {
             errorMessage = serviceError
             isLoading = false
             return
-        }
-
-        // Persist "keep logged in" preference
-        if keepLoggedIn {
-            UserDefaults.standard.set(true, forKey: "spendly_keep_logged_in")
-            UserDefaults.standard.set(email, forKey: "spendly_saved_email")
-        } else {
-            UserDefaults.standard.removeObject(forKey: "spendly_keep_logged_in")
-            UserDefaults.standard.removeObject(forKey: "spendly_saved_email")
         }
 
         // Route based on email (demo accounts) or user role
@@ -122,8 +137,40 @@ public final class AuthViewModel {
             }
         }
 
+        // Persist "Remember Me" session data
+        if rememberMe {
+            UserDefaults.standard.set(true, forKey: "spendly_isRemembered")
+            UserDefaults.standard.set(email, forKey: "spendly_savedEmail")
+            UserDefaults.standard.set(authState.currentPortal.rawValue, forKey: "spendly_savedPortal")
+            UserDefaults.standard.set(authState.currentRole.rawValue, forKey: "spendly_savedRole")
+        } else {
+            UserDefaults.standard.set(false, forKey: "spendly_isRemembered")
+            UserDefaults.standard.removeObject(forKey: "spendly_savedEmail")
+            UserDefaults.standard.removeObject(forKey: "spendly_savedPortal")
+            UserDefaults.standard.removeObject(forKey: "spendly_savedRole")
+        }
+
+        // Save portal/role for biometric re-login
+        UserDefaults.standard.set(authState.currentPortal.rawValue, forKey: "spendly_biometric_portal")
+        UserDefaults.standard.set(authState.currentRole.rawValue, forKey: "spendly_biometric_role")
+
         authState.login()
         isLoading = false
+
+        // After successful password login, offer biometric enrollment if available and not yet enabled
+        if canUseBiometrics && !UserDefaults.standard.bool(forKey: "biometricEnabled") {
+            UserDefaults.standard.set(email, forKey: "spendly_biometric_email")
+            showBiometricEnrollment = true
+        } else if canUseBiometrics && UserDefaults.standard.bool(forKey: "biometricEnabled") {
+            // Update saved email for biometric login on subsequent logins
+            UserDefaults.standard.set(email, forKey: "spendly_biometric_email")
+        }
+    }
+
+    /// Called when the user accepts biometric enrollment after a successful password login.
+    func enableBiometricLogin() {
+        UserDefaults.standard.set(true, forKey: "biometricEnabled")
+        UserDefaults.standard.set(email, forKey: "spendly_biometric_email")
     }
 
     /// Authenticate with biometrics (Face ID / Touch ID).
@@ -131,13 +178,27 @@ public final class AuthViewModel {
     func signInWithBiometrics(authState: AuthState) async {
         biometricError = nil
 
+        guard UserDefaults.standard.bool(forKey: "biometricEnabled"),
+              let savedEmail = UserDefaults.standard.string(forKey: "spendly_biometric_email") else {
+            biometricError = "Biometric login is not set up. Please sign in with your password first."
+            return
+        }
+
         do {
             let success = try await biometricAuth.authenticateWithBiometrics()
             if success {
-                // Load saved email if available
-                if let savedEmail = UserDefaults.standard.string(forKey: "spendly_saved_email") {
-                    email = savedEmail
+                email = savedEmail
+
+                // Restore saved portal/role from last password login
+                if let portalRaw = UserDefaults.standard.string(forKey: "spendly_biometric_portal"),
+                   let portal = Portal(rawValue: portalRaw) {
+                    authState.currentPortal = portal
                 }
+                if let roleRaw = UserDefaults.standard.string(forKey: "spendly_biometric_role"),
+                   let role = UserRole(rawValue: roleRaw) {
+                    authState.currentRole = role
+                }
+
                 authState.login()
             }
         } catch {
@@ -168,12 +229,13 @@ public final class AuthViewModel {
         isSendingReset = false
     }
 
-    /// Restore saved session if "Keep me logged in" was enabled.
+    /// Pre-fill saved email and restore "Remember Me" toggle state.
     func restoreSavedSession() {
-        if UserDefaults.standard.bool(forKey: "spendly_keep_logged_in"),
-           let savedEmail = UserDefaults.standard.string(forKey: "spendly_saved_email") {
+        if let savedEmail = UserDefaults.standard.string(forKey: "spendly_savedEmail") {
             email = savedEmail
-            keepLoggedIn = true
+        }
+        if UserDefaults.standard.bool(forKey: "spendly_isRemembered") {
+            rememberMe = true
         }
     }
 }

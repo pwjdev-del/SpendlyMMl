@@ -135,7 +135,7 @@ enum EmailPreviewMockData {
             fileSize: "2.4 MB",
             fileType: .pdf
         ),
-        serviceDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        serviceDate: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
     )
 
     static let sampleEmail2 = EmailPreviewDisplayModel(
@@ -168,6 +168,6 @@ enum EmailPreviewMockData {
             fileSize: "3.1 MB",
             fileType: .pdf
         ),
-        serviceDate: Calendar.current.date(byAdding: .day, value: -2, to: Date())!
+        serviceDate: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date()
     )
 }

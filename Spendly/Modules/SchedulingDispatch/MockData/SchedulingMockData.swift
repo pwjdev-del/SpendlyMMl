@@ -1,25 +1,32 @@
 import Foundation
 import SwiftUI
+import UniformTypeIdentifiers
 import SpendlyCore
 
 // MARK: - Schedule Event
 
-struct ScheduleEvent: Identifiable {
+struct ScheduleEvent: Identifiable, Codable, Transferable {
     let id: UUID
-    let title: String
-    let category: EventCategory
-    let date: Date
-    let startTime: Date
-    let endTime: Date
-    let technicianID: UUID
-    let technicianName: String
-    let customerName: String?
-    let address: String?
-    let priority: TicketPriority
-    let status: TripStatus
-    let estimatedHours: Double
-    let ticketID: String?
-    let notes: String?
+    var title: String
+    var category: EventCategory
+    var date: Date
+    var startTime: Date
+    var endTime: Date
+    var technicianID: UUID
+    var technicianName: String
+    var customerName: String?
+    var address: String?
+    var latitude: Double = 39.7817
+    var longitude: Double = -89.6501
+    var priority: TicketPriority
+    var status: TripStatus
+    var estimatedHours: Double
+    var ticketID: String?
+    var notes: String?
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .plainText)
+    }
 
     var durationText: String {
         let formatter = DateComponentsFormatter()
@@ -37,7 +44,7 @@ struct ScheduleEvent: Identifiable {
 
 // MARK: - Event Category
 
-enum EventCategory: String, CaseIterable {
+enum EventCategory: String, CaseIterable, Codable {
     case hvac = "HVAC"
     case electrical = "Electrical"
     case plumbing = "Plumbing"
@@ -156,13 +163,13 @@ enum SchedulingMockData {
 
     private static func date(daysFromNow offset: Int, hour: Int, minute: Int = 0) -> Date {
         let today = calendar.startOfDay(for: Date())
-        let day = calendar.date(byAdding: .day, value: offset, to: today)!
-        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: day)!
+        let day = calendar.date(byAdding: .day, value: offset, to: today) ?? today
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: day) ?? day
     }
 
     private static func dayStart(daysFromNow offset: Int) -> Date {
         let today = calendar.startOfDay(for: Date())
-        return calendar.date(byAdding: .day, value: offset, to: today)!
+        return calendar.date(byAdding: .day, value: offset, to: today) ?? today
     }
 
     // MARK: Technicians
@@ -255,6 +262,8 @@ enum SchedulingMockData {
             technicianName: "Alex Rivera",
             customerName: "Acme Corp",
             address: "123 Maple Avenue, Springfield, IL",
+            latitude: 39.7817,
+            longitude: -89.6501,
             priority: .high,
             status: .scheduled,
             estimatedHours: 2.5,
@@ -272,6 +281,8 @@ enum SchedulingMockData {
             technicianName: "Alex Rivera",
             customerName: "Henderson Residence",
             address: "456 Oak Street, Springfield, IL",
+            latitude: 39.7730,
+            longitude: -89.6440,
             priority: .medium,
             status: .scheduled,
             estimatedHours: 4.0,
@@ -289,6 +300,8 @@ enum SchedulingMockData {
             technicianName: "Marcus Chen",
             customerName: "City Hall",
             address: "1 Main St, Springfield, IL",
+            latitude: 39.7990,
+            longitude: -89.6440,
             priority: .critical,
             status: .enRoute,
             estimatedHours: 2.0,
@@ -307,6 +320,8 @@ enum SchedulingMockData {
             technicianName: "Jordan Smith",
             customerName: "Wilson Residence",
             address: "789 Pine Ave, Springfield, IL",
+            latitude: 39.7650,
+            longitude: -89.6580,
             priority: .medium,
             status: .scheduled,
             estimatedHours: 4.0,
@@ -324,6 +339,8 @@ enum SchedulingMockData {
             technicianName: "Sarah Chen",
             customerName: "TechStart Inc",
             address: "200 Business Pkwy, Springfield, IL",
+            latitude: 39.7870,
+            longitude: -89.6370,
             priority: .low,
             status: .scheduled,
             estimatedHours: 1.5,
@@ -342,6 +359,8 @@ enum SchedulingMockData {
             technicianName: "Elena Park",
             customerName: "Riverside Apartments",
             address: "300 River Rd, Springfield, IL",
+            latitude: 39.7560,
+            longitude: -89.6690,
             priority: .medium,
             status: .scheduled,
             estimatedHours: 2.0,
@@ -360,6 +379,8 @@ enum SchedulingMockData {
             technicianName: "Alex Rivera",
             customerName: "Metro Mall",
             address: "500 Commerce Dr, Springfield, IL",
+            latitude: 39.8010,
+            longitude: -89.6260,
             priority: .high,
             status: .scheduled,
             estimatedHours: 6.0,
@@ -378,6 +399,8 @@ enum SchedulingMockData {
             technicianName: "Jordan Smith",
             customerName: nil,
             address: "HQ Training Room",
+            latitude: 39.7900,
+            longitude: -89.6500,
             priority: .low,
             status: .scheduled,
             estimatedHours: 3.0,
@@ -396,6 +419,8 @@ enum SchedulingMockData {
             technicianName: "Jordan Smith",
             customerName: "Grand Hotel",
             address: "1000 Grand Blvd, Springfield, IL",
+            latitude: 39.8100,
+            longitude: -89.6350,
             priority: .high,
             status: .scheduled,
             estimatedHours: 8.5,
@@ -413,6 +438,8 @@ enum SchedulingMockData {
             technicianName: "Marcus Chen",
             customerName: "Park Residence",
             address: "88 Lake View Dr, Springfield, IL",
+            latitude: 39.7710,
+            longitude: -89.6610,
             priority: .medium,
             status: .scheduled,
             estimatedHours: 3.0,

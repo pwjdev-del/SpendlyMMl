@@ -3,6 +3,7 @@ import SpendlyCore
 
 public struct FinancialHubRootView: View {
     @State private var vm = FinancialHubViewModel()
+    @State private var showNotificationsSheet = false
     @Environment(\.colorScheme) private var colorScheme
 
     public var body: some View {
@@ -10,7 +11,7 @@ public struct FinancialHubRootView: View {
             // Header
             SPHeader(title: "Financial Hub") {
                 Button {
-                    // Notifications action
+                    showNotificationsSheet = true
                 } label: {
                     Image(systemName: SpendlyIcon.notifications.systemName)
                         .font(.system(size: 18, weight: .semibold))
@@ -39,6 +40,61 @@ public struct FinancialHubRootView: View {
             }
         }
         .background(SpendlyColors.background(for: colorScheme))
+        .sheet(isPresented: $showNotificationsSheet) {
+            NavigationStack {
+                List {
+                    Section("Recent Alerts") {
+                        ForEach(vm.recentPayouts.prefix(5)) { payout in
+                            HStack(spacing: SpendlySpacing.md) {
+                                Image(systemName: "bell.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(SpendlyColors.primary)
+                                VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                                    Text("Payout: \(payout.title)")
+                                        .font(SpendlyFont.bodySemibold())
+                                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                                    Text(vm.formatPayoutDate(payout.date))
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                }
+                                Spacer()
+                                Text(vm.formatPayoutAmount(payout.amount))
+                                    .font(SpendlyFont.bodySemibold())
+                                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            }
+                        }
+                    }
+                    Section("Expense Updates") {
+                        ForEach(vm.expenseStatusItems) { item in
+                            HStack(spacing: SpendlySpacing.md) {
+                                Circle()
+                                    .fill(item.status.badgeStyle.foregroundColor)
+                                    .frame(width: 8, height: 8)
+                                VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                                    Text(item.title)
+                                        .font(SpendlyFont.bodySemibold())
+                                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                                    Text(item.status.label)
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                }
+                                Spacer()
+                                Text(vm.formatAmount(item.amount))
+                                    .font(SpendlyFont.bodySemibold())
+                                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            }
+                        }
+                    }
+                }
+                .navigationTitle("Notifications")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showNotificationsSheet = false }
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Summary Metric Cards

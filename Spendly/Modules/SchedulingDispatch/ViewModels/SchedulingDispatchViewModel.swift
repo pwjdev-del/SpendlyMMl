@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import MapKit
 import SpendlyCore
 
 // MARK: - Calendar View Mode
@@ -73,6 +74,29 @@ final class SchedulingDispatchViewModel {
     var selectedScheduleDate: Date = Date()
     var preferredTechnicianIDs: Set<UUID> = []
 
+    // MARK: - Ticket Scheduling Day Tab
+    var schedulingDayIsToday: Bool = true
+
+    // MARK: - Create / Edit Event State
+    var showCreateEventSheet: Bool = false
+    var showEditEventSheet: Bool = false
+    var showDeleteConfirmation: Bool = false
+    var editingEvent: ScheduleEvent? = nil
+    var conflictWarningMessage: String? = nil
+    var showConflictWarning: Bool = false
+
+    // Create-event form fields
+    var newEventTitle: String = ""
+    var newEventCategory: EventCategory = .general
+    var newEventStartHour: Int = 9
+    var newEventStartMinute: Int = 0
+    var newEventDuration: Double = 2.0
+    var newEventTechnicianID: UUID? = nil
+    var newEventPriority: TicketPriority = .medium
+    var newEventCustomerName: String = ""
+    var newEventAddress: String = ""
+    var newEventNotes: String = ""
+
     // MARK: - Navigation
     var navigationPath: [SchedulingDestination] = []
     var showEventDetail: Bool = false
@@ -94,35 +118,36 @@ final class SchedulingDispatchViewModel {
 
     /// Returns all days to display in the monthly calendar grid (including filler days from prev/next month).
     var monthDays: [CalendarDay] {
-        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate))!
-        let range = calendar.range(of: .day, in: .month, for: startOfMonth)!
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate)) ?? currentDate
+        guard let range = calendar.range(of: .day, in: .month, for: startOfMonth) else { return [] }
         let firstWeekday = calendar.component(.weekday, from: startOfMonth)
 
         var days: [CalendarDay] = []
 
         // Leading filler days from previous month
-        let prevMonth = calendar.date(byAdding: .month, value: -1, to: startOfMonth)!
-        let prevMonthRange = calendar.range(of: .day, in: .month, for: prevMonth)!
+        let prevMonth = calendar.date(byAdding: .month, value: -1, to: startOfMonth) ?? startOfMonth
+        let prevMonthRange = calendar.range(of: .day, in: .month, for: prevMonth) ?? (1..<31)
         let fillerCount = firstWeekday - 1
         for i in 0..<fillerCount {
             let day = prevMonthRange.upperBound - fillerCount + i
-            let date = calendar.date(byAdding: .day, value: -(fillerCount - i), to: startOfMonth)!
+            let date = calendar.date(byAdding: .day, value: -(fillerCount - i), to: startOfMonth) ?? startOfMonth
             days.append(CalendarDay(dayNumber: day, date: date, isCurrentMonth: false))
         }
 
         // Current month days
         for day in range {
-            let date = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)!
+            let date = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) ?? startOfMonth
             days.append(CalendarDay(dayNumber: day, date: date, isCurrentMonth: true))
         }
 
         // Trailing filler days (fill to 35 or 42)
         let totalCells = days.count <= 35 ? 35 : 42
         let trailingCount = totalCells - days.count
-        for i in 1...max(trailingCount, 1) {
-            if days.count >= totalCells { break }
-            let date = calendar.date(byAdding: .day, value: range.count + i - 1, to: startOfMonth)!
-            days.append(CalendarDay(dayNumber: i, date: date, isCurrentMonth: false))
+        if trailingCount > 0 {
+            for i in 1...trailingCount {
+                let date = calendar.date(byAdding: .day, value: range.count + i - 1, to: startOfMonth) ?? startOfMonth
+                days.append(CalendarDay(dayNumber: i, date: date, isCurrentMonth: false))
+            }
         }
 
         return days
@@ -130,9 +155,9 @@ final class SchedulingDispatchViewModel {
 
     /// Returns the 7 days of the currently selected week.
     var weekDays: [CalendarDay] {
-        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate))!
+        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate)) ?? selectedDate
         return (0..<7).map { offset in
-            let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek)!
+            let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek) ?? startOfWeek
             let day = calendar.component(.day, from: date)
             return CalendarDay(dayNumber: day, date: date, isCurrentMonth: true)
         }
@@ -223,25 +248,25 @@ final class SchedulingDispatchViewModel {
 
     func navigateToNextMonth() {
         withAnimation(.easeInOut(duration: 0.25)) {
-            currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate)!
+            currentDate = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
         }
     }
 
     func navigateToPreviousMonth() {
         withAnimation(.easeInOut(duration: 0.25)) {
-            currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate)!
+            currentDate = calendar.date(byAdding: .month, value: -1, to: currentDate) ?? currentDate
         }
     }
 
     func navigateToNextWeek() {
         withAnimation(.easeInOut(duration: 0.25)) {
-            selectedDate = calendar.date(byAdding: .weekOfYear, value: 1, to: selectedDate)!
+            selectedDate = calendar.date(byAdding: .weekOfYear, value: 1, to: selectedDate) ?? selectedDate
         }
     }
 
     func navigateToPreviousWeek() {
         withAnimation(.easeInOut(duration: 0.25)) {
-            selectedDate = calendar.date(byAdding: .weekOfYear, value: -1, to: selectedDate)!
+            selectedDate = calendar.date(byAdding: .weekOfYear, value: -1, to: selectedDate) ?? selectedDate
         }
     }
 
@@ -280,25 +305,314 @@ final class SchedulingDispatchViewModel {
         }
     }
 
+    // MARK: - Bug 1 Fix: confirmDispatch updates event status + assigns technician
     func confirmDispatch() {
+        guard let techID = selectedTechnicianID,
+              let tech = selectedTechnician else {
+            isDispatching = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                self?.isDispatching = false
+                self?.showDispatchSuccess = true
+            }
+            return
+        }
+
         isDispatching = true
-        // Simulate network delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.isDispatching = false
-            self?.showDispatchSuccess = true
+            guard let self else { return }
+            // Find the event being dispatched and update its status + technician
+            if let eventID = self.navigationPath.compactMap({ dest -> UUID? in
+                if case .dispatchConfirmation(_, let eID) = dest { return eID }
+                return nil
+            }).last, let idx = self.events.firstIndex(where: { $0.id == eventID }) {
+                self.events[idx].status = .enRoute
+                self.events[idx].technicianID = techID
+                self.events[idx].technicianName = tech.name
+            }
+            self.isDispatching = false
+            self.showDispatchSuccess = true
         }
     }
 
-    func detectConflict(for date: Date, startHour: Int, endHour: Int, techID: UUID) -> Bool {
-        let dayEvents = events.filter { calendar.isDate($0.date, inSameDayAs: date) && $0.technicianID == techID }
+    // MARK: - Bug 6 Fix: Conflict detection called on create/edit
+    /// Checks whether a proposed time range (in total minutes from midnight) overlaps with
+    /// any existing event for the given technician on the given date.
+    func detectConflict(for date: Date, startMinutes: Int, endMinutes: Int, techID: UUID, excludingEventID: UUID? = nil) -> Bool {
+        let dayEvents = events.filter {
+            calendar.isDate($0.date, inSameDayAs: date) &&
+            $0.technicianID == techID &&
+            $0.id != excludingEventID
+        }
         for event in dayEvents {
-            let eventStart = calendar.component(.hour, from: event.startTime)
-            let eventEnd = calendar.component(.hour, from: event.endTime)
-            if startHour < eventEnd && endHour > eventStart {
+            let eventStartMins = calendar.component(.hour, from: event.startTime) * 60 + calendar.component(.minute, from: event.startTime)
+            let eventEndMins = calendar.component(.hour, from: event.endTime) * 60 + calendar.component(.minute, from: event.endTime)
+            if startMinutes < eventEndMins && endMinutes > eventStartMins {
                 return true
             }
         }
         return false
+    }
+
+    /// Returns a human-readable conflict message, or nil if no conflict.
+    func checkConflictAndWarn(date: Date, startMinutes: Int, endMinutes: Int, techID: UUID, excludingEventID: UUID? = nil) -> String? {
+        guard detectConflict(for: date, startMinutes: startMinutes, endMinutes: endMinutes, techID: techID, excludingEventID: excludingEventID) else {
+            return nil
+        }
+        let techName = technicians.first(where: { $0.id == techID })?.name ?? "Selected technician"
+        return "\(techName) already has an overlapping event during this time slot. Scheduling may cause a conflict."
+    }
+
+    // MARK: - Bug 2 Fix: Create Event
+    func resetCreateEventForm() {
+        newEventTitle = ""
+        newEventCategory = .general
+        newEventStartHour = 9
+        newEventStartMinute = 0
+        newEventDuration = 2.0
+        newEventTechnicianID = nil
+        newEventPriority = .medium
+        newEventCustomerName = ""
+        newEventAddress = ""
+        newEventNotes = ""
+        conflictWarningMessage = nil
+    }
+
+    func createEvent() {
+        let dayStart = calendar.startOfDay(for: selectedDate)
+        let start = calendar.date(bySettingHour: newEventStartHour, minute: newEventStartMinute, second: 0, of: dayStart) ?? dayStart
+        let durationMinutes = Int(newEventDuration * 60)
+        let end = calendar.date(byAdding: .minute, value: durationMinutes, to: start) ?? start
+        let endHourMinutes = newEventStartHour * 60 + newEventStartMinute + durationMinutes
+
+        let techID = newEventTechnicianID ?? technicians.first?.id ?? UUID()
+        let techName = technicians.first(where: { $0.id == techID })?.name ?? "Unassigned"
+
+        // Bug 6: Check for conflicts
+        if let warning = checkConflictAndWarn(
+            date: dayStart,
+            startMinutes: newEventStartHour * 60 + newEventStartMinute,
+            endMinutes: endHourMinutes,
+            techID: techID
+        ) {
+            conflictWarningMessage = warning
+            showConflictWarning = true
+            // Still allow creation, just warn
+        }
+
+        let event = ScheduleEvent(
+            id: UUID(),
+            title: newEventTitle.isEmpty ? "New Event" : newEventTitle,
+            category: newEventCategory,
+            date: dayStart,
+            startTime: start,
+            endTime: end,
+            technicianID: techID,
+            technicianName: techName,
+            customerName: newEventCustomerName.isEmpty ? nil : newEventCustomerName,
+            address: newEventAddress.isEmpty ? nil : newEventAddress,
+            priority: newEventPriority,
+            status: .scheduled,
+            estimatedHours: newEventDuration,
+            ticketID: nil,
+            notes: newEventNotes.isEmpty ? nil : newEventNotes
+        )
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            events.append(event)
+        }
+        showCreateEventSheet = false
+        resetCreateEventForm()
+    }
+
+    // MARK: - Bug 3 Fix: Edit Event
+    func prepareEditEvent(_ event: ScheduleEvent) {
+        editingEvent = event
+        newEventTitle = event.title
+        newEventCategory = event.category
+        newEventStartHour = calendar.component(.hour, from: event.startTime)
+        newEventStartMinute = calendar.component(.minute, from: event.startTime)
+        newEventDuration = event.estimatedHours
+        newEventTechnicianID = event.technicianID
+        newEventPriority = event.priority
+        newEventCustomerName = event.customerName ?? ""
+        newEventAddress = event.address ?? ""
+        newEventNotes = event.notes ?? ""
+        showEditEventSheet = true
+    }
+
+    func saveEditedEvent() {
+        guard let editing = editingEvent,
+              let idx = events.firstIndex(where: { $0.id == editing.id }) else { return }
+
+        let dayStart = calendar.startOfDay(for: events[idx].date)
+        let start = calendar.date(bySettingHour: newEventStartHour, minute: newEventStartMinute, second: 0, of: dayStart) ?? dayStart
+        let durationMinutes = Int(newEventDuration * 60)
+        let end = calendar.date(byAdding: .minute, value: durationMinutes, to: start) ?? start
+        let endHourMinutes = newEventStartHour * 60 + newEventStartMinute + durationMinutes
+
+        let techID = newEventTechnicianID ?? events[idx].technicianID
+        let techName = technicians.first(where: { $0.id == techID })?.name ?? events[idx].technicianName
+
+        // Bug 6: Check for conflicts on edit
+        if let warning = checkConflictAndWarn(
+            date: dayStart,
+            startMinutes: newEventStartHour * 60 + newEventStartMinute,
+            endMinutes: endHourMinutes,
+            techID: techID,
+            excludingEventID: editing.id
+        ) {
+            conflictWarningMessage = warning
+            showConflictWarning = true
+        }
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            events[idx].title = newEventTitle.isEmpty ? "Untitled Event" : newEventTitle
+            events[idx].category = newEventCategory
+            events[idx].startTime = start
+            events[idx].endTime = end
+            events[idx].technicianID = techID
+            events[idx].technicianName = techName
+            events[idx].customerName = newEventCustomerName.isEmpty ? nil : newEventCustomerName
+            events[idx].address = newEventAddress.isEmpty ? nil : newEventAddress
+            events[idx].priority = newEventPriority
+            events[idx].estimatedHours = newEventDuration
+            events[idx].notes = newEventNotes.isEmpty ? nil : newEventNotes
+        }
+
+        showEditEventSheet = false
+        selectedEvent = nil
+        showEventDetail = false
+        editingEvent = nil
+        resetCreateEventForm()
+    }
+
+    // MARK: - Bug 3 Fix: Delete Event
+    func deleteEvent(_ event: ScheduleEvent) {
+        withAnimation(.easeInOut(duration: 0.25)) {
+            events.removeAll { $0.id == event.id }
+        }
+        showEventDetail = false
+        selectedEvent = nil
+    }
+
+    // MARK: - Bug 5 Fix: Create event from ticket scheduling
+    func createEventFromScheduling() {
+        guard let slotID = selectedTimeSlotID,
+              let slot = timeSlots.first(where: { $0.id == slotID }) else { return }
+
+        let isToday = schedulingDayIsToday
+        let dayOffset = isToday ? 0 : 1
+        let dayStart = calendar.startOfDay(for: calendar.date(byAdding: .day, value: dayOffset, to: Date()) ?? Date())
+
+        // Parse slot start time (e.g. "09:00 AM")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "hh:mm a"
+        let slotStart = formatter.date(from: slot.startTime) ?? Date()
+        let slotEnd = formatter.date(from: slot.endTime) ?? Date()
+        let startHour = calendar.component(.hour, from: slotStart)
+        let startMin = calendar.component(.minute, from: slotStart)
+        let endHour = calendar.component(.hour, from: slotEnd)
+        let endMin = calendar.component(.minute, from: slotEnd)
+
+        let start = calendar.date(bySettingHour: startHour, minute: startMin, second: 0, of: dayStart) ?? dayStart
+        let end = calendar.date(bySettingHour: endHour, minute: endMin, second: 0, of: dayStart) ?? dayStart
+        let duration = end.timeIntervalSince(start) / 3600.0
+
+        // Map ServicePriority to TicketPriority
+        let ticketPriority: TicketPriority = {
+            switch selectedPriority {
+            case .low: return .low
+            case .medium: return .medium
+            case .high: return .high
+            }
+        }()
+
+        // Use preferred technicians or first available
+        let techID = preferredTechnicianIDs.first ?? technicians.first?.id ?? UUID()
+        let techName = technicians.first(where: { $0.id == techID })?.name ?? "Unassigned"
+
+        // Bug 6: Check for conflicts
+        let startMins = startHour * 60 + startMin
+        let endMins = endHour * 60 + endMin
+        if let warning = checkConflictAndWarn(date: dayStart, startMinutes: startMins, endMinutes: endMins, techID: techID) {
+            conflictWarningMessage = warning
+            showConflictWarning = true
+        }
+
+        let event = ScheduleEvent(
+            id: UUID(),
+            title: "Scheduled Service Visit",
+            category: .general,
+            date: dayStart,
+            startTime: start,
+            endTime: end,
+            technicianID: techID,
+            technicianName: techName,
+            customerName: nil,
+            address: nil,
+            priority: ticketPriority,
+            status: .scheduled,
+            estimatedHours: duration,
+            ticketID: nil,
+            notes: nil
+        )
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            events.append(event)
+        }
+    }
+
+    // MARK: - Bug 8 Fix: Dynamic ETA based on technician distance
+    func estimatedETAText(for technician: Technician) -> String {
+        // Base: ~6 min per mile, plus availability delay
+        let baseTravelMinutes = Int(technician.distance * 6)
+        let availabilityDelay: Int
+        switch technician.availability {
+        case .available:
+            availabilityDelay = 0
+        case .busy:
+            availabilityDelay = 15
+        case .offDuty:
+            availabilityDelay = 45
+        }
+        let minETA = max(5, baseTravelMinutes + availabilityDelay)
+        let maxETA = minETA + max(5, Int(Double(baseTravelMinutes) * 0.4))
+        return "\(minETA) - \(maxETA) mins"
+    }
+
+    // MARK: - Bug 9 Fix: Open Apple Maps
+    func openInMaps(address: String?) {
+        guard let address, !address.isEmpty else { return }
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address) { placemarks, _ in
+            guard let placemark = placemarks?.first,
+                  let location = placemark.location else { return }
+            let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate))
+            mapItem.name = address
+            mapItem.openInMaps(launchOptions: [
+                MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+            ])
+        }
+    }
+
+    // MARK: - Bug 11 Fix: Drag-and-drop rescheduling
+    func moveEvent(eventID: UUID, toDate newDate: Date) {
+        guard let idx = events.firstIndex(where: { $0.id == eventID }) else { return }
+
+        let oldDate = events[idx].date
+        let newDayStart = calendar.startOfDay(for: newDate)
+
+        // Compute offset in days
+        let oldDayStart = calendar.startOfDay(for: oldDate)
+        let dayDifference = calendar.dateComponents([.day], from: oldDayStart, to: newDayStart).day ?? 0
+
+        guard dayDifference != 0 else { return }
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            events[idx].date = newDayStart
+            events[idx].startTime = calendar.date(byAdding: .day, value: dayDifference, to: events[idx].startTime) ?? events[idx].startTime
+            events[idx].endTime = calendar.date(byAdding: .day, value: dayDifference, to: events[idx].endTime) ?? events[idx].endTime
+        }
     }
 }
 

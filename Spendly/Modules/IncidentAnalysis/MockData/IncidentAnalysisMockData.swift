@@ -107,7 +107,7 @@ enum IncidentAnalysisMockData {
     // MARK: Date Helpers
 
     private static func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d))!
+        Calendar.current.date(from: DateComponents(year: y, month: m, day: d)) ?? Date()
     }
 
     // MARK: Incidents

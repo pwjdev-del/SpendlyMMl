@@ -20,6 +20,7 @@ struct VaultMachine: Identifiable, Hashable {
     let imageName: String?           // SF Symbol fallback when nil
     let customerName: String?
     let notes: String?
+    let category: MachineTypeFilter  // exact machine type for filtering
     let maintenanceHistory: [MaintenanceEvent]
     let scheduledMaintenance: [ScheduledMaintenance]
 
@@ -155,7 +156,7 @@ enum MachineVaultMockData {
 
     // Date helpers
     private static func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d))!
+        Calendar.current.date(from: DateComponents(year: y, month: m, day: d)) ?? Date()
     }
 
     static let machines: [VaultMachine] = [
@@ -173,6 +174,7 @@ enum MachineVaultMockData {
             imageName: nil,
             customerName: "Industrial Logistics Corp.",
             notes: "High-speed vertical form-fill-seal machine. 120 bags/min capacity.",
+            category: .ffs,
             maintenanceHistory: [
                 MaintenanceEvent(
                     title: "Scheduled Preventive Maintenance",
@@ -221,6 +223,7 @@ enum MachineVaultMockData {
             imageName: nil,
             customerName: "Pacific Foods Inc.",
             notes: "Premade pouch filler with zipper applicator. Needs roller replacement.",
+            category: .pouchMaker,
             maintenanceHistory: [
                 MaintenanceEvent(
                     title: "Roller Wear Inspection",
@@ -267,6 +270,7 @@ enum MachineVaultMockData {
             imageName: nil,
             customerName: "Industrial Logistics Corp.",
             notes: "High-speed slitter-rewinder with automatic knife positioning. Top performer.",
+            category: .converter,
             maintenanceHistory: [
                 MaintenanceEvent(
                     title: "Blade Replacement & Calibration",
@@ -299,6 +303,7 @@ enum MachineVaultMockData {
             imageName: nil,
             customerName: "Global Wrap Solutions",
             notes: "3-layer co-extrusion blown film line. Currently down for die repair.",
+            category: .blownFilm,
             maintenanceHistory: [
                 MaintenanceEvent(
                     title: "Die Head Disassembly & Cleaning",
@@ -347,6 +352,7 @@ enum MachineVaultMockData {
             imageName: nil,
             customerName: "Pacific Foods Inc.",
             notes: "Multi-lane sachet filler. 8-lane configuration for powder & granule products.",
+            category: .sachet,
             maintenanceHistory: [
                 MaintenanceEvent(
                     title: "Lane Balancing & Auger Service",

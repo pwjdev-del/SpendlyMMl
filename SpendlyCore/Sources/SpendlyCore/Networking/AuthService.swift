@@ -22,7 +22,7 @@ public class AuthService {
         // Mock: create a service manager user
         let mockUser = SPUser(
             id: UUID(),
-            orgID: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+            orgID: UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID(),
             email: email,
             fullName: "Kathan Patel",
             role: .serviceManager,

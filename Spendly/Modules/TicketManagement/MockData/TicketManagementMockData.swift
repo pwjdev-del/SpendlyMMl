@@ -4,7 +4,7 @@ import SpendlyCore
 
 // MARK: - Ticket Category
 
-enum TicketCategory: String, CaseIterable, Hashable {
+enum TicketCategory: String, CaseIterable, Hashable, Codable {
     case electrical    = "Electrical"
     case mechanical    = "Mechanical"
     case pneumatic     = "Pneumatic"
@@ -31,7 +31,7 @@ enum TicketCategory: String, CaseIterable, Hashable {
 
 // MARK: - Ticket Urgency
 
-enum TicketUrgency: String, CaseIterable, Hashable {
+enum TicketUrgency: String, CaseIterable, Hashable, Codable {
     case low      = "Low"
     case medium   = "Medium"
     case high     = "High"
@@ -58,8 +58,9 @@ enum TicketUrgency: String, CaseIterable, Hashable {
 
 // MARK: - Ticket Display Status
 
-enum TicketDisplayStatus: String, CaseIterable, Hashable {
+enum TicketDisplayStatus: String, CaseIterable, Hashable, Codable {
     case all          = "All"
+    case draft        = "Draft"
     case open         = "Open"
     case inProgress   = "In Progress"
     case onHold       = "On Hold"
@@ -69,6 +70,7 @@ enum TicketDisplayStatus: String, CaseIterable, Hashable {
     var badgeStyle: SPBadgeStyle {
         switch self {
         case .all:        return .neutral
+        case .draft:      return .neutral
         case .open:       return .info
         case .inProgress: return .custom(SpendlyColors.accent)
         case .onHold:     return .warning
@@ -81,6 +83,7 @@ enum TicketDisplayStatus: String, CaseIterable, Hashable {
     var coreStatus: TicketStatus? {
         switch self {
         case .all:        return nil
+        case .draft:      return .draft
         case .open:       return .open
         case .inProgress: return .inProgress
         case .onHold:     return .onHold
@@ -92,7 +95,7 @@ enum TicketDisplayStatus: String, CaseIterable, Hashable {
 
 // MARK: - Ticket Source
 
-enum TicketSource: String, Hashable {
+enum TicketSource: String, Hashable, Codable {
     case manual       = "Manual"
     case incomingCall = "Incoming Call"
     case diagnostic   = "Diagnostic"
@@ -101,7 +104,7 @@ enum TicketSource: String, Hashable {
 
 // MARK: - Timeline Event
 
-struct TicketTimelineEvent: Identifiable, Hashable {
+struct TicketTimelineEvent: Identifiable, Hashable, Codable {
     let id: UUID
     let title: String
     let description: String?
@@ -128,7 +131,7 @@ struct TicketTimelineEvent: Identifiable, Hashable {
 
 // MARK: - Display Ticket
 
-struct DisplayTicket: Identifiable, Hashable {
+struct DisplayTicket: Identifiable, Hashable, Codable {
     let id: UUID
     let ticketNumber: String
     let title: String
@@ -197,7 +200,7 @@ struct DisplayTicket: Identifiable, Hashable {
 enum TicketManagementMockData {
 
     private static func date(_ y: Int, _ m: Int, _ d: Int, _ h: Int = 9, _ min: Int = 0) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d, hour: h, minute: min))!
+        Calendar.current.date(from: DateComponents(year: y, month: m, day: d, hour: h, minute: min)) ?? Date()
     }
 
     static let tickets: [DisplayTicket] = [

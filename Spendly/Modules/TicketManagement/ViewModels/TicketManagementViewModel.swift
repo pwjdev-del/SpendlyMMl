@@ -17,10 +17,39 @@ enum TicketSortOption: String, CaseIterable {
 @Observable
 final class TicketManagementViewModel {
 
+    // MARK: Persistence
+
+    private static let storageKey = "tickets"
+    private let storage = LocalStorageService.shared
+
     // MARK: Data
 
     var allTickets: [DisplayTicket] = TicketManagementMockData.tickets
     var selectedTicket: DisplayTicket?
+
+    // MARK: Init
+
+    init() {
+        loadPersistedData()
+    }
+
+    private func loadPersistedData() {
+        if let saved: [DisplayTicket] = storage.load(forKey: Self.storageKey) {
+            let mockIDs = Set(TicketManagementMockData.tickets.map(\.id))
+            let userCreated = saved.filter { !mockIDs.contains($0.id) }
+            var merged = TicketManagementMockData.tickets
+            for (index, mockItem) in merged.enumerated() {
+                if let savedVersion = saved.first(where: { $0.id == mockItem.id }) {
+                    merged[index] = savedVersion
+                }
+            }
+            allTickets = userCreated + merged
+        }
+    }
+
+    private func persistTickets() {
+        storage.save(allTickets, forKey: Self.storageKey)
+    }
 
     // MARK: UI State
 
@@ -39,6 +68,8 @@ final class TicketManagementViewModel {
     var newTicketUrgency: String = "Medium"
     var newTicketMachine: String = ""
     var newTicketCustomer: String = ""
+    var newTicketSubcategory: String? = nil
+    var newTicketPhotoCount: Int = 0
     var isSubmittingTicket: Bool = false
     var showSubmitSuccess: Bool = false
     var newTicketIsDraft: Bool = false
@@ -208,19 +239,19 @@ final class TicketManagementViewModel {
                 description: self.newTicketDescription,
                 category: category,
                 urgency: urgency,
-                status: self.newTicketIsDraft ? .open : .open,
+                status: self.newTicketIsDraft ? .draft : .open,
                 source: .manual,
                 customerName: self.newTicketCustomer.isEmpty ? "Unknown Customer" : self.newTicketCustomer,
                 machineName: self.newTicketMachine.isEmpty ? nil : self.newTicketMachine,
                 createdAt: Date(),
                 updatedAt: Date(),
-                photoCount: 0,
+                photoCount: self.newTicketPhotoCount,
                 timeline: [
                     TicketTimelineEvent(
-                        title: "Submitted",
-                        description: "Ticket created via mobile app.",
+                        title: self.newTicketIsDraft ? "Draft Saved" : "Submitted",
+                        description: self.newTicketIsDraft ? "Ticket saved as draft via mobile app." : "Ticket created via mobile app.",
                         date: Date(),
-                        status: .open,
+                        status: self.newTicketIsDraft ? .draft : .open,
                         performedBy: "Current User"
                     ),
                 ],
@@ -228,6 +259,7 @@ final class TicketManagementViewModel {
             )
 
             self.allTickets.insert(newTicket, at: 0)
+            self.persistTickets()
             self.isSubmittingTicket = false
             self.showSubmitSuccess = true
             self.resetNewTicketForm()
@@ -249,10 +281,54 @@ final class TicketManagementViewModel {
         newTicketTitle = ""
         newTicketDescription = ""
         newTicketCategory = ""
+        newTicketSubcategory = nil
         newTicketUrgency = "Medium"
         newTicketMachine = ""
         newTicketCustomer = ""
+        newTicketPhotoCount = 0
         newTicketIsDraft = false
+    }
+
+    // MARK: - Ticket Mutations
+
+    /// Updates a ticket in-place by replacing it with a modified copy.
+    func updateTicket(_ ticket: DisplayTicket, status: TicketDisplayStatus? = nil, urgency: TicketUrgency? = nil) {
+        guard let index = allTickets.firstIndex(where: { $0.id == ticket.id }) else { return }
+        let old = allTickets[index]
+        let updated = DisplayTicket(
+            id: old.id,
+            ticketNumber: old.ticketNumber,
+            title: old.title,
+            description: old.description,
+            category: old.category,
+            urgency: urgency ?? old.urgency,
+            status: status ?? old.status,
+            source: old.source,
+            customerName: old.customerName,
+            machineName: old.machineName,
+            machineSerial: old.machineSerial,
+            location: old.location,
+            assignedTechnician: old.assignedTechnician,
+            createdAt: old.createdAt,
+            updatedAt: Date(),
+            scheduledDate: old.scheduledDate,
+            photoCount: old.photoCount,
+            timeline: old.timeline + [
+                TicketTimelineEvent(
+                    title: status.map { "Status Changed to \($0.rawValue)" } ?? "Priority Escalated",
+                    description: status != nil ? "Ticket status updated." : "Priority escalated to \(urgency?.rawValue ?? "Critical").",
+                    date: Date(),
+                    status: status ?? old.status,
+                    performedBy: "Current User"
+                )
+            ],
+            isSyncedOffline: old.isSyncedOffline
+        )
+        allTickets[index] = updated
+        persistTickets()
+        if selectedTicket?.id == ticket.id {
+            selectedTicket = updated
+        }
     }
 
     // MARK: - Helpers

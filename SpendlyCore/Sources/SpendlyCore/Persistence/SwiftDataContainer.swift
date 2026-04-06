@@ -41,6 +41,20 @@ public class SpendlyDataContainer {
             ComparisonGroup.self
         ])
         let config = ModelConfiguration(isStoredInMemoryOnly: false)
-        container = try! ModelContainer(for: schema, configurations: [config])
+        do {
+            container = try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            // If the persistent store is corrupted or a migration fails, fall back
+            // to an in-memory container so the app can still launch without crashing.
+            print("[SpendlyDataContainer] Failed to create persistent ModelContainer: \(error.localizedDescription). Falling back to in-memory store.")
+            let fallbackConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+            do {
+                container = try ModelContainer(for: schema, configurations: [fallbackConfig])
+            } catch {
+                // This should never happen with an in-memory store, but if it does
+                // we have no choice but to terminate — SwiftData schema itself is invalid.
+                fatalError("[SpendlyDataContainer] Failed to create even in-memory ModelContainer: \(error.localizedDescription)")
+            }
+        }
     }
 }

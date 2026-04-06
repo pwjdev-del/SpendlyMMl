@@ -19,6 +19,9 @@ struct EstimateEditorView: View {
                     // MARK: Customer Selection Section
                     customerSelectionSection
 
+                    // MARK: Valid Until Date Section
+                    validUntilSection
+
                     // MARK: Tasks & Services Section
                     tasksSection
 
@@ -31,6 +34,7 @@ struct EstimateEditorView: View {
                 .padding(.horizontal, SpendlySpacing.lg)
                 .padding(.top, SpendlySpacing.md)
             }
+            .scrollDismissesKeyboard(.interactively)
             .background(SpendlyColors.background(for: colorScheme))
 
             // MARK: Sticky Footer
@@ -42,12 +46,12 @@ struct EstimateEditorView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {
-                        // Save as template placeholder
+                        viewModel.saveAsTemplate()
                     } label: {
                         Label("Save as Template", systemImage: "doc.badge.plus")
                     }
                     Button {
-                        // Save as draft placeholder
+                        viewModel.saveAsDraft()
                     } label: {
                         Label("Save as Draft", systemImage: "square.and.pencil")
                     }
@@ -130,6 +134,41 @@ struct EstimateEditorView: View {
                                 .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
                         )
                     }
+                }
+            }
+        }
+    }
+
+    // MARK: - Valid Until Date Section
+
+    private var validUntilSection: some View {
+        VStack(alignment: .leading, spacing: SpendlySpacing.md) {
+            HStack(spacing: SpendlySpacing.sm) {
+                Image(systemName: "calendar.badge.clock")
+                    .foregroundStyle(SpendlyColors.primary)
+                    .font(.system(size: 18))
+
+                Text("Valid Until")
+                    .font(SpendlyFont.headline())
+                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+            }
+
+            SPCard(elevation: .low) {
+                HStack {
+                    Text("Expiration Date")
+                        .font(SpendlyFont.body())
+                        .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+
+                    Spacer()
+
+                    DatePicker(
+                        "",
+                        selection: $viewModel.editorExpiresAt,
+                        in: Date()...,
+                        displayedComponents: .date
+                    )
+                    .labelsHidden()
+                    .tint(SpendlyColors.primary)
                 }
             }
         }
@@ -375,11 +414,15 @@ struct EstimateEditorView: View {
 
     // MARK: - Currency Formatter
 
-    private func formatCurrency(_ value: Double) -> String {
+    private static let currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
+        return formatter
+    }()
+
+    private func formatCurrency(_ value: Double) -> String {
+        Self.currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }
 
@@ -463,6 +506,21 @@ private struct TaskCardView: View {
 
     // MARK: - Formatters
 
+    private static let rateFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+
+    private static let currencyFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        return formatter
+    }()
+
     private func formatHours(_ hours: Double) -> String {
         hours.truncatingRemainder(dividingBy: 1) == 0
             ? String(format: "%.0f", hours)
@@ -470,18 +528,11 @@ private struct TaskCardView: View {
     }
 
     private func formatRate(_ rate: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: rate)) ?? "$0"
+        Self.rateFormatter.string(from: NSNumber(value: rate)) ?? "$0"
     }
 
     private func formatCurrency(_ value: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
+        Self.currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }
 
@@ -573,12 +624,16 @@ private struct TaskTemplatePickerSheet: View {
             : String(format: "%.1f", hours)
     }
 
-    private func formatRate(_ rate: Double) -> String {
+    private static let rateFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
         formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: rate)) ?? "$0"
+        return formatter
+    }()
+
+    private func formatRate(_ rate: Double) -> String {
+        Self.rateFormatter.string(from: NSNumber(value: rate)) ?? "$0"
     }
 }
 

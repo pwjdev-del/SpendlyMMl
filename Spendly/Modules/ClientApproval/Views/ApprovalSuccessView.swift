@@ -1,6 +1,10 @@
 import SwiftUI
 import SpendlyCore
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 struct ApprovalSuccessView: View {
     @Bindable var vm: ClientApprovalViewModel
 
@@ -48,6 +52,15 @@ struct ApprovalSuccessView: View {
                 contentOpacity = 1.0
             }
         }
+        #if canImport(UIKit)
+        .sheet(isPresented: $vm.showingShareSheet) {
+            if let pdfData = vm.generatedPDFData {
+                SuccessShareSheetView(activityItems: [pdfData])
+            } else {
+                Color.clear.onAppear { vm.showingShareSheet = false }
+            }
+        }
+        #endif
     }
 
     // MARK: - Header
@@ -163,7 +176,9 @@ struct ApprovalSuccessView: View {
         VStack(spacing: SpendlySpacing.md) {
             // Download PDF
             SPButton("Download PDF Estimate", icon: "arrow.down.doc", style: .primary) {
-                // Download PDF placeholder
+                if let estimate = vm.lastApprovedEstimate {
+                    vm.generateAndSharePDF(for: estimate)
+                }
             }
 
             // Return to Portal
@@ -187,6 +202,20 @@ struct ApprovalSuccessView: View {
         .opacity(contentOpacity)
     }
 }
+
+// MARK: - Share Sheet (UIKit Bridge)
+
+#if canImport(UIKit)
+private struct SuccessShareSheetView: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+#endif
 
 // MARK: - Preview
 

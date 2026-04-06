@@ -6,6 +6,8 @@ import SpendlyCore
 public struct AnalyticsDashboardsRootView: View {
 
     @State private var viewModel = AnalyticsDashboardsViewModel()
+    @State private var showDateRangePicker = false
+    @State private var showAllTechnicians = false
     @Environment(\.colorScheme) private var colorScheme
 
     public init() {}
@@ -126,7 +128,11 @@ public struct AnalyticsDashboardsRootView: View {
 
     private func filterButton(icon: String, label: String) -> some View {
         Button {
-            // Filter action
+            if icon == "calendar" {
+                showDateRangePicker = true
+            } else {
+                viewModel.cycleFilter(for: label)
+            }
         } label: {
             HStack(spacing: SpendlySpacing.sm) {
                 Image(systemName: icon)
@@ -154,6 +160,37 @@ public struct AnalyticsDashboardsRootView: View {
                         lineWidth: 1
                     )
             )
+        }
+        .sheet(isPresented: $showDateRangePicker) {
+            NavigationStack {
+                List {
+                    ForEach(AnalyticsDateRange.allCases, id: \.self) { range in
+                        Button {
+                            viewModel.selectedDateRange = range
+                            showDateRangePicker = false
+                        } label: {
+                            HStack {
+                                Text(range.rawValue)
+                                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                                Spacer()
+                                if viewModel.selectedDateRange == range {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(SpendlyColors.accent)
+                                        .fontWeight(.bold)
+                                }
+                            }
+                        }
+                    }
+                }
+                .navigationTitle("Date Range")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Close") { showDateRangePicker = false }
+                    }
+                }
+            }
+            .presentationDetents([.medium])
         }
     }
 
@@ -371,9 +408,9 @@ public struct AnalyticsDashboardsRootView: View {
                     Spacer()
 
                     Button {
-                        // View all action
+                        withAnimation { showAllTechnicians.toggle() }
                     } label: {
-                        Text("View All")
+                        Text(showAllTechnicians ? "Show Less" : "View All")
                             .font(SpendlyFont.bodySemibold())
                             .foregroundStyle(SpendlyColors.accent)
                     }
@@ -388,7 +425,7 @@ public struct AnalyticsDashboardsRootView: View {
                 SPDivider()
 
                 // Technician rows
-                ForEach(Array(viewModel.filteredTechnicians.enumerated()), id: \.element.id) { index, tech in
+                ForEach(Array((showAllTechnicians ? viewModel.filteredTechnicians : Array(viewModel.filteredTechnicians.prefix(5))).enumerated()), id: \.element.id) { index, tech in
                     technicianRow(tech)
 
                     if index < viewModel.filteredTechnicians.count - 1 {

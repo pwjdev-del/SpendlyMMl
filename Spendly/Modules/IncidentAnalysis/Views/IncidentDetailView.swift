@@ -6,7 +6,7 @@ import SpendlyCore
 struct IncidentDetailView: View {
 
     let incident: AnalysisIncident
-    let viewModel: IncidentAnalysisViewModel
+    @Bindable var viewModel: IncidentAnalysisViewModel
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
@@ -19,7 +19,7 @@ struct IncidentDetailView: View {
     }()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack {  // IncidentDetailView is presented as a sheet — NavigationStack is correct here
             ZStack {
                 SpendlyTheme.blueprint.backgroundColor(for: colorScheme)
                     .ignoresSafeArea()
@@ -72,7 +72,7 @@ struct IncidentDetailView: View {
                     }
                 }
             }
-            .alert("Report Exported", isPresented: .constant(viewModel.showExportConfirmation)) {
+            .alert("Report Exported", isPresented: $viewModel.showExportConfirmation) {
                 Button("OK") {
                     viewModel.showExportConfirmation = false
                 }

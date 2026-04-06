@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 import SpendlyCore
 
 public struct SchedulingDispatchRootView: View {
@@ -35,10 +36,24 @@ public struct SchedulingDispatchRootView: View {
                     TicketSchedulingView(viewModel: viewModel, ticketID: ticketID)
                 }
             }
-            .sheet(isPresented: $viewModel.showEventDetail) {
-                if let event = viewModel.selectedEvent {
-                    eventDetailSheet(event: event)
+            .sheet(item: $viewModel.selectedEvent) { event in
+                eventDetailSheet(event: event)
+            }
+            // Bug 2: Create event sheet
+            .sheet(isPresented: $viewModel.showCreateEventSheet) {
+                createEventSheet
+            }
+            // Bug 3: Edit event sheet
+            .sheet(isPresented: $viewModel.showEditEventSheet) {
+                editEventSheet
+            }
+            // Bug 6: Conflict warning alert
+            .alert("Scheduling Conflict", isPresented: $viewModel.showConflictWarning) {
+                Button("OK", role: .cancel) {
+                    viewModel.conflictWarningMessage = nil
                 }
+            } message: {
+                Text(viewModel.conflictWarningMessage ?? "A scheduling conflict was detected.")
             }
         }
     }
@@ -264,11 +279,7 @@ public struct SchedulingDispatchRootView: View {
                         .padding(.vertical, SpendlySpacing.sm)
                 }
             }
-            .background(
-                colorScheme == .dark
-                    ? SpendlyColors.surfaceDark.opacity(0.5)
-                    : Color(hex: "#f8fafc")
-            )
+            .background(SpendlyColors.background(for: colorScheme))
 
             // Calendar grid
             let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
@@ -343,6 +354,12 @@ public struct SchedulingDispatchRootView: View {
             )
         }
         .buttonStyle(.plain)
+        // Bug 11: Drop destination for drag-and-drop rescheduling
+        .dropDestination(for: ScheduleEvent.self) { droppedEvents, _ in
+            guard let event = droppedEvents.first else { return false }
+            viewModel.moveEvent(eventID: event.id, toDate: day.date)
+            return true
+        }
     }
 
     // MARK: - Weekly Calendar
@@ -501,6 +518,8 @@ public struct SchedulingDispatchRootView: View {
             .padding(.vertical, SpendlySpacing.md)
         }
         .buttonStyle(.plain)
+        // Bug 11: Drag-and-drop support on timeline blocks
+        .draggable(event)
     }
 
     // MARK: - Day Events Section (below calendar in Month mode)
@@ -519,6 +538,24 @@ public struct SchedulingDispatchRootView: View {
                 }
 
                 Spacer()
+
+                // Bug 2: Add "+" button to create a new event on this date
+                Button {
+                    viewModel.resetCreateEventForm()
+                    viewModel.showCreateEventSheet = true
+                } label: {
+                    HStack(spacing: SpendlySpacing.xs) {
+                        Image(systemName: SpendlyIcon.add.systemName)
+                            .font(.system(size: 13, weight: .bold))
+                        Text("New Event")
+                            .font(SpendlyFont.bodySemibold())
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, SpendlySpacing.md)
+                    .padding(.vertical, SpendlySpacing.sm)
+                    .background(SpendlyColors.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                }
 
                 Button {
                     viewModel.navigationPath.append(.assignTechnician(eventID: nil))
@@ -621,6 +658,8 @@ public struct SchedulingDispatchRootView: View {
             .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
         }
         .buttonStyle(.plain)
+        // Bug 11: Drag-and-drop support on event cards
+        .draggable(event)
     }
 
     // MARK: - Unscheduled Section
@@ -698,7 +737,7 @@ public struct SchedulingDispatchRootView: View {
     // MARK: - Event Detail Sheet
 
     private func eventDetailSheet(event: ScheduleEvent) -> some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: SpendlySpacing.lg) {
                     // Category & Status
@@ -742,6 +781,44 @@ public struct SchedulingDispatchRootView: View {
                         viewModel.showEventDetail = false
                         viewModel.navigationPath.append(.assignTechnician(eventID: event.id))
                     }
+
+                    // Bug 3: Edit and Delete buttons
+                    HStack(spacing: SpendlySpacing.md) {
+                        Button {
+                            viewModel.showEventDetail = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                viewModel.prepareEditEvent(event)
+                            }
+                        } label: {
+                            HStack(spacing: SpendlySpacing.xs) {
+                                Image(systemName: "pencil")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Edit")
+                                    .font(SpendlyFont.bodySemibold())
+                            }
+                            .foregroundStyle(SpendlyColors.primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, SpendlySpacing.md)
+                            .background(SpendlyColors.primary.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        }
+
+                        Button {
+                            viewModel.showDeleteConfirmation = true
+                        } label: {
+                            HStack(spacing: SpendlySpacing.xs) {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Delete")
+                                    .font(SpendlyFont.bodySemibold())
+                            }
+                            .foregroundStyle(SpendlyColors.error)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, SpendlySpacing.md)
+                            .background(SpendlyColors.error.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        }
+                    }
                 }
                 .padding(SpendlySpacing.lg)
             }
@@ -756,6 +833,15 @@ public struct SchedulingDispatchRootView: View {
                     .font(SpendlyFont.bodySemibold())
                     .foregroundStyle(SpendlyColors.primary)
                 }
+            }
+            // Bug 3: Delete confirmation
+            .alert("Delete Event", isPresented: $viewModel.showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteEvent(event)
+                }
+            } message: {
+                Text("Are you sure you want to delete \"\(event.title)\"? This action cannot be undone.")
             }
         }
     }
@@ -784,6 +870,273 @@ public struct SchedulingDispatchRootView: View {
         }
     }
 
+    // MARK: - Bug 2: Create Event Sheet
+
+    private var createEventSheet: some View {
+        NavigationStack {
+            eventFormContent(isEdit: false)
+                .navigationTitle("New Event")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancel") {
+                            viewModel.showCreateEventSheet = false
+                            viewModel.resetCreateEventForm()
+                        }
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.secondary)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Create") {
+                            viewModel.createEvent()
+                        }
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.primary)
+                        .disabled(viewModel.newEventTitle.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                }
+        }
+    }
+
+    // MARK: - Bug 3: Edit Event Sheet
+
+    private var editEventSheet: some View {
+        NavigationStack {
+            eventFormContent(isEdit: true)
+                .navigationTitle("Edit Event")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancel") {
+                            viewModel.showEditEventSheet = false
+                            viewModel.editingEvent = nil
+                            viewModel.resetCreateEventForm()
+                        }
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.secondary)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Save") {
+                            viewModel.saveEditedEvent()
+                        }
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.primary)
+                    }
+                }
+        }
+    }
+
+    /// Shared form layout used by both create and edit sheets.
+    private func eventFormContent(isEdit: Bool) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: SpendlySpacing.lg) {
+                // Title
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Title")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    TextField("Event title", text: $viewModel.newEventTitle)
+                        .font(SpendlyFont.body())
+                        .padding(SpendlySpacing.md)
+                        .background(SpendlyColors.surface(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
+                        )
+                }
+
+                // Category
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Category")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: SpendlySpacing.sm) {
+                            ForEach(EventCategory.allCases, id: \.self) { cat in
+                                Button {
+                                    viewModel.newEventCategory = cat
+                                } label: {
+                                    Text(cat.rawValue)
+                                        .font(SpendlyFont.bodySemibold())
+                                        .foregroundStyle(
+                                            viewModel.newEventCategory == cat ? .white : SpendlyColors.foreground(for: colorScheme)
+                                        )
+                                        .padding(.horizontal, SpendlySpacing.lg)
+                                        .padding(.vertical, SpendlySpacing.sm)
+                                        .background(viewModel.newEventCategory == cat ? cat.color : SpendlyColors.surface(for: colorScheme))
+                                        .clipShape(Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(
+                                                    viewModel.newEventCategory == cat ? Color.clear : SpendlyColors.secondary.opacity(0.2),
+                                                    lineWidth: 1
+                                                )
+                                        )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Time
+                HStack(spacing: SpendlySpacing.md) {
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Text("Start Hour")
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Picker("Hour", selection: $viewModel.newEventStartHour) {
+                            ForEach(6..<21) { hour in
+                                Text(String(format: "%d:00", hour)).tag(hour)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(height: 100)
+                        .clipped()
+                    }
+
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Text("Duration (hrs)")
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Picker("Duration", selection: $viewModel.newEventDuration) {
+                            ForEach([0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0], id: \.self) { d in
+                                Text(String(format: "%.1fh", d)).tag(d)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(height: 100)
+                        .clipped()
+                    }
+                }
+
+                // Priority
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Priority")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    HStack(spacing: SpendlySpacing.sm) {
+                        ForEach(TicketPriority.allCases, id: \.self) { p in
+                            Button {
+                                viewModel.newEventPriority = p
+                            } label: {
+                                Text(p.rawValue.capitalized)
+                                    .font(SpendlyFont.bodySemibold())
+                                    .foregroundStyle(
+                                        viewModel.newEventPriority == p ? .white : SpendlyColors.foreground(for: colorScheme)
+                                    )
+                                    .padding(.horizontal, SpendlySpacing.md)
+                                    .padding(.vertical, SpendlySpacing.sm)
+                                    .background(viewModel.newEventPriority == p ? SpendlyColors.primary : SpendlyColors.surface(for: colorScheme))
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule().strokeBorder(
+                                            viewModel.newEventPriority == p ? Color.clear : SpendlyColors.secondary.opacity(0.2),
+                                            lineWidth: 1
+                                        )
+                                    )
+                            }
+                        }
+                    }
+                }
+
+                // Technician assignment
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Assign Technician")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    ForEach(viewModel.technicians) { tech in
+                        Button {
+                            viewModel.newEventTechnicianID = tech.id
+                        } label: {
+                            HStack(spacing: SpendlySpacing.md) {
+                                SPAvatar(initials: tech.initials, size: .sm, statusDot: tech.availability.dotColor)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(tech.name)
+                                        .font(SpendlyFont.bodySemibold())
+                                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                                    Text(tech.specialty)
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                }
+                                Spacer()
+                                if viewModel.newEventTechnicianID == tech.id {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(SpendlyColors.primary)
+                                }
+                            }
+                            .padding(SpendlySpacing.md)
+                            .background(
+                                viewModel.newEventTechnicianID == tech.id
+                                    ? SpendlyColors.primary.opacity(0.06)
+                                    : SpendlyColors.surface(for: colorScheme)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                    .strokeBorder(
+                                        viewModel.newEventTechnicianID == tech.id
+                                            ? SpendlyColors.primary : SpendlyColors.secondary.opacity(0.15),
+                                        lineWidth: 1
+                                    )
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                // Customer & Address
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Customer Name (optional)")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    TextField("Customer name", text: $viewModel.newEventCustomerName)
+                        .font(SpendlyFont.body())
+                        .padding(SpendlySpacing.md)
+                        .background(SpendlyColors.surface(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
+                        )
+                }
+
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Address (optional)")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    TextField("Service address", text: $viewModel.newEventAddress)
+                        .font(SpendlyFont.body())
+                        .padding(SpendlySpacing.md)
+                        .background(SpendlyColors.surface(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
+                        )
+                }
+
+                // Notes
+                VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                    Text("Notes (optional)")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                    TextField("Additional notes", text: $viewModel.newEventNotes)
+                        .font(SpendlyFont.body())
+                        .padding(SpendlySpacing.md)
+                        .background(SpendlyColors.surface(for: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
+                        )
+                }
+            }
+            .padding(SpendlySpacing.lg)
+        }
+        .background(SpendlyTheme.blueprint.backgroundColor(for: colorScheme))
+    }
+
     // MARK: - Helpers
 
     private func statusBadgeStyle(_ status: TripStatus) -> SPBadgeStyle {
@@ -796,22 +1149,36 @@ public struct SchedulingDispatchRootView: View {
         }
     }
 
-    private func timeString(_ date: Date) -> String {
+    // MARK: - Static Formatters
+
+    private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
-        return formatter.string(from: date)
+        return formatter
+    }()
+
+    private static let dayOfWeekFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter
+    }()
+
+    private static let selectedDateLabelFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d"
+        return formatter
+    }()
+
+    private func timeString(_ date: Date) -> String {
+        Self.timeFormatter.string(from: date)
     }
 
     private func dayOfWeekAbbrev(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
-        return formatter.string(from: date).uppercased()
+        Self.dayOfWeekFormatter.string(from: date).uppercased()
     }
 
     private var selectedDateLabel: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMM d"
-        return formatter.string(from: viewModel.selectedDate)
+        Self.selectedDateLabelFormatter.string(from: viewModel.selectedDate)
     }
 }
 

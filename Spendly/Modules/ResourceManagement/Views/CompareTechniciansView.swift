@@ -105,7 +105,7 @@ struct CompareTechniciansView: View {
     private func shortName(_ name: String) -> String {
         let parts = name.split(separator: " ")
         guard let first = parts.first else { return name }
-        let lastInitial = parts.count > 1 ? "\(parts.last!.prefix(1))." : ""
+        let lastInitial = parts.count > 1 ? "\(parts.last?.prefix(1) ?? "")." : ""
         return "\(first) \(lastInitial)"
     }
 
@@ -123,10 +123,11 @@ struct CompareTechniciansView: View {
     // MARK: - Comparison Table
 
     private var comparisonTable: some View {
+        guard vm.selectedTechnicians.count >= 2 else { return AnyView(EmptyView()) }
         let techA = vm.selectedTechnicians[0]
         let techB = vm.selectedTechnicians[1]
 
-        return SPCard(elevation: .low, padding: 0) {
+        return AnyView(SPCard(elevation: .low, padding: 0) {
             VStack(spacing: 0) {
                 // Header row
                 comparisonHeader(techA: techA, techB: techB)
@@ -163,7 +164,7 @@ struct CompareTechniciansView: View {
                 // Revenue row (highlighted)
                 revenueRow(techA: techA, techB: techB)
             }
-        }
+        })
     }
 
     private func comparisonHeader(techA: TechnicianDisplayItem, techB: TechnicianDisplayItem) -> some View {
@@ -272,10 +273,11 @@ struct CompareTechniciansView: View {
     // MARK: - Skill Competencies
 
     private var skillCompetencies: some View {
+        guard vm.selectedTechnicians.count >= 2 else { return AnyView(EmptyView()) }
         let techA = vm.selectedTechnicians[0]
         let techB = vm.selectedTechnicians[1]
 
-        return SPCard(elevation: .low) {
+        return AnyView(SPCard(elevation: .low) {
             VStack(alignment: .leading, spacing: SpendlySpacing.lg) {
                 Text("Skill Competencies")
                     .font(SpendlyFont.caption())
@@ -301,7 +303,7 @@ struct CompareTechniciansView: View {
                     Spacer()
                 }
             }
-        }
+        })
     }
 
     private func skillBar(label: String, scoreA: Int, scoreB: Int) -> some View {
@@ -353,6 +355,7 @@ struct CompareTechniciansView: View {
 
     private var recentPraiseSection: some View {
         let techs = vm.selectedTechnicians
+        guard techs.count >= 2 else { return AnyView(EmptyView()) }
         let hasPraise = techs.contains { $0.recentPraise != nil }
         guard hasPraise else { return AnyView(EmptyView()) }
 
@@ -423,8 +426,8 @@ struct CompareTechniciansView: View {
 #Preview {
     let vm = ResourceManagementViewModel()
     vm.selectedTechIDs = [
-        UUID(uuidString: "E1111111-1111-1111-1111-111111111111")!,
-        UUID(uuidString: "E2222222-2222-2222-2222-222222222222")!,
+        UUID(uuidString: "E1111111-1111-1111-1111-111111111111") ?? UUID(),
+        UUID(uuidString: "E2222222-2222-2222-2222-222222222222") ?? UUID(),
     ]
     return CompareTechniciansView(vm: vm)
 }

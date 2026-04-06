@@ -3,9 +3,26 @@ import SpendlyCore
 
 struct ExpenseDetailView: View {
     @Bindable var vm: ExpenseLoggingViewModel
-    let expense: ExpenseDisplayItem
+    let expenseID: UUID
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+
+    /// Always reads the latest version of the expense from the view model.
+    private var expense: ExpenseDisplayItem {
+        vm.expenses.first(where: { $0.id == expenseID })
+            ?? ExpenseDisplayItem(
+                id: expenseID,
+                title: "Unknown",
+                amount: 0,
+                category: .other,
+                projectName: "",
+                date: Date(),
+                status: .pending,
+                receiptURL: nil,
+                rejectionReason: nil,
+                reimbursedDate: nil
+            )
+    }
 
     var body: some View {
         NavigationStack {
@@ -267,6 +284,6 @@ struct ExpenseDetailView: View {
 #Preview {
     ExpenseDetailView(
         vm: ExpenseLoggingViewModel(),
-        expense: ExpenseLoggingMockData.sampleExpenses[0]
+        expenseID: ExpenseLoggingMockData.sampleExpenses[0].id
     )
 }

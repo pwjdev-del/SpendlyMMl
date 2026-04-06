@@ -6,9 +6,38 @@ import SpendlyCore
 @Observable
 final class CustomerProfileViewModel {
 
+    // MARK: - Persistence
+
+    private static let storageKey = "customers"
+    private let storage = LocalStorageService.shared
+
     // MARK: - Data
 
     var customers: [CustomerDisplayModel] = CustomerProfileMockData.customers
+
+    // MARK: - Init
+
+    init() {
+        loadPersistedData()
+    }
+
+    private func loadPersistedData() {
+        if let saved: [CustomerDisplayModel] = storage.load(forKey: Self.storageKey) {
+            let mockIDs = Set(CustomerProfileMockData.customers.map(\.id))
+            let userCreated = saved.filter { !mockIDs.contains($0.id) }
+            var merged = CustomerProfileMockData.customers
+            for (index, mockItem) in merged.enumerated() {
+                if let savedVersion = saved.first(where: { $0.id == mockItem.id }) {
+                    merged[index] = savedVersion
+                }
+            }
+            customers = userCreated + merged
+        }
+    }
+
+    private func persistCustomers() {
+        storage.save(customers, forKey: Self.storageKey)
+    }
 
     // MARK: - Search & Filter State
 
@@ -137,6 +166,35 @@ final class CustomerProfileViewModel {
     func selectCustomer(_ customer: CustomerDisplayModel) {
         selectedCustomer = customer
         showDetail = true
+    }
+
+    func addCustomer(name: String, email: String, company: String, phone: String) {
+        let newCustomer = CustomerDisplayModel(
+            id: UUID(),
+            name: name,
+            companyName: company,
+            contactTitle: "",
+            email: email,
+            phone: phone,
+            address: "",
+            city: "",
+            state: "",
+            postalCode: "",
+            avatarURL: nil,
+            isPremium: false,
+            accountBalance: 0,
+            budgetAllocated: 0,
+            region: "North",
+            contractType: "Standard",
+            paymentStatus: .current,
+            lastActivityDate: Date(),
+            createdAt: Date(),
+            notes: [],
+            machines: [],
+            jobHistory: []
+        )
+        customers.insert(newCustomer, at: 0)
+        persistCustomers()
     }
 
     // MARK: - Helpers

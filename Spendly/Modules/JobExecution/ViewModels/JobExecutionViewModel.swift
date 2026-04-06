@@ -7,6 +7,14 @@ import SpendlyCore
 @Observable
 final class JobExecutionViewModel {
 
+    // MARK: - Sort
+
+    enum SortOption {
+        case date, priority, status
+    }
+
+    var sortBy: SortOption = .date
+
     // MARK: - Schedule Data
 
     var jobs: [JobDisplayModel] = JobExecutionMockData.jobs
@@ -22,7 +30,7 @@ final class JobExecutionViewModel {
 
     // MARK: - Offline / Sync
 
-    var syncStatus: SyncStatus = .synced
+    var syncStatus: JobSyncDisplayStatus = .synced
     var isOffline: Bool = false
     var pendingSyncCount: Int = 0
 
@@ -31,7 +39,9 @@ final class JobExecutionViewModel {
     var showTimerView: Bool = false
     var showPhotoCapture: Bool = false
     var showMaterialLog: Bool = false
+    var showMapSheet: Bool = false
     var selectedJob: JobDisplayModel?
+    var mapJob: JobDisplayModel?
 
     // MARK: - Break Timer
 
@@ -80,6 +90,11 @@ final class JobExecutionViewModel {
     func openJob(_ job: JobDisplayModel) {
         selectedJob = job
         showTimerView = true
+    }
+
+    func openMapForJob(_ job: JobDisplayModel) {
+        mapJob = job
+        showMapSheet = true
     }
 
     // MARK: - Timer Controls
@@ -239,6 +254,31 @@ final class JobExecutionViewModel {
         }
     }
 
+    // MARK: - Voice Notes
+
+    func addVoiceNote(to jobID: UUID, voiceNote: VoiceNote) {
+        guard let idx = jobs.firstIndex(where: { $0.id == jobID }) else { return }
+        jobs[idx].voiceNotes.append(voiceNote)
+
+        if selectedJob?.id == jobID {
+            selectedJob = jobs[idx]
+        }
+
+        if isOffline {
+            pendingSyncCount += 1
+            syncStatus = .pendingSync(count: pendingSyncCount)
+        }
+    }
+
+    func removeVoiceNote(from jobID: UUID, voiceNoteID: UUID) {
+        guard let idx = jobs.firstIndex(where: { $0.id == jobID }) else { return }
+        jobs[idx].voiceNotes.removeAll { $0.id == voiceNoteID }
+
+        if selectedJob?.id == jobID {
+            selectedJob = jobs[idx]
+        }
+    }
+
     // MARK: - Offline Sync
 
     func toggleOfflineMode() {
@@ -302,9 +342,35 @@ final class JobExecutionViewModel {
         jobs.first { $0.id == activeJobID }
     }
 
+    var selectedDate: Date {
+        guard weekDays.indices.contains(selectedDayIndex) else { return Date() }
+        return weekDays[selectedDayIndex].date
+    }
+
     var jobsForSelectedDay: [JobDisplayModel] {
-        // For mock data, return all jobs regardless of selected day
-        jobs
+        let calendar = Calendar.current
+        let filtered = jobs.filter { job in
+            calendar.isDate(job.scheduledStart, inSameDayAs: selectedDate)
+        }
+
+        switch sortBy {
+        case .date:
+            return filtered.sorted { $0.scheduledStart < $1.scheduledStart }
+        case .priority:
+            // Priority order: inProgress > upcoming > completed
+            return filtered.sorted { lhs, rhs in
+                func rank(_ s: JobExecutionStatus) -> Int {
+                    switch s {
+                    case .inProgress: return 0
+                    case .upcoming:   return 1
+                    case .completed:  return 2
+                    }
+                }
+                return rank(lhs.status) < rank(rhs.status)
+            }
+        case .status:
+            return filtered.sorted { $0.status.rawValue < $1.status.rawValue }
+        }
     }
 
     // MARK: - Cost Visibility

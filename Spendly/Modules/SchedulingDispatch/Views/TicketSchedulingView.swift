@@ -43,7 +43,7 @@ struct TicketSchedulingView: View {
                 Text("Schedule Service Visit")
                     .font(SpendlyFont.headline())
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
-                Text(ticketID ?? "#TK-98234 | Acme Corp")
+                Text(ticketToolbarSubtitle)
                     .font(SpendlyFont.caption())
                     .fontWeight(.semibold)
                     .foregroundStyle(SpendlyColors.accent)
@@ -53,6 +53,19 @@ struct TicketSchedulingView: View {
 
     // MARK: - Service Summary Card
 
+    /// Finds a matching event or unscheduled job from the ticketID, if provided.
+    private var matchedEvent: ScheduleEvent? {
+        guard let ticketID else { return nil }
+        return viewModel.events.first(where: { $0.ticketID == ticketID })
+    }
+
+    private var matchedJob: UnscheduledJob? {
+        // If no event matched, try to use the first unscheduled job as context
+        guard matchedEvent == nil else { return nil }
+        return viewModel.unscheduledJobs.first
+    }
+
+    // Bug 10: Display actual ticket/job data instead of hardcoded summary
     private var serviceSummaryCard: some View {
         HStack(alignment: .top, spacing: SpendlySpacing.md) {
             VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
@@ -61,14 +74,14 @@ struct TicketSchedulingView: View {
                     .tracking(1)
                     .foregroundStyle(SpendlyColors.primary.opacity(0.6))
 
-                Text("Electrical & Programming")
+                Text(serviceSummaryTitle)
                     .font(SpendlyFont.headline())
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
 
                 HStack(spacing: SpendlySpacing.xs) {
-                    Image(systemName: "cpu")
+                    Image(systemName: serviceSummaryCategory.icon)
                         .font(.system(size: 12))
-                    Text("Servo & Drive Faults")
+                    Text(serviceSummaryDescription)
                         .font(SpendlyFont.body())
                 }
                 .foregroundStyle(SpendlyColors.secondary)
@@ -78,11 +91,11 @@ struct TicketSchedulingView: View {
 
             ZStack {
                 RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
-                    .fill(SpendlyColors.primary.opacity(0.08))
+                    .fill(serviceSummaryCategory.color.opacity(0.08))
                     .frame(width: 56, height: 56)
-                Image(systemName: "bolt.fill")
+                Image(systemName: serviceSummaryCategory.icon)
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(SpendlyColors.primary.opacity(0.5))
+                    .foregroundStyle(serviceSummaryCategory.color.opacity(0.5))
             }
         }
         .padding(SpendlySpacing.lg)
@@ -92,6 +105,39 @@ struct TicketSchedulingView: View {
             RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous)
                 .strokeBorder(SpendlyColors.primary.opacity(0.05), lineWidth: 1)
         )
+    }
+
+    private var serviceSummaryTitle: String {
+        if let event = matchedEvent { return event.title }
+        if let job = matchedJob { return job.name }
+        return "New Service Visit"
+    }
+
+    private var serviceSummaryCategory: EventCategory {
+        if let event = matchedEvent { return event.category }
+        if let job = matchedJob { return job.category }
+        return .general
+    }
+
+    private var ticketToolbarSubtitle: String {
+        if let ticketID { return ticketID }
+        if let event = matchedEvent, let tid = event.ticketID {
+            return "\(tid) | \(event.customerName ?? event.category.rawValue)"
+        }
+        if let job = matchedJob {
+            return "\(job.name) | \(job.type)"
+        }
+        return "New Service Visit"
+    }
+
+    private var serviceSummaryDescription: String {
+        if let event = matchedEvent {
+            return [event.category.rawValue, event.notes].compactMap { $0 }.joined(separator: " - ")
+        }
+        if let job = matchedJob {
+            return "\(job.type) \u{2022} Est. \(String(format: "%.1f", job.estimatedHours))h"
+        }
+        return "Schedule a new service visit"
     }
 
     // MARK: - Priority Section
@@ -253,7 +299,7 @@ struct TicketSchedulingView: View {
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .font(.system(size: 10))
-                                .foregroundStyle(Color(hex: "#EAB308"))
+                                .foregroundStyle(SpendlyColors.warning)
                             Text(String(format: "%.1f", tech.rating))
                                 .font(SpendlyFont.caption())
                                 .fontWeight(.bold)
@@ -330,18 +376,47 @@ struct TicketSchedulingView: View {
                 .font(SpendlyFont.headline())
                 .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
 
-            // Day tabs
+            // Bug 4: Stateful day tabs - tapping changes which day's slots are shown
             HStack(spacing: SpendlySpacing.lg) {
-                dayTab(label: "Today", isSelected: true)
-                dayTab(label: "Tomorrow", isSelected: false)
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.schedulingDayIsToday = true
+                    }
+                } label: {
+                    dayTab(label: "Today", isSelected: viewModel.schedulingDayIsToday)
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.schedulingDayIsToday = false
+                    }
+                } label: {
+                    dayTab(label: "Tomorrow", isSelected: !viewModel.schedulingDayIsToday)
+                }
+                .buttonStyle(.plain)
             }
             .padding(.bottom, SpendlySpacing.xs)
+
+            // Bug 4: Show day label
+            Text(schedulingDayLabel)
+                .font(SpendlyFont.caption())
+                .foregroundStyle(SpendlyColors.secondary)
 
             // Slots
             ForEach(viewModel.timeSlots) { slot in
                 timeSlotRow(slot: slot)
             }
         }
+    }
+
+    /// Label for the currently selected scheduling day.
+    private var schedulingDayLabel: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d"
+        let cal = Calendar.current
+        let day = cal.date(byAdding: .day, value: viewModel.schedulingDayIsToday ? 0 : 1, to: Date()) ?? Date()
+        return formatter.string(from: day)
     }
 
     private func dayTab(label: String, isSelected: Bool) -> some View {
@@ -425,7 +500,8 @@ struct TicketSchedulingView: View {
                     : "Confirm Schedule & Dispatch",
                 style: .primary
             ) {
-                // Would save and navigate forward; for now dismiss
+                // Bug 5: Create event from selected time slot, priority, and team before dismissing
+                viewModel.createEventFromScheduling()
                 dismiss()
             }
 

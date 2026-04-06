@@ -158,7 +158,7 @@ enum AnalyticsDashboardsMockData {
     // MARK: - Date Helper
 
     private static func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d))!
+        Calendar.current.date(from: DateComponents(year: y, month: m, day: d)) ?? Date()
     }
 
     // MARK: - Technicians (5 required: James Wilson, Sarah Chen, Marcus Kim, Emily Rodriguez, David Park)

@@ -118,13 +118,20 @@ final class MachineVaultViewModel {
             }
         }
 
-        // Type filter
+        // Type filter (exact match on category)
         let typeSection = filterSections.first(where: { $0.title == "Machine Type" })
         let selectedTypes = typeSection?.options.filter(\.isSelected).map(\.label) ?? []
         if !selectedTypes.isEmpty {
             result = result.filter { machine in
-                selectedTypes.contains(where: { machine.name.lowercased().contains($0.lowercased()) ||
-                    machine.division.lowercased().contains($0.lowercased()) })
+                selectedTypes.contains(machine.category.rawValue)
+            }
+        }
+
+        // Health score range filter
+        let healthSection = filterSections.first(where: { $0.title == "Health Score" })
+        if let healthSection, let minScore = healthSection.rangeValue, minScore > 0 {
+            result = result.filter { machine in
+                machine.healthPercent >= Int(minScore)
             }
         }
 
@@ -148,7 +155,14 @@ final class MachineVaultViewModel {
     }
 
     var activeFilterCount: Int {
-        filterSections.flatMap(\.options).filter(\.isSelected).count
+        let checkboxCount = filterSections.flatMap(\.options).filter(\.isSelected).count
+        let rangeCount = filterSections.filter { section in
+            if case .range = section.type, let val = section.rangeValue, val > 0 {
+                return true
+            }
+            return false
+        }.count
+        return checkboxCount + rangeCount
     }
 
     // MARK: - Summary Stats
@@ -180,5 +194,22 @@ final class MachineVaultViewModel {
         withAnimation(.easeInOut(duration: 0.25)) {
             layoutMode = layoutMode == .grid ? .list : .grid
         }
+    }
+
+    func addMachine(_ machine: VaultMachine) {
+        allMachines.append(machine)
+    }
+
+    func updateMachine(_ machine: VaultMachine) {
+        if let index = allMachines.firstIndex(where: { $0.id == machine.id }) {
+            allMachines[index] = machine
+            selectedMachine = machine
+        }
+    }
+
+    func deleteMachine(id: UUID) {
+        allMachines.removeAll { $0.id == id }
+        selectedMachine = nil
+        showDetail = false
     }
 }

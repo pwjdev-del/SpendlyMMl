@@ -7,9 +7,41 @@ import SpendlyCore
 @Observable
 final class ExpenseLoggingViewModel {
 
+    // MARK: Persistence
+
+    private static let storageKey = "expenses"
+    private let storage = LocalStorageService.shared
+
     // MARK: Expense List
 
     var expenses: [ExpenseDisplayItem] = ExpenseLoggingMockData.sampleExpenses
+
+    // MARK: Init
+
+    init() {
+        loadPersistedData()
+    }
+
+    private func loadPersistedData() {
+        if let saved: [ExpenseDisplayItem] = storage.load(forKey: Self.storageKey) {
+            // Merge: start with mock data, then append any user-created items
+            // (items whose ID is not in the mock set)
+            let mockIDs = Set(ExpenseLoggingMockData.sampleExpenses.map(\.id))
+            let userCreated = saved.filter { !mockIDs.contains($0.id) }
+            // Also apply any edits the user made to mock items
+            var merged = ExpenseLoggingMockData.sampleExpenses
+            for (index, mockItem) in merged.enumerated() {
+                if let savedVersion = saved.first(where: { $0.id == mockItem.id }) {
+                    merged[index] = savedVersion
+                }
+            }
+            expenses = userCreated + merged
+        }
+    }
+
+    private func persistExpenses() {
+        storage.save(expenses, forKey: Self.storageKey)
+    }
 
     var recentExpenses: [ExpenseDisplayItem] {
         Array(expenses.prefix(10))
@@ -84,6 +116,7 @@ final class ExpenseLoggingViewModel {
             expenses.insert(newExpense, at: 0)
         }
 
+        persistExpenses()
         resetForm()
         showingSubmitConfirmation = true
     }
@@ -117,6 +150,7 @@ final class ExpenseLoggingViewModel {
         expenses[idx].category = category
         expenses[idx].projectName = editProject
 
+        persistExpenses()
         showingDetail = false
         selectedExpense = nil
     }
@@ -138,6 +172,7 @@ final class ExpenseLoggingViewModel {
         withAnimation(.easeInOut(duration: 0.25)) {
             expenses.removeAll { $0.id == expense.id }
         }
+        persistExpenses()
         expenseToDelete = nil
         showingDeleteConfirmation = false
 
@@ -155,6 +190,7 @@ final class ExpenseLoggingViewModel {
         withAnimation(.easeInOut(duration: 0.25)) {
             expenses[idx].status = .approved
         }
+        persistExpenses()
     }
 
     func beginReject(_ expense: ExpenseDisplayItem) {
@@ -170,6 +206,7 @@ final class ExpenseLoggingViewModel {
             expenses[idx].status = .rejected
             expenses[idx].rejectionReason = rejectionReason.isEmpty ? "No reason provided" : rejectionReason
         }
+        persistExpenses()
         showingRejectSheet = false
         expenseToReject = nil
         rejectionReason = ""
@@ -183,6 +220,7 @@ final class ExpenseLoggingViewModel {
             expenses[idx].status = .reimbursed
             expenses[idx].reimbursedDate = Date()
         }
+        persistExpenses()
     }
 
     // MARK: Formatting

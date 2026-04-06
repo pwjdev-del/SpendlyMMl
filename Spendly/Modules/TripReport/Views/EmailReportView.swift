@@ -1,5 +1,8 @@
 import SwiftUI
 import SpendlyCore
+#if canImport(MessageUI)
+import MessageUI
+#endif
 
 struct EmailReportView: View {
     let trip: TripReportDisplayModel
@@ -49,6 +52,32 @@ struct EmailReportView: View {
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
             }
         }
+        // BUG 2 FIX: Confirmation alert when native mail is unavailable
+        .alert("Confirm Email Send", isPresented: $viewModel.showEmailConfirmation) {
+            Button("Send Anyway") {
+                viewModel.confirmEmailSend()
+            }
+            Button("Cancel", role: .cancel) {
+                viewModel.isSendingEmail = false
+            }
+        } message: {
+            Text(viewModel.emailConfirmationMessage)
+        }
+        #if canImport(MessageUI)
+        // BUG 2 FIX: Native mail composer sheet
+        .sheet(isPresented: $viewModel.showMailCompose) {
+            MailComposeView(
+                recipients: viewModel.selectedRecipientEmails,
+                subject: "Trip Completion Report - \(trip.reportNumber)",
+                body: viewModel.emailBody,
+                pdfData: viewModel.pdfData,
+                pdfFilename: "TripReport_\(trip.reportNumber).pdf"
+            ) { success in
+                viewModel.handleMailComposeResult(success: success)
+            }
+            .ignoresSafeArea()
+        }
+        #endif
     }
 
     // MARK: - PDF Preview Mini
@@ -364,6 +393,56 @@ private struct RecipientCard: View {
         .buttonStyle(.plain)
     }
 }
+
+// MARK: - Mail Compose View (UIViewControllerRepresentable)
+
+#if canImport(MessageUI)
+struct MailComposeView: UIViewControllerRepresentable {
+    let recipients: [String]
+    let subject: String
+    let body: String
+    let pdfData: Data?
+    let pdfFilename: String
+    let onComplete: (Bool) -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onComplete: onComplete)
+    }
+
+    func makeUIViewController(context: Context) -> MFMailComposeViewController {
+        let composer = MFMailComposeViewController()
+        composer.mailComposeDelegate = context.coordinator
+        composer.setToRecipients(recipients)
+        composer.setSubject(subject)
+        composer.setMessageBody(body, isHTML: false)
+
+        if let data = pdfData {
+            composer.addAttachmentData(data, mimeType: "application/pdf", fileName: pdfFilename)
+        }
+
+        return composer
+    }
+
+    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
+
+    class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
+        let onComplete: (Bool) -> Void
+
+        init(onComplete: @escaping (Bool) -> Void) {
+            self.onComplete = onComplete
+        }
+
+        func mailComposeController(
+            _ controller: MFMailComposeViewController,
+            didFinishWith result: MFMailComposeResult,
+            error: Error?
+        ) {
+            controller.dismiss(animated: true)
+            onComplete(result == .sent)
+        }
+    }
+}
+#endif
 
 // MARK: - Preview
 

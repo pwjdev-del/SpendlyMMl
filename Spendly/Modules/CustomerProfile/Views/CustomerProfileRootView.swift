@@ -6,6 +6,11 @@ import SpendlyCore
 public struct CustomerProfileRootView: View {
 
     @State private var viewModel = CustomerProfileViewModel()
+    @State private var showAddCustomerSheet = false
+    @State private var newCustomerName = ""
+    @State private var newCustomerEmail = ""
+    @State private var newCustomerCompany = ""
+    @State private var newCustomerPhone = ""
     @Environment(\.colorScheme) private var colorScheme
 
     public init() {}
@@ -57,9 +62,58 @@ public struct CustomerProfileRootView: View {
                 sections: $viewModel.filterSections
             )
         }
+        .sheet(isPresented: $showAddCustomerSheet) {
+            NavigationStack {
+                Form {
+                    Section("Customer Information") {
+                        TextField("Name", text: $newCustomerName)
+                        TextField("Email", text: $newCustomerEmail)
+                            .keyboardType(.emailAddress)
+                            .textContentType(.emailAddress)
+                            .autocapitalization(.none)
+                        TextField("Company", text: $newCustomerCompany)
+                        TextField("Phone", text: $newCustomerPhone)
+                            .keyboardType(.phonePad)
+                            .textContentType(.telephoneNumber)
+                    }
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .navigationTitle("Add Customer")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            showAddCustomerSheet = false
+                            newCustomerName = ""
+                            newCustomerEmail = ""
+                            newCustomerCompany = ""
+                            newCustomerPhone = ""
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            viewModel.addCustomer(
+                                name: newCustomerName,
+                                email: newCustomerEmail,
+                                company: newCustomerCompany,
+                                phone: newCustomerPhone
+                            )
+                            showAddCustomerSheet = false
+                            newCustomerName = ""
+                            newCustomerEmail = ""
+                            newCustomerCompany = ""
+                            newCustomerPhone = ""
+                        }
+                        .disabled(newCustomerName.isEmpty)
+                    }
+                }
+            }
+        }
         .navigationDestination(isPresented: $viewModel.showDetail) {
             if let customer = viewModel.selectedCustomer {
                 CustomerDetailView(customer: customer)
+            } else {
+                ContentUnavailableView("Customer Not Found", systemImage: "person.crop.circle.badge.questionmark", description: Text("This customer profile is no longer available."))
             }
         }
     }
@@ -81,7 +135,7 @@ public struct CustomerProfileRootView: View {
             Spacer()
 
             Button {
-                // Add customer action placeholder
+                showAddCustomerSheet = true
             } label: {
                 HStack(spacing: SpendlySpacing.xs) {
                     Image(systemName: SpendlyIcon.add.systemName)
@@ -197,7 +251,7 @@ public struct CustomerProfileRootView: View {
                 .multilineTextAlignment(.center)
 
             SPButton("Add Customer", icon: SpendlyIcon.add.systemName, style: .primary) {
-                // Placeholder for add customer
+                showAddCustomerSheet = true
             }
             .frame(maxWidth: 200)
         }
@@ -361,11 +415,15 @@ private struct CustomerCardView: View {
 
     // MARK: - Currency Formatter
 
-    private func formatCurrency(_ value: Double) -> String {
+    private static let currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
+        return formatter
+    }()
+
+    private func formatCurrency(_ value: Double) -> String {
+        Self.currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }
 

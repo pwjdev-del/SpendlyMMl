@@ -31,6 +31,12 @@ public struct EstimateBuilderRootView: View {
                         }
                     )
 
+                    // MARK: Horizontal Filter Chips (BUG 5 FIX)
+                    EstimateFilterView(
+                        showFilterModal: $viewModel.showFilterModal,
+                        filterSections: $viewModel.filterSections
+                    )
+
                     // MARK: Active Filters Badge
                     if viewModel.activeFilterCount > 0 {
                         activeFiltersIndicator
@@ -67,6 +73,8 @@ public struct EstimateBuilderRootView: View {
         .navigationDestination(isPresented: $viewModel.showEditor) {
             if let estimate = viewModel.selectedEstimate {
                 EstimateEditorView(viewModel: viewModel, editingEstimate: estimate)
+            } else {
+                ContentUnavailableView("Estimate Not Found", systemImage: "doc.text", description: Text("This estimate is no longer available."))
             }
         }
         .navigationDestination(isPresented: $viewModel.showCreateNew) {
@@ -319,18 +327,26 @@ private struct EstimateListCard: View {
 
     // MARK: - Formatters
 
-    private func formatCurrency(_ value: Double) -> String {
+    private static let currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
-    }
+        return formatter
+    }()
 
-    private func formatDate(_ date: Date) -> String {
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
-        return formatter.string(from: date)
+        return formatter
+    }()
+
+    private func formatCurrency(_ value: Double) -> String {
+        Self.currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
+    }
+
+    private func formatDate(_ date: Date) -> String {
+        Self.dateFormatter.string(from: date)
     }
 }
 

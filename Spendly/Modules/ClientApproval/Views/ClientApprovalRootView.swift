@@ -63,10 +63,8 @@ public struct ClientApprovalRootView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $vm.showingDetail) {
-            if let estimate = vm.selectedEstimate {
-                EstimateApprovalView(vm: vm, estimate: estimate)
-            }
+        .fullScreenCover(item: $vm.selectedEstimate) { estimate in
+            EstimateApprovalView(vm: vm, estimate: estimate)
         }
         .fullScreenCover(isPresented: $vm.showingSuccess) {
             ApprovalSuccessView(vm: vm)

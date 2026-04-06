@@ -26,6 +26,7 @@ struct EstimateApprovalItem: Identifiable {
     let laborItems: [EstimateLineItem]
     let materialItems: [EstimateLineItem]
     let taxRate: Double   // e.g. 0.085 for 8.5%
+    var comments: String = ""  // client comments entered during approval/rejection
 
     var subtotal: Double {
         (laborItems + materialItems).reduce(0) { $0 + $1.total }

@@ -96,11 +96,13 @@ final class SettingsNotificationsViewModel {
 
     // MARK: - Security
 
-    var biometricLoginEnabled: Bool = true
+    @ObservationIgnored
+    @AppStorage("biometricEnabled") var biometricLoginEnabled: Bool = false
 
     // MARK: - App Preferences
 
-    var darkModePreference: String = DarkModePreference.system.rawValue
+    @ObservationIgnored
+    @AppStorage("darkModePreference") var darkModePreference: String = DarkModePreference.system.rawValue
     var selectedLanguage: String = LanguageOption.english.rawValue
     var selectedDialect: String = DialectOption.usEnglish.rawValue
     var selectedMeasurementUnit: String = MeasurementUnitOption.imperial.rawValue
@@ -230,7 +232,7 @@ final class SettingsNotificationsViewModel {
         pushNotificationsEnabled = true
         emailAlertsEnabled = false
         smsRemindersEnabled = true
-        biometricLoginEnabled = true
+        biometricLoginEnabled = false
         darkModePreference = DarkModePreference.system.rawValue
         selectedLanguage = LanguageOption.english.rawValue
         selectedDialect = DialectOption.usEnglish.rawValue

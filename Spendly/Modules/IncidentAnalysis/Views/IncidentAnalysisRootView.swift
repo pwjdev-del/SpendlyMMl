@@ -34,10 +34,8 @@ public struct IncidentAnalysisRootView: View {
             }
             .navigationTitle("Incident Analysis")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $viewModel.showDetail) {
-                if let incident = viewModel.selectedIncident {
-                    IncidentDetailView(incident: incident, viewModel: viewModel)
-                }
+            .sheet(item: $viewModel.selectedIncident) { incident in
+                IncidentDetailView(incident: incident, viewModel: viewModel)
             }
         }
     }

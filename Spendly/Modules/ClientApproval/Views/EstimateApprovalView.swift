@@ -1,6 +1,10 @@
 import SwiftUI
 import SpendlyCore
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 struct EstimateApprovalView: View {
     @Bindable var vm: ClientApprovalViewModel
     let estimate: EstimateApprovalItem
@@ -50,6 +54,15 @@ struct EstimateApprovalView: View {
         .sheet(isPresented: $vm.showingRequestChanges) {
             requestChangesSheet
         }
+        #if canImport(UIKit)
+        .sheet(isPresented: $vm.showingShareSheet) {
+            if let pdfData = vm.generatedPDFData {
+                ShareSheetView(activityItems: [pdfData])
+            } else {
+                Color.clear.onAppear { vm.showingShareSheet = false }
+            }
+        }
+        #endif
     }
 
     // MARK: - Header
@@ -88,7 +101,7 @@ struct EstimateApprovalView: View {
             Spacer()
 
             Button {
-                // Download action placeholder
+                vm.generateAndSharePDF(for: estimate)
             } label: {
                 Image(systemName: "arrow.down.circle")
                     .font(.system(size: 18))
@@ -431,6 +444,20 @@ struct EstimateApprovalView: View {
         .presentationDetents([.medium, .large])
     }
 }
+
+// MARK: - Share Sheet (UIKit Bridge)
+
+#if canImport(UIKit)
+private struct ShareSheetView: UIViewControllerRepresentable {
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+#endif
 
 // MARK: - Preview
 

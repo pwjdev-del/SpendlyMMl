@@ -51,10 +51,8 @@ public struct TicketManagementRootView: View {
                 sections: $viewModel.filterSections
             )
         }
-        .sheet(isPresented: $viewModel.showDetail) {
-            if let ticket = viewModel.selectedTicket {
-                TicketDetailView(ticket: ticket)
-            }
+        .sheet(item: $viewModel.selectedTicket) { ticket in
+            TicketDetailView(ticket: ticket, viewModel: viewModel)
         }
         .sheet(isPresented: $viewModel.showNewTicketForm) {
             NewTicketFormView(viewModel: viewModel)

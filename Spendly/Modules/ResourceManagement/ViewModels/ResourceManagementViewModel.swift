@@ -177,7 +177,7 @@ final class ResourceManagementViewModel {
     func initials(for name: String) -> String {
         let parts = name.split(separator: " ")
         let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
+        let last = parts.count > 1 ? (parts.last?.prefix(1) ?? "") : ""
         return "\(first)\(last)".uppercased()
     }
 

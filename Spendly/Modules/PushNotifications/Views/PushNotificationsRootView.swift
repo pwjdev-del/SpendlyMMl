@@ -8,34 +8,35 @@ public struct PushNotificationsRootView: View {
     @State private var viewModel = PushNotificationsViewModel()
     @Environment(\.colorScheme) private var colorScheme
 
+    @Environment(\.dismiss) private var dismiss
+
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // MARK: - Header
-                notificationHeader
+        VStack(spacing: 0) {
+            // MARK: - Header
+            notificationHeader
 
-                // MARK: - Filter Chips
-                filterChips
-                    .padding(.top, SpendlySpacing.sm)
-                    .padding(.bottom, SpendlySpacing.md)
+            // MARK: - Filter Chips
+            filterChips
+                .padding(.top, SpendlySpacing.sm)
+                .padding(.bottom, SpendlySpacing.md)
 
-                // MARK: - Notification List
-                if viewModel.filteredNotifications.isEmpty {
-                    emptyState
-                } else {
-                    notificationList
-                }
+            // MARK: - Notification List
+            if viewModel.filteredNotifications.isEmpty {
+                emptyState
+            } else {
+                notificationList
             }
-            .background(SpendlyColors.background(for: colorScheme))
-            .navigationBarHidden(true)
-            .overlay(alignment: .bottom) {
-                if viewModel.showActionConfirmation {
-                    actionConfirmationBanner
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .animation(.easeInOut(duration: 0.25), value: viewModel.showActionConfirmation)
         }
+        .background(SpendlyColors.background(for: colorScheme))
+        .navigationTitle("Notifications")
+        .navigationBarTitleDisplayMode(.inline)
+        .overlay(alignment: .bottom) {
+            if viewModel.showActionConfirmation {
+                actionConfirmationBanner
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: viewModel.showActionConfirmation)
     }
 
     // MARK: - Header
@@ -43,30 +44,15 @@ public struct PushNotificationsRootView: View {
     private var notificationHeader: some View {
         VStack(spacing: 0) {
             HStack(alignment: .center) {
-                // Back button
-                Button {} label: {
-                    Image(systemName: SpendlyIcon.arrowBack.systemName)
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(SpendlyColors.secondary)
-                }
-                .frame(width: 40, height: 40)
-
-                Spacer()
-
-                // Title with unread badge
-                HStack(spacing: SpendlySpacing.sm) {
-                    Text("Notifications")
-                        .font(SpendlyFont.headline())
-                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
-
-                    if viewModel.unreadCount > 0 {
-                        Text("\(viewModel.unreadCount)")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(.white)
-                            .frame(minWidth: 20, minHeight: 20)
-                            .background(SpendlyColors.error)
-                            .clipShape(Capsule())
-                    }
+                // Unread badge
+                if viewModel.unreadCount > 0 {
+                    Text("\(viewModel.unreadCount) unread")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, SpendlySpacing.sm)
+                        .padding(.vertical, SpendlySpacing.xs)
+                        .background(SpendlyColors.error)
+                        .clipShape(Capsule())
                 }
 
                 Spacer()
@@ -84,7 +70,7 @@ public struct PushNotificationsRootView: View {
                 .opacity(viewModel.hasUnread ? 1.0 : 0.5)
             }
             .padding(.horizontal, SpendlySpacing.lg)
-            .padding(.vertical, SpendlySpacing.md)
+            .padding(.vertical, SpendlySpacing.sm)
         }
         .background(SpendlyColors.surface(for: colorScheme))
     }

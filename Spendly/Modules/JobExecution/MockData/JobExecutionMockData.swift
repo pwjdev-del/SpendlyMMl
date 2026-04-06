@@ -84,12 +84,38 @@ struct PhotoCaptureItem: Identifiable {
     var caption: String
     var isBefore: Bool
     var timestamp: Date
+    var imageData: Data?
+    var placeholderIcon: String
 
-    init(id: UUID = UUID(), caption: String = "", isBefore: Bool = true, timestamp: Date = Date()) {
+    init(id: UUID = UUID(), caption: String = "", isBefore: Bool = true, timestamp: Date = Date(), imageData: Data? = nil, placeholderIcon: String = "photo.on.rectangle.angled") {
         self.id = id
         self.caption = caption
         self.isBefore = isBefore
         self.timestamp = timestamp
+        self.imageData = imageData
+        self.placeholderIcon = placeholderIcon
+    }
+}
+
+// MARK: - Voice Note
+
+struct VoiceNote: Identifiable {
+    let id: UUID
+    var duration: TimeInterval
+    var fileURL: URL?
+    var createdAt: Date
+
+    init(id: UUID = UUID(), duration: TimeInterval = 0, fileURL: URL? = nil, createdAt: Date = Date()) {
+        self.id = id
+        self.duration = duration
+        self.fileURL = fileURL
+        self.createdAt = createdAt
+    }
+
+    var formattedDuration: String {
+        let minutes = Int(duration) / 60
+        let seconds = Int(duration) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 
@@ -117,6 +143,7 @@ struct JobDisplayModel: Identifiable {
     var checklist: [ChecklistItem]
     var materials: [MaterialItem]
     var photos: [PhotoCaptureItem]
+    var voiceNotes: [VoiceNote]
     var estimatedDurationSeconds: TimeInterval
     var elapsedSeconds: TimeInterval
     var isPaused: Bool
@@ -142,6 +169,28 @@ struct JobDisplayModel: Identifiable {
     var totalTaskCount: Int {
         checklist.count
     }
+
+    /// Empty placeholder used as a fallback when no job is selected.
+    static let placeholder = JobDisplayModel(
+        id: UUID(),
+        jobNumber: "--",
+        title: "No Job",
+        jobType: .maintenance,
+        status: .upcoming,
+        location: "--",
+        scheduledStart: Date(),
+        scheduledEnd: Date(),
+        client: ClientInfo(name: "--", address: "--", phone: "", notes: ""),
+        checklist: [],
+        materials: [],
+        photos: [],
+        voiceNotes: [],
+        estimatedDurationSeconds: 0,
+        elapsedSeconds: 0,
+        isPaused: false,
+        latitude: 0,
+        longitude: 0
+    )
 }
 
 // MARK: - Week Day Model
@@ -154,9 +203,10 @@ struct WeekDay: Identifiable {
     var isSelected: Bool
 }
 
-// MARK: - Sync Status
+// MARK: - Job Sync Display Status
+// Renamed from `SyncStatus` to avoid shadowing `SpendlyCore.SyncStatus`.
 
-enum SyncStatus {
+enum JobSyncDisplayStatus {
     case synced
     case syncing
     case pendingSync(count: Int)
@@ -206,6 +256,7 @@ enum JobExecutionMockData {
             ],
             materials: [],
             photos: [],
+            voiceNotes: [],
             estimatedDurationSeconds: 3600,
             elapsedSeconds: 3120,
             isPaused: false,
@@ -239,6 +290,7 @@ enum JobExecutionMockData {
                 MaterialItem(name: "Copper Tubing 1/4\"", quantity: 2, unitCost: 12.50)
             ],
             photos: [],
+            voiceNotes: [],
             estimatedDurationSeconds: 7200,
             elapsedSeconds: 8096,
             isPaused: false,
@@ -274,6 +326,7 @@ enum JobExecutionMockData {
                 MaterialItem(name: "Cable Clips", quantity: 20, unitCost: 0.50)
             ],
             photos: [],
+            voiceNotes: [],
             estimatedDurationSeconds: 7200,
             elapsedSeconds: 0,
             isPaused: false,
@@ -304,6 +357,7 @@ enum JobExecutionMockData {
             ],
             materials: [],
             photos: [],
+            voiceNotes: [],
             estimatedDurationSeconds: 5400,
             elapsedSeconds: 0,
             isPaused: false,
@@ -317,12 +371,12 @@ enum JobExecutionMockData {
         let today = Date()
         let weekday = calendar.component(.weekday, from: today)
         // Sunday = 1, so offset to get start of the week (Sunday)
-        let startOfWeek = calendar.date(byAdding: .day, value: -(weekday - 1), to: today)!
+        let startOfWeek = calendar.date(byAdding: .day, value: -(weekday - 1), to: today) ?? today
 
         let dayAbbreviations = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 
         return (0..<7).map { offset in
-            let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek)!
+            let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek) ?? startOfWeek
             let dayNumber = calendar.component(.day, from: date)
             let isToday = calendar.isDateInToday(date)
             return WeekDay(

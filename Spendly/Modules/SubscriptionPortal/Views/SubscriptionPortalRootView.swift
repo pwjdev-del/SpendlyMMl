@@ -866,8 +866,10 @@ private extension SubscriptionPortalRootView {
                         }
                     }
 
-                    // Placeholder save button
-                    Button {} label: {
+                    // Save button
+                    Button {
+                        viewModel.showUpdateBilling = false
+                    } label: {
                         Text("Save Changes")
                             .font(SpendlyFont.bodySemibold())
                             .foregroundStyle(.white)

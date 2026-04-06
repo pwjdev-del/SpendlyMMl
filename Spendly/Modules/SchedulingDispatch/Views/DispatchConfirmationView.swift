@@ -79,7 +79,7 @@ struct DispatchConfirmationView: View {
                     HStack(spacing: SpendlySpacing.xs) {
                         Image(systemName: "star.fill")
                             .font(.system(size: 14))
-                            .foregroundStyle(Color(hex: "#EAB308"))
+                            .foregroundStyle(SpendlyColors.warning)
                         Text(String(format: "%.1f", tech.rating))
                             .font(SpendlyFont.bodySemibold())
                             .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
@@ -158,9 +158,7 @@ struct DispatchConfirmationView: View {
         }
         .padding(SpendlySpacing.lg)
         .background(
-            colorScheme == .dark
-                ? SpendlyColors.surfaceDark.opacity(0.5)
-                : Color(hex: "#f8fafc")
+            SpendlyColors.background(for: colorScheme)
         )
         .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
         .overlay(
@@ -216,9 +214,7 @@ struct DispatchConfirmationView: View {
             }
         }
         .background(
-            colorScheme == .dark
-                ? SpendlyColors.surfaceDark.opacity(0.5)
-                : Color(hex: "#f8fafc")
+            SpendlyColors.background(for: colorScheme)
         )
         .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
         .overlay(
@@ -253,9 +249,7 @@ struct DispatchConfirmationView: View {
         }
         .padding(SpendlySpacing.lg)
         .background(
-            colorScheme == .dark
-                ? SpendlyColors.surfaceDark.opacity(0.5)
-                : Color(hex: "#f8fafc")
+            SpendlyColors.background(for: colorScheme)
         )
         .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
         .overlay(
@@ -281,7 +275,8 @@ struct DispatchConfirmationView: View {
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
 
                 HStack(spacing: SpendlySpacing.sm) {
-                    Text("15 - 20 minutes")
+                    // Bug 8: Dynamic ETA based on technician distance/availability
+                    Text(technician.map { viewModel.estimatedETAText(for: $0) } ?? "-- mins")
                         .font(SpendlyFont.headline())
                         .foregroundStyle(SpendlyColors.success)
 

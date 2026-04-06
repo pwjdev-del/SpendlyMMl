@@ -5,6 +5,7 @@ public struct SPScreenWrapper<Content: View>: View {
     private let content: () -> Content
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init(
         theme: SpendlyTheme = .blueprint,
@@ -21,7 +22,7 @@ public struct SPScreenWrapper<Content: View>: View {
 
             ScrollView {
                 content()
-                    .padding(.horizontal, SpendlySpacing.lg)
+                    .padding(.horizontal, sizeClass == .regular ? AdaptiveSpacing.lg : SpendlySpacing.lg)
                     .padding(.top, SpendlySpacing.sm)
                     .padding(.bottom, SpendlySpacing.xxxl)
             }

@@ -4,9 +4,15 @@ import SpendlyCore
 struct MachineDetailView: View {
 
     let machine: VaultMachine
+    var viewModel: MachineVaultViewModel
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
+
+    @State private var showEditSheet = false
+    @State private var showDeleteAlert = false
+    @State private var showShareSheet = false
+    @State private var exportText = ""
 
     private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -49,17 +55,18 @@ struct MachineDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
-                            // edit action
+                            showEditSheet = true
                         } label: {
                             Label("Edit Machine", systemImage: SpendlyIcon.edit.systemName)
                         }
                         Button {
-                            // export
+                            exportText = generateReport()
+                            showShareSheet = true
                         } label: {
                             Label("Export Report", systemImage: SpendlyIcon.download.systemName)
                         }
                         Button(role: .destructive) {
-                            // delete
+                            showDeleteAlert = true
                         } label: {
                             Label("Delete Machine", systemImage: SpendlyIcon.delete.systemName)
                         }
@@ -70,7 +77,80 @@ struct MachineDetailView: View {
                     }
                 }
             }
+            .alert("Delete Machine", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteMachine(id: machine.id)
+                    dismiss()
+                }
+            } message: {
+                Text("Are you sure you want to delete \"\(machine.name)\"? This action cannot be undone.")
+            }
+            .sheet(isPresented: $showEditSheet) {
+                EditMachineView(machine: machine) { updated in
+                    viewModel.updateMachine(updated)
+                }
+            }
+            .sheet(isPresented: $showShareSheet) {
+                ShareSheetView(text: exportText)
+            }
         }
+    }
+
+    // MARK: - Report Generation
+
+    private func generateReport() -> String {
+        var report = """
+        MACHINE REPORT
+        ==============
+        Name: \(machine.name)
+        Model: \(machine.model)
+        Serial Number: \(machine.serialNumber)
+        Status: \(machine.statusLabel)
+        Division: \(machine.division)
+        Location: \(machine.location)
+        Health Score: \(machine.healthPercent)%
+        Category: \(machine.category.rawValue)
+        """
+
+        if let customer = machine.customerName {
+            report += "\nCustomer: \(customer)"
+        }
+        if let installDate = machine.installDate {
+            report += "\nInstall Date: \(dateFormatter.string(from: installDate))"
+        }
+        if let expiry = machine.warrantyExpiry {
+            report += "\nWarranty Expiry: \(dateFormatter.string(from: expiry))"
+        }
+        report += "\nWarranty Status: \(machine.warrantyStatus.label)"
+
+        if let notes = machine.notes, !notes.isEmpty {
+            report += "\n\nNotes: \(notes)"
+        }
+
+        if !machine.maintenanceHistory.isEmpty {
+            report += "\n\nMAINTENANCE HISTORY"
+            report += "\n-------------------"
+            for event in machine.maintenanceHistory {
+                report += "\n[\(dateFormatter.string(from: event.date))] \(event.title)"
+                if let ticket = event.ticketNumber { report += " (\(ticket))" }
+                report += "\n  \(event.description)"
+                if let tech = event.technicianName { report += "\n  Technician: \(tech)" }
+            }
+        }
+
+        if !machine.scheduledMaintenance.isEmpty {
+            report += "\n\nSCHEDULED MAINTENANCE"
+            report += "\n---------------------"
+            for event in machine.scheduledMaintenance {
+                report += "\n[\(dateFormatter.string(from: event.scheduledDate))] \(event.title)"
+                if let tech = event.assignedTechnician { report += " - Assigned: \(tech)" }
+                if event.isOverdue { report += " (OVERDUE)" }
+            }
+        }
+
+        report += "\n\nGenerated: \(dateFormatter.string(from: Date()))"
+        return report
     }
 
     // MARK: - Hero Section
@@ -460,14 +540,213 @@ struct MachineDetailView: View {
     }
 }
 
+// MARK: - Edit Machine View
+
+private struct EditMachineView: View {
+
+    let machine: VaultMachine
+    var onSave: (VaultMachine) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+
+    @State private var name: String
+    @State private var model: String
+    @State private var serialNumber: String
+    @State private var location: String
+    @State private var customer: String
+    @State private var division: String
+    @State private var notes: String
+    @State private var healthScore: Double
+    @State private var status: MachineStatus
+    @State private var category: MachineTypeFilter
+
+    init(machine: VaultMachine, onSave: @escaping (VaultMachine) -> Void) {
+        self.machine = machine
+        self.onSave = onSave
+        _name = State(initialValue: machine.name)
+        _model = State(initialValue: machine.model)
+        _serialNumber = State(initialValue: machine.serialNumber)
+        _location = State(initialValue: machine.location)
+        _customer = State(initialValue: machine.customerName ?? "")
+        _division = State(initialValue: machine.division)
+        _notes = State(initialValue: machine.notes ?? "")
+        _healthScore = State(initialValue: machine.healthScore)
+        _status = State(initialValue: machine.status)
+        _category = State(initialValue: machine.category)
+    }
+
+    private var isValid: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !serialNumber.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                SpendlyTheme.blueprint.backgroundColor(for: colorScheme)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: SpendlySpacing.lg) {
+                        formSection(title: "Basic Information") {
+                            formField(label: "Machine Name *", text: $name, placeholder: "e.g. M-200 FFS")
+                            formField(label: "Model", text: $model, placeholder: "e.g. M-200-FFS-XL")
+                            formField(label: "Serial Number *", text: $serialNumber, placeholder: "e.g. SN-M200-4821")
+                        }
+
+                        formSection(title: "Location & Customer") {
+                            formField(label: "Location", text: $location, placeholder: "e.g. Plant A - Line 3")
+                            formField(label: "Division", text: $division, placeholder: "e.g. Packaging Division")
+                            formField(label: "Customer", text: $customer, placeholder: "e.g. Industrial Logistics Corp.")
+                        }
+
+                        formSection(title: "Machine Details") {
+                            VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                                Text("Category")
+                                    .font(SpendlyFont.caption())
+                                    .foregroundStyle(SpendlyColors.secondary)
+                                Picker("Category", selection: $category) {
+                                    ForEach(MachineTypeFilter.allCases.filter { $0 != .all }, id: \.self) { type in
+                                        Text(type.rawValue).tag(type)
+                                    }
+                                }
+                                .pickerStyle(.segmented)
+                            }
+
+                            VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                                Text("Status")
+                                    .font(SpendlyFont.caption())
+                                    .foregroundStyle(SpendlyColors.secondary)
+                                Picker("Status", selection: $status) {
+                                    Text("Operational").tag(MachineStatus.operational)
+                                    Text("Needs Maintenance").tag(MachineStatus.needsMaintenance)
+                                    Text("Under Repair").tag(MachineStatus.underRepair)
+                                    Text("Decommissioned").tag(MachineStatus.decommissioned)
+                                }
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+
+                            VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                                HStack {
+                                    Text("Health Score")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                    Spacer()
+                                    Text("\(Int(healthScore * 100))%")
+                                        .font(SpendlyFont.bodySemibold())
+                                        .foregroundStyle(SpendlyColors.primary)
+                                        .monospacedDigit()
+                                }
+                                Slider(value: $healthScore, in: 0...1, step: 0.01)
+                                    .tint(SpendlyColors.primary)
+                            }
+                        }
+
+                        formSection(title: "Notes") {
+                            TextField("Additional notes...", text: $notes, axis: .vertical)
+                                .font(SpendlyFont.body())
+                                .lineLimit(3...6)
+                                .padding(SpendlySpacing.md)
+                                .background(SpendlyColors.background(for: colorScheme))
+                                .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        }
+                    }
+                    .padding(.horizontal, SpendlySpacing.lg)
+                    .padding(.top, SpendlySpacing.sm)
+                    .padding(.bottom, SpendlySpacing.xxxl)
+                }
+            }
+            .navigationTitle("Edit Machine")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(SpendlyColors.secondary)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") { saveChanges() }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(isValid ? SpendlyColors.primary : SpendlyColors.secondary)
+                        .disabled(!isValid)
+                }
+            }
+        }
+    }
+
+    private func formSection(title: String, @ViewBuilder content: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: SpendlySpacing.md) {
+            Text(title)
+                .font(SpendlyFont.headline())
+                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+
+            VStack(spacing: SpendlySpacing.md) {
+                content()
+            }
+            .padding(SpendlySpacing.md)
+            .background(SpendlyColors.surface(for: colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
+        }
+    }
+
+    private func formField(label: String, text: Binding<String>, placeholder: String) -> some View {
+        VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+            Text(label)
+                .font(SpendlyFont.caption())
+                .foregroundStyle(SpendlyColors.secondary)
+            TextField(placeholder, text: text)
+                .font(SpendlyFont.body())
+                .padding(SpendlySpacing.md)
+                .background(SpendlyColors.background(for: colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+        }
+    }
+
+    private func saveChanges() {
+        let updated = VaultMachine(
+            id: machine.id,
+            name: name.trimmingCharacters(in: .whitespaces),
+            model: model.trimmingCharacters(in: .whitespaces),
+            serialNumber: serialNumber.trimmingCharacters(in: .whitespaces),
+            status: status,
+            division: division.trimmingCharacters(in: .whitespaces),
+            location: location.trimmingCharacters(in: .whitespaces),
+            healthScore: healthScore,
+            warrantyExpiry: machine.warrantyExpiry,
+            installDate: machine.installDate,
+            imageName: machine.imageName,
+            customerName: customer.isEmpty ? nil : customer.trimmingCharacters(in: .whitespaces),
+            notes: notes.isEmpty ? nil : notes.trimmingCharacters(in: .whitespaces),
+            category: category,
+            maintenanceHistory: machine.maintenanceHistory,
+            scheduledMaintenance: machine.scheduledMaintenance
+        )
+        onSave(updated)
+        dismiss()
+    }
+}
+
+// MARK: - Share Sheet (UIKit wrapper)
+
+private struct ShareSheetView: UIViewControllerRepresentable {
+    let text: String
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [text], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
 // MARK: - Preview
 
 #Preview("Machine Detail - Light") {
-    MachineDetailView(machine: MachineVaultMockData.machines[0])
+    MachineDetailView(machine: MachineVaultMockData.machines[0], viewModel: MachineVaultViewModel())
         .preferredColorScheme(.light)
 }
 
 #Preview("Machine Detail - Dark") {
-    MachineDetailView(machine: MachineVaultMockData.machines[3])
+    MachineDetailView(machine: MachineVaultMockData.machines[3], viewModel: MachineVaultViewModel())
         .preferredColorScheme(.dark)
 }

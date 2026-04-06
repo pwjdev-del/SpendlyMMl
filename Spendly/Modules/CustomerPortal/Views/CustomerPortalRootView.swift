@@ -4,6 +4,8 @@ import SpendlyCore
 public struct CustomerPortalRootView: View {
 
     @State private var viewModel = CustomerPortalViewModel()
+    @State private var showAllTickets = false
+    @State private var showAllFleet = false
     @Environment(\.colorScheme) private var colorScheme
 
     public var body: some View {
@@ -335,20 +337,28 @@ public struct CustomerPortalRootView: View {
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
                 Spacer()
                 Button {
-                    // view all tickets
+                    withAnimation { showAllTickets.toggle() }
                 } label: {
-                    Text("View All Tickets")
+                    Text(showAllTickets ? "Show Less" : "View All Tickets")
                         .font(SpendlyFont.bodySemibold())
                         .foregroundStyle(SpendlyColors.primary)
                 }
             }
 
+            if showAllTickets {
+                LazyVStack(spacing: SpendlySpacing.sm) {
+                    ForEach(viewModel.recentIssues) { issue in
+                        issueCard(issue)
+                    }
+                }
+            } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SpendlySpacing.sm) {
                     ForEach(viewModel.recentIssues) { issue in
                         issueCard(issue)
                     }
                 }
+            }
             }
         }
     }
@@ -417,16 +427,16 @@ public struct CustomerPortalRootView: View {
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
                 Spacer()
                 Button {
-                    // view fleet details
+                    withAnimation { showAllFleet.toggle() }
                 } label: {
-                    Text("View Fleet Details")
+                    Text(showAllFleet ? "Show Less" : "View Fleet Details")
                         .font(SpendlyFont.bodySemibold())
                         .foregroundStyle(SpendlyColors.primary)
                 }
             }
 
             LazyVStack(spacing: SpendlySpacing.sm) {
-                ForEach(viewModel.machines) { machine in
+                ForEach(showAllFleet ? viewModel.machines : Array(viewModel.machines.prefix(3))) { machine in
                     machineRow(machine)
                 }
             }

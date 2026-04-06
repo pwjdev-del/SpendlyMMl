@@ -26,13 +26,11 @@ public struct KnowledgeBaseRootView: View {
                 .padding(.bottom, SpendlySpacing.xxxl * 2)
             }
         }
-        .sheet(isPresented: $viewModel.showArticleDetail) {
-            if let article = viewModel.selectedArticle {
-                ArticleDetailView(
-                    article: article,
-                    viewModel: viewModel
-                )
-            }
+        .sheet(item: $viewModel.selectedArticle) { article in
+            ArticleDetailView(
+                article: article,
+                viewModel: viewModel
+            )
         }
         .sheet(isPresented: $viewModel.showCreateArticle) {
             CreateArticleView(viewModel: viewModel)

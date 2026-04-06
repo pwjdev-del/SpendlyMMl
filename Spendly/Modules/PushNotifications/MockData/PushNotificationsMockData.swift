@@ -176,7 +176,7 @@ enum PushNotificationsMockData {
             type: .statusUpdate,
             priority: .medium,
             isRead: false,
-            timestamp: Calendar.current.date(byAdding: .minute, value: -5, to: Date())!,
+            timestamp: Calendar.current.date(byAdding: .minute, value: -5, to: Date()) ?? Date(),
             locationPreview: nil,
             quickActions: [
                 NotificationQuickAction(
@@ -196,7 +196,7 @@ enum PushNotificationsMockData {
             type: .estimateApproved,
             priority: .medium,
             isRead: false,
-            timestamp: Calendar.current.date(byAdding: .minute, value: -12, to: Date())!,
+            timestamp: Calendar.current.date(byAdding: .minute, value: -12, to: Date()) ?? Date(),
             locationPreview: nil,
             quickActions: [
                 NotificationQuickAction(
@@ -222,7 +222,7 @@ enum PushNotificationsMockData {
             type: .scheduleChange,
             priority: .high,
             isRead: true,
-            timestamp: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!,
+            timestamp: Calendar.current.date(byAdding: .hour, value: -2, to: Date()) ?? Date(),
             locationPreview: LocationPreview(
                 id: UUID(),
                 label: "Updated Location",
@@ -252,7 +252,7 @@ enum PushNotificationsMockData {
             type: .systemAlert,
             priority: .critical,
             isRead: true,
-            timestamp: Calendar.current.date(byAdding: .hour, value: -6, to: Date())!,
+            timestamp: Calendar.current.date(byAdding: .hour, value: -6, to: Date()) ?? Date(),
             locationPreview: nil,
             quickActions: [
                 NotificationQuickAction(
@@ -272,7 +272,7 @@ enum PushNotificationsMockData {
             type: .message,
             priority: .medium,
             isRead: false,
-            timestamp: Calendar.current.date(byAdding: .minute, value: -30, to: Date())!,
+            timestamp: Calendar.current.date(byAdding: .minute, value: -30, to: Date()) ?? Date(),
             locationPreview: nil,
             quickActions: [
                 NotificationQuickAction(

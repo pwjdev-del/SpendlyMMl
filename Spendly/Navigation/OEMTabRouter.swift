@@ -3,9 +3,21 @@ import SpendlyCore
 
 public struct OEMTabRouter: View {
     @State private var selectedTab = 0
+    @State private var sidebarSelection: Int? = 0
     @Environment(AuthState.self) private var authState
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public var body: some View {
+        if sizeClass == .regular {
+            iPadLayout
+        } else {
+            iPhoneLayout
+        }
+    }
+
+    // MARK: - iPhone (Tab Bar)
+
+    private var iPhoneLayout: some View {
         TabView(selection: $selectedTab) {
             NavigationStack { ManagerDashboardRootView() }
                 .tabItem { Label("Dashboard", systemImage: "square.grid.2x2") }
@@ -28,6 +40,87 @@ public struct OEMTabRouter: View {
                 .tag(4)
         }
         .tint(SpendlyColors.primary)
+    }
+
+    // MARK: - iPad (Sidebar)
+
+    private var iPadLayout: some View {
+        NavigationSplitView {
+            List(selection: $sidebarSelection) {
+                Section("Main") {
+                    Label("Dashboard", systemImage: "square.grid.2x2").tag(0)
+                    Label("Trips", systemImage: "briefcase").tag(1)
+                    Label("Approvals", systemImage: "checkmark.circle").tag(2)
+                    Label("Machines", systemImage: "gearshape.2").tag(3)
+                }
+
+                Section("Modules") {
+                    Label("Customers", systemImage: "person.crop.rectangle").tag(10)
+                    Label("Estimates", systemImage: "doc.text").tag(11)
+                    Label("Invoicing", systemImage: "doc.plaintext").tag(12)
+                    Label("Knowledge Base", systemImage: "books.vertical").tag(13)
+                    Label("Team Chat", systemImage: "message").tag(14)
+                    Label("Analytics", systemImage: "chart.xyaxis.line").tag(15)
+                    Label("Resources", systemImage: "person.2").tag(16)
+                }
+
+                Section("Account") {
+                    Label("Settings", systemImage: "gearshape").tag(20)
+                    Label("Notifications", systemImage: "bell").tag(21)
+                }
+            }
+            .navigationTitle("Spendly")
+            .listStyle(.sidebar)
+            .tint(SpendlyColors.primary)
+            .safeAreaInset(edge: .bottom) {
+                iPadSignOutButton
+            }
+        } detail: {
+            NavigationStack {
+                iPadDetailView
+            }
+        }
+        .tint(SpendlyColors.primary)
+    }
+
+    @ViewBuilder
+    private var iPadDetailView: some View {
+        switch sidebarSelection ?? 0 {
+        case 0:  ManagerDashboardRootView()
+        case 1:  JobExecutionRootView()
+        case 2:  ClientApprovalRootView()
+        case 3:  MachineVaultRootView()
+        case 10: CustomerProfileRootView()
+        case 11: EstimateBuilderRootView()
+        case 12: InvoicingBillingRootView()
+        case 13: KnowledgeBaseRootView()
+        case 14: TeamChatRootView()
+        case 15: AnalyticsDashboardsRootView()
+        case 16: ResourceManagementRootView()
+        case 20: SettingsNotificationsRootView()
+        case 21: PushNotificationsRootView()
+        default: ManagerDashboardRootView()
+        }
+    }
+
+    @State private var showLogoutConfirmationIPad = false
+
+    private var iPadSignOutButton: some View {
+        Button(role: .destructive) {
+            showLogoutConfirmationIPad = true
+        } label: {
+            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                .foregroundStyle(SpendlyColors.error)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 12)
+        }
+        .alert("Sign Out", isPresented: $showLogoutConfirmationIPad) {
+            Button("Sign Out", role: .destructive) { authState.logout() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to sign out?")
+        }
     }
 }
 

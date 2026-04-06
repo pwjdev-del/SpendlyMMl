@@ -46,7 +46,10 @@ final class AIDiagnosticsViewModel {
     var selectedMachineIndex: Int = 0
 
     var selectedMachine: MachineTemplate {
-        machineTemplates[selectedMachineIndex]
+        guard machineTemplates.indices.contains(selectedMachineIndex) else {
+            return machineTemplates.first ?? MachineTemplate(name: "Unknown", serialNumber: "N/A", model: "N/A")
+        }
+        return machineTemplates[selectedMachineIndex]
     }
 
     // MARK: - Wizard State

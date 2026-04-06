@@ -99,7 +99,7 @@ public enum AuthMockData {
         let vm = AuthViewModel()
         vm.email = validEmail
         vm.password = validPassword
-        vm.keepLoggedIn = true
+        vm.rememberMe = true
         return vm
     }
 

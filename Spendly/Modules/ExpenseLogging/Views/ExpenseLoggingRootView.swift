@@ -1,8 +1,12 @@
 import SwiftUI
+import PhotosUI
 import SpendlyCore
 
 public struct ExpenseLoggingRootView: View {
     @State private var vm = ExpenseLoggingViewModel()
+    @State private var showAllExpenses = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var receiptImage: Image?
     @Environment(\.colorScheme) private var colorScheme
 
     public var body: some View {
@@ -22,18 +26,20 @@ public struct ExpenseLoggingRootView: View {
                     recentSubmissionsSection
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .background(SpendlyColors.surface(for: colorScheme))
-        .sheet(isPresented: $vm.showingDetail) {
-            if let expense = vm.selectedExpense {
-                ExpenseDetailView(vm: vm, expense: expense)
-            }
+        .sheet(item: $vm.selectedExpense) { expense in
+            ExpenseDetailView(vm: vm, expenseID: expense.id)
         }
         .sheet(isPresented: $vm.showingRejectSheet) {
             rejectSheet
         }
         .alert("Expense Submitted", isPresented: $vm.showingSubmitConfirmation) {
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) {
+                receiptImage = nil
+                selectedPhotoItem = nil
+            }
         } message: {
             Text("Your expense has been submitted for approval.")
         }
@@ -53,9 +59,11 @@ public struct ExpenseLoggingRootView: View {
 
     private var quickCaptureSection: some View {
         VStack(spacing: 0) {
-            Button {
-                vm.hasReceipt = true
-            } label: {
+            PhotosPicker(
+                selection: $selectedPhotoItem,
+                matching: .images,
+                photoLibrary: .shared()
+            ) {
                 VStack(spacing: SpendlySpacing.md) {
                     ZStack {
                         Circle()
@@ -88,25 +96,49 @@ public struct ExpenseLoggingRootView: View {
                 .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
             }
             .buttonStyle(.plain)
-
-            if vm.hasReceipt {
-                HStack(spacing: SpendlySpacing.sm) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(SpendlyColors.success)
-                        .font(.system(size: 14))
-                    Text("Receipt captured")
-                        .font(SpendlyFont.caption())
-                        .foregroundStyle(SpendlyColors.success)
-                    Spacer()
-                    Button {
-                        vm.hasReceipt = false
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(SpendlyColors.secondary)
-                            .font(.system(size: 14))
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                Task {
+                    if let newItem,
+                       let data = try? await newItem.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        receiptImage = Image(uiImage: uiImage)
+                        vm.hasReceipt = true
                     }
                 }
-                .padding(.top, SpendlySpacing.sm)
+            }
+
+            if vm.hasReceipt, let receiptImage {
+                VStack(spacing: SpendlySpacing.sm) {
+                    HStack(spacing: SpendlySpacing.sm) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(SpendlyColors.success)
+                            .font(.system(size: 14))
+                        Text("Receipt captured")
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(SpendlyColors.success)
+                        Spacer()
+                        Button {
+                            vm.hasReceipt = false
+                            self.receiptImage = nil
+                            selectedPhotoItem = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(SpendlyColors.secondary)
+                                .font(.system(size: 14))
+                        }
+                    }
+                    .padding(.top, SpendlySpacing.sm)
+
+                    receiptImage
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                                .strokeBorder(SpendlyColors.secondary.opacity(0.15), lineWidth: 1)
+                        )
+                }
             }
         }
         .padding(SpendlySpacing.lg)
@@ -179,19 +211,24 @@ public struct ExpenseLoggingRootView: View {
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
                 Spacer()
                 Button {
-                    // View All action
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showAllExpenses.toggle()
+                    }
                 } label: {
-                    Text("View All")
+                    Text(showAllExpenses ? "Show Less" : "View All")
                         .font(SpendlyFont.caption())
                         .fontWeight(.bold)
                         .foregroundStyle(SpendlyColors.primary)
                 }
             }
 
-            if vm.recentExpenses.isEmpty {
+            if vm.expenses.isEmpty {
                 emptyState
             } else {
-                ForEach(vm.recentExpenses) { expense in
+                let visibleExpenses = showAllExpenses
+                    ? vm.expenses
+                    : Array(vm.expenses.prefix(5))
+                ForEach(visibleExpenses) { expense in
                     expenseCard(expense)
                 }
             }

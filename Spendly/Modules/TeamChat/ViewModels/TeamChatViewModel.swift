@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import PhotosUI
 import SpendlyCore
 
 // MARK: - Navigation Destination
@@ -25,6 +26,7 @@ final class TeamChatViewModel {
     var messageText: String = ""
     var isShowingAttachmentPicker: Bool = false
     var isShowingImagePicker: Bool = false
+    var selectedPhotoItem: PhotosPickerItem? = nil
 
     // MARK: - Navigation
 
@@ -111,11 +113,58 @@ final class TeamChatViewModel {
         simulateTypingResponse()
     }
 
+    func handlePhotoSelection(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        // In a real app this would load the image data; for now we append a photo message
+        let photoMessage = TeamChatMessage(
+            id: UUID(),
+            senderID: currentUserID,
+            senderName: "You",
+            senderRole: "Service Manager",
+            senderInitials: "ME",
+            senderAvatarURL: nil,
+            content: "",
+            kind: .image(imageName: "photo"),
+            timestamp: Date(),
+            isRead: false,
+            isOutgoing: true
+        )
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            messages.append(photoMessage)
+        }
+
+        selectedPhotoItem = nil
+    }
+
+    func handleFileAttachment(_ urls: [URL]) {
+        for url in urls {
+            let fileName = url.lastPathComponent
+            let attachmentMessage = TeamChatMessage(
+                id: UUID(),
+                senderID: currentUserID,
+                senderName: "You",
+                senderRole: "Service Manager",
+                senderInitials: "ME",
+                senderAvatarURL: nil,
+                content: "Attached: \(fileName)",
+                kind: .text,
+                timestamp: Date(),
+                isRead: false,
+                isOutgoing: true
+            )
+
+            withAnimation(.easeInOut(duration: 0.25)) {
+                messages.append(attachmentMessage)
+            }
+        }
+    }
+
     func selectRoom(_ room: ChatRoomSummary) {
         selectedRoom = room
-        // Load messages for the selected room (for now, always show TK-98234 conversation)
-        messages = TeamChatMockData.tk98234Messages
-        navigationPath.append(.chatRoom(roomID: room.id))
+        // Load messages for the selected room from the lookup dictionary
+        messages = TeamChatMockData.messagesByRoomID[room.id] ?? []
+        participants = room.participants
     }
 
     func markRoomAsRead(_ room: ChatRoomSummary) {

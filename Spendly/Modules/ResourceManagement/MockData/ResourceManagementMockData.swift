@@ -104,7 +104,7 @@ struct TechnicianDisplayItem: Identifiable, Equatable {
     var initials: String {
         let parts = name.split(separator: " ")
         let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
+        let last = parts.count > 1 ? (parts.last?.prefix(1) ?? "") : ""
         return "\(first)\(last)".uppercased()
     }
 
@@ -164,7 +164,7 @@ enum ResourceManagementMockData {
 
     static let technicians: [TechnicianDisplayItem] = [
         TechnicianDisplayItem(
-            id: UUID(uuidString: "E1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "E1111111-1111-1111-1111-111111111111") ?? UUID(),
             name: "Marcus Chen",
             specialty: "Expert HVAC Specialist",
             status: .onSite,
@@ -187,7 +187,7 @@ enum ResourceManagementMockData {
             praiseClient: "Acme Corp"
         ),
         TechnicianDisplayItem(
-            id: UUID(uuidString: "E2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "E2222222-2222-2222-2222-222222222222") ?? UUID(),
             name: "Sarah Jenkins",
             specialty: "Electrical Maintenance",
             status: .travel,
@@ -208,7 +208,7 @@ enum ResourceManagementMockData {
             praiseClient: "Zen Homes"
         ),
         TechnicianDisplayItem(
-            id: UUID(uuidString: "E3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "E3333333-3333-3333-3333-333333333333") ?? UUID(),
             name: "David Miller",
             specialty: "Security Systems",
             status: .available,
@@ -226,7 +226,7 @@ enum ResourceManagementMockData {
             praiseClient: "Stellar Logistics"
         ),
         TechnicianDisplayItem(
-            id: UUID(uuidString: "E4444444-4444-4444-4444-444444444444")!,
+            id: UUID(uuidString: "E4444444-4444-4444-4444-444444444444") ?? UUID(),
             name: "Alex Lopez",
             specialty: "Plumbing Systems",
             status: .onSite,
@@ -248,7 +248,7 @@ enum ResourceManagementMockData {
             praiseClient: "Global Industries"
         ),
         TechnicianDisplayItem(
-            id: UUID(uuidString: "E5555555-5555-5555-5555-555555555555")!,
+            id: UUID(uuidString: "E5555555-5555-5555-5555-555555555555") ?? UUID(),
             name: "Kate Barrett",
             specialty: "Fire Safety",
             status: .offDuty,
@@ -271,7 +271,7 @@ enum ResourceManagementMockData {
 
     static let unassignedRequests: [UnassignedRequest] = [
         UnassignedRequest(
-            id: UUID(uuidString: "F1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "F1111111-1111-1111-1111-111111111111") ?? UUID(),
             requestNumber: "#REQ-402",
             title: "HVAC Emergency Repair",
             customerName: "Global Industries - North Wing",
@@ -280,7 +280,7 @@ enum ResourceManagementMockData {
             priority: .high
         ),
         UnassignedRequest(
-            id: UUID(uuidString: "F2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "F2222222-2222-2222-2222-222222222222") ?? UUID(),
             requestNumber: "#REQ-405",
             title: "Annual System Audit",
             customerName: "TechCorp Solutions",
@@ -289,7 +289,7 @@ enum ResourceManagementMockData {
             priority: .maintenance
         ),
         UnassignedRequest(
-            id: UUID(uuidString: "F3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "F3333333-3333-3333-3333-333333333333") ?? UUID(),
             requestNumber: "#REQ-409",
             title: "Fire Safety Check",
             customerName: "Stellar Logistics",
@@ -303,14 +303,14 @@ enum ResourceManagementMockData {
 
     static let priorCommitments: [PriorCommitment] = [
         PriorCommitment(
-            id: UUID(uuidString: "G1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "G1111111-1111-1111-1111-111111111111") ?? UUID(),
             jobTitle: "Network Rack Install",
             customerName: "Stellar Logistics",
             technicianName: "Marcus Chen",
             timeSlot: "08:00 - 10:30"
         ),
         PriorCommitment(
-            id: UUID(uuidString: "G2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "G2222222-2222-2222-2222-222222222222") ?? UUID(),
             jobTitle: "CCTV Calibration",
             customerName: "Private Client #82",
             technicianName: "Sarah Jenkins",
@@ -322,41 +322,41 @@ enum ResourceManagementMockData {
 
     static let savedGroups: [SavedTechGroup] = [
         SavedTechGroup(
-            id: UUID(uuidString: "H1111111-1111-1111-1111-111111111111")!,
+            id: UUID(uuidString: "H1111111-1111-1111-1111-111111111111") ?? UUID(),
             name: "Plumbing Leads",
             technicianCount: 12,
             memberIDs: [
-                UUID(uuidString: "E3333333-3333-3333-3333-333333333333")!,
-                UUID(uuidString: "E2222222-2222-2222-2222-222222222222")!,
+                UUID(uuidString: "E3333333-3333-3333-3333-333333333333") ?? UUID(),
+                UUID(uuidString: "E2222222-2222-2222-2222-222222222222") ?? UUID(),
             ],
             updatedAt: dateFrom(year: 2026, month: 3, day: 24)
         ),
         SavedTechGroup(
-            id: UUID(uuidString: "H2222222-2222-2222-2222-222222222222")!,
+            id: UUID(uuidString: "H2222222-2222-2222-2222-222222222222") ?? UUID(),
             name: "Top Tier North",
             technicianCount: 8,
             memberIDs: [
-                UUID(uuidString: "E1111111-1111-1111-1111-111111111111")!,
-                UUID(uuidString: "E4444444-4444-4444-4444-444444444444")!,
+                UUID(uuidString: "E1111111-1111-1111-1111-111111111111") ?? UUID(),
+                UUID(uuidString: "E4444444-4444-4444-4444-444444444444") ?? UUID(),
             ],
             updatedAt: dateFrom(year: 2026, month: 3, day: 20)
         ),
         SavedTechGroup(
-            id: UUID(uuidString: "H3333333-3333-3333-3333-333333333333")!,
+            id: UUID(uuidString: "H3333333-3333-3333-3333-333333333333") ?? UUID(),
             name: "HVAC Specialists",
             technicianCount: 15,
             memberIDs: [
-                UUID(uuidString: "E1111111-1111-1111-1111-111111111111")!,
+                UUID(uuidString: "E1111111-1111-1111-1111-111111111111") ?? UUID(),
             ],
             updatedAt: dateFrom(year: 2026, month: 3, day: 18)
         ),
         SavedTechGroup(
-            id: UUID(uuidString: "H4444444-4444-4444-4444-444444444444")!,
+            id: UUID(uuidString: "H4444444-4444-4444-4444-444444444444") ?? UUID(),
             name: "Weekend Emergency",
             technicianCount: 5,
             memberIDs: [
-                UUID(uuidString: "E2222222-2222-2222-2222-222222222222")!,
-                UUID(uuidString: "E3333333-3333-3333-3333-333333333333")!,
+                UUID(uuidString: "E2222222-2222-2222-2222-222222222222") ?? UUID(),
+                UUID(uuidString: "E3333333-3333-3333-3333-333333333333") ?? UUID(),
             ],
             updatedAt: dateFrom(year: 2026, month: 3, day: 15)
         ),

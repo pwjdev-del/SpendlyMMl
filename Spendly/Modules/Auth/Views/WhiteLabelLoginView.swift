@@ -31,13 +31,15 @@ public struct WhiteLabelLoginView: View {
 
     // MARK: - Body
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     public var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    headerSection
-                    formSection
-                    footerSection
+            Group {
+                if sizeClass == .regular {
+                    iPadWhiteLabelLayout
+                } else {
+                    iPhoneWhiteLabelLayout
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -151,8 +153,8 @@ public struct WhiteLabelLoginView: View {
             // Password field
             passwordField
 
-            // Keep me logged in
-            SPToggle(isOn: $viewModel.keepLoggedIn, label: "Keep me logged in")
+            // Remember Me
+            SPToggle(isOn: $viewModel.rememberMe, label: "Remember Me")
 
             // Sign In button (uses brand primary)
             signInButton
@@ -334,6 +336,105 @@ public struct WhiteLabelLoginView: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - iPad Layout (Split: brand left, form right)
+
+    private var iPadWhiteLabelLayout: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                // Left: branding hero
+                ZStack {
+                    brandPrimary
+                        .ignoresSafeArea()
+
+                    VStack(spacing: SpendlySpacing.xl) {
+                        Spacer()
+
+                        if let logoURL = branding.customLogoURL, !logoURL.isEmpty {
+                            AsyncImage(url: URL(string: logoURL)) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image.resizable().scaledToFit()
+                                        .frame(width: 80, height: 80)
+                                        .clipShape(RoundedRectangle(cornerRadius: brandRadius, style: .continuous))
+                                default:
+                                    whiteLabelHeroIcon
+                                }
+                            }
+                        } else {
+                            whiteLabelHeroIcon
+                        }
+
+                        Text("Service Platform")
+                            .font(.custom("Inter-Bold", size: 32))
+                            .foregroundStyle(.white)
+
+                        Text("Secure Credential Management")
+                            .font(SpendlyFont.headline())
+                            .foregroundStyle(.white.opacity(0.7))
+
+                        Spacer()
+
+                        Text("v1.0.0-white-label")
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(.bottom, SpendlySpacing.xxxl)
+                    }
+                }
+                .frame(width: geo.size.width * 0.4)
+
+                // Right: form
+                ScrollView {
+                    VStack(spacing: SpendlySpacing.xl) {
+                        Spacer().frame(height: SpendlySpacing.xxxl)
+
+                        Text("Welcome Back")
+                            .font(.custom("Inter-Bold", size: 28))
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        emailField
+                        passwordField
+
+                        SPToggle(isOn: $viewModel.rememberMe, label: "Remember Me")
+
+                        signInButton
+
+                        orDivider
+                        biometricButtons
+
+                        Spacer().frame(height: SpendlySpacing.xxxl)
+                    }
+                    .padding(.horizontal, SpendlySpacing.xxxl + SpendlySpacing.lg)
+                }
+                .frame(width: geo.size.width * 0.6)
+                .background(SpendlyColors.background(for: colorScheme))
+            }
+        }
+    }
+
+    private var whiteLabelHeroIcon: some View {
+        RoundedRectangle(cornerRadius: brandRadius, style: .continuous)
+            .fill(.white.opacity(0.15))
+            .frame(width: 80, height: 80)
+            .overlay(
+                Image(systemName: "square.grid.2x2")
+                    .font(.system(size: 36))
+                    .foregroundStyle(.white)
+            )
+    }
+
+    // MARK: - iPhone Layout (original stacked)
+
+    private var iPhoneWhiteLabelLayout: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                headerSection
+                formSection
+                footerSection
+            }
+        }
     }
 
     // MARK: - Footer Section

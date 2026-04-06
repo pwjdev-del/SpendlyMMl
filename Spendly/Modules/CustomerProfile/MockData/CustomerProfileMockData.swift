@@ -4,7 +4,7 @@ import SpendlyCore
 
 // MARK: - Customer Display Model
 
-struct CustomerDisplayModel: Identifiable {
+struct CustomerDisplayModel: Identifiable, Codable {
     let id: UUID
     var name: String
     var companyName: String
@@ -31,7 +31,7 @@ struct CustomerDisplayModel: Identifiable {
     var initials: String {
         let parts = name.split(separator: " ")
         let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
+        let last = parts.count > 1 ? (parts.last?.prefix(1) ?? "") : ""
         return "\(first)\(last)".uppercased()
     }
 
@@ -46,7 +46,7 @@ struct CustomerDisplayModel: Identifiable {
 
 // MARK: - Payment Status
 
-enum PaymentStatusType: String, CaseIterable {
+enum PaymentStatusType: String, CaseIterable, Codable {
     case current = "Current"
     case overdue = "Overdue"
     case pending = "Pending"
@@ -64,7 +64,7 @@ enum PaymentStatusType: String, CaseIterable {
 
 // MARK: - Customer Machine Item
 
-struct CustomerMachineItem: Identifiable {
+struct CustomerMachineItem: Identifiable, Codable {
     let id: UUID
     var name: String
     var model: String
@@ -74,7 +74,7 @@ struct CustomerMachineItem: Identifiable {
 
 // MARK: - Customer Job Item
 
-struct CustomerJobItem: Identifiable {
+struct CustomerJobItem: Identifiable, Codable {
     let id: UUID
     var title: String
     var jobID: String
@@ -84,7 +84,7 @@ struct CustomerJobItem: Identifiable {
     var technicianName: String?
 }
 
-enum CustomerJobStatus: String {
+enum CustomerJobStatus: String, Codable {
     case inProgress = "In Progress"
     case completed = "Completed"
     case scheduled = "Scheduled"
@@ -132,8 +132,8 @@ enum CustomerProfileMockData {
             region: "West",
             contractType: "Annual",
             paymentStatus: .current,
-            lastActivityDate: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,
-            createdAt: Calendar.current.date(byAdding: .month, value: -18, to: Date())!,
+            lastActivityDate: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
+            createdAt: Calendar.current.date(byAdding: .month, value: -18, to: Date()) ?? Date(),
             notes: [
                 "Gate code: 7742. Security clearance needed for Zone B.",
                 "Prefers morning service appointments before 10 AM."
@@ -169,7 +169,7 @@ enum CustomerProfileMockData {
                     title: "SealMaster Belt Replacement",
                     jobID: "#8744",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date(),
                     amount: 2450.00,
                     technicianName: "Vikram Desai"
                 )
@@ -194,8 +194,8 @@ enum CustomerProfileMockData {
             region: "North",
             contractType: "Enterprise",
             paymentStatus: .current,
-            lastActivityDate: Calendar.current.date(byAdding: .day, value: -5, to: Date())!,
-            createdAt: Calendar.current.date(byAdding: .month, value: -24, to: Date())!,
+            lastActivityDate: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date(),
+            createdAt: Calendar.current.date(byAdding: .month, value: -24, to: Date()) ?? Date(),
             notes: [
                 "Requires 48-hour advance notice for all service calls.",
                 "Contact security desk first at ext 201."
@@ -215,7 +215,7 @@ enum CustomerProfileMockData {
                     title: "CorrugaMaster Annual Service",
                     jobID: "#8992",
                     status: .scheduled,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date(),
                     amount: nil,
                     technicianName: "Priya Nair"
                 ),
@@ -224,7 +224,7 @@ enum CustomerProfileMockData {
                     title: "Die Cutter Blade Sharpening",
                     jobID: "#8510",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date(),
                     amount: 1800.00,
                     technicianName: "Suresh Kumar"
                 )
@@ -249,8 +249,8 @@ enum CustomerProfileMockData {
             region: "East",
             contractType: "Per Call",
             paymentStatus: .overdue,
-            lastActivityDate: Calendar.current.date(byAdding: .day, value: -45, to: Date())!,
-            createdAt: Calendar.current.date(byAdding: .month, value: -8, to: Date())!,
+            lastActivityDate: Calendar.current.date(byAdding: .day, value: -45, to: Date()) ?? Date(),
+            createdAt: Calendar.current.date(byAdding: .month, value: -8, to: Date()) ?? Date(),
             notes: [
                 "Outstanding balance from Q3 invoice. Follow up required."
             ],
@@ -269,7 +269,7 @@ enum CustomerProfileMockData {
                     title: "BoxFold Emergency Repair",
                     jobID: "#8399",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: -45, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: -45, to: Date()) ?? Date(),
                     amount: 3400.00,
                     technicianName: "Farhan Khan"
                 )
@@ -294,8 +294,8 @@ enum CustomerProfileMockData {
             region: "South",
             contractType: "Annual",
             paymentStatus: .paid,
-            lastActivityDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
-            createdAt: Calendar.current.date(byAdding: .month, value: -36, to: Date())!,
+            lastActivityDate: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
+            createdAt: Calendar.current.date(byAdding: .month, value: -36, to: Date()) ?? Date(),
             notes: [
                 "VIP client. Dedicated account manager: Kiran.",
                 "Eco-friendly materials only for all service work."
@@ -338,7 +338,7 @@ enum CustomerProfileMockData {
                     title: "CoatMax UV Lamp Replacement",
                     jobID: "#8901",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: -20, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: -20, to: Date()) ?? Date(),
                     amount: 4200.00,
                     technicianName: "Deepak Rajan"
                 ),
@@ -347,7 +347,7 @@ enum CustomerProfileMockData {
                     title: "LaminaPro Roller Alignment",
                     jobID: "#8650",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: -60, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: -60, to: Date()) ?? Date(),
                     amount: 1500.00,
                     technicianName: "Suresh Kumar"
                 )
@@ -372,8 +372,8 @@ enum CustomerProfileMockData {
             region: "West",
             contractType: "Warranty",
             paymentStatus: .pending,
-            lastActivityDate: Calendar.current.date(byAdding: .day, value: -10, to: Date())!,
-            createdAt: Calendar.current.date(byAdding: .month, value: -4, to: Date())!,
+            lastActivityDate: Calendar.current.date(byAdding: .day, value: -10, to: Date()) ?? Date(),
+            createdAt: Calendar.current.date(byAdding: .month, value: -4, to: Date()) ?? Date(),
             notes: [
                 "New customer. Still under initial warranty period.",
                 "Parking available at Gate 3 only."
@@ -393,7 +393,7 @@ enum CustomerProfileMockData {
                     title: "Installation Commissioning",
                     jobID: "#9050",
                     status: .completed,
-                    scheduledDate: Calendar.current.date(byAdding: .month, value: -4, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .month, value: -4, to: Date()) ?? Date(),
                     amount: 0.00,
                     technicianName: "Amit Shah"
                 ),
@@ -402,7 +402,7 @@ enum CustomerProfileMockData {
                     title: "Warranty Inspection",
                     jobID: "#9155",
                     status: .scheduled,
-                    scheduledDate: Calendar.current.date(byAdding: .day, value: 14, to: Date())!,
+                    scheduledDate: Calendar.current.date(byAdding: .day, value: 14, to: Date()) ?? Date(),
                     amount: nil,
                     technicianName: "Amit Shah"
                 )

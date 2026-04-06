@@ -289,7 +289,7 @@ struct CustomerDetailView: View {
                                 .foregroundStyle(SpendlyColors.primary)
                         }
 
-                        ForEach(customer.notes, id: \.self) { note in
+                        ForEach(Array(customer.notes.enumerated()), id: \.offset) { _, note in
                             HStack(alignment: .top, spacing: SpendlySpacing.sm) {
                                 Circle()
                                     .fill(SpendlyColors.primary)

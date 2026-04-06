@@ -6,11 +6,40 @@ import SpendlyCore
 @Observable
 final class EstimateBuilderViewModel {
 
+    // MARK: - Persistence
+
+    private static let storageKey = "estimates"
+    private let storage = LocalStorageService.shared
+
     // MARK: - Data
 
     var estimates: [EstimateDisplayModel] = EstimateBuilderMockData.estimates
     var customers: [CustomerOption] = EstimateBuilderMockData.customers
     var taskTemplates: [TaskTemplate] = EstimateBuilderMockData.taskTemplates
+
+    // MARK: - Init
+
+    init() {
+        loadPersistedData()
+    }
+
+    private func loadPersistedData() {
+        if let saved: [EstimateDisplayModel] = storage.load(forKey: Self.storageKey) {
+            let mockIDs = Set(EstimateBuilderMockData.estimates.map(\.id))
+            let userCreated = saved.filter { !mockIDs.contains($0.id) }
+            var merged = EstimateBuilderMockData.estimates
+            for (index, mockItem) in merged.enumerated() {
+                if let savedVersion = saved.first(where: { $0.id == mockItem.id }) {
+                    merged[index] = savedVersion
+                }
+            }
+            estimates = userCreated + merged
+        }
+    }
+
+    private func persistEstimates() {
+        storage.save(estimates, forKey: Self.storageKey)
+    }
 
     // MARK: - List Search & Filter State
 
@@ -121,12 +150,31 @@ final class EstimateBuilderViewModel {
     var showCreateNew: Bool = false
     var selectedEstimate: EstimateDisplayModel?
 
+    // MARK: - Filter Date/Range State (for dateRange and range filter types)
+
+    var filterDateFrom: Date = Calendar.current.date(byAdding: .day, value: -90, to: Date()) ?? Date() {
+        didSet { isCreationDateFilterActive = true }
+    }
+    var filterDateTo: Date = Date() {
+        didSet { isCreationDateFilterActive = true }
+    }
+    var filterBudgetMax: Double = 10000 {
+        didSet { isBudgetRangeFilterActive = (filterBudgetMax < 10000) }
+    }
+    var isCreationDateFilterActive: Bool = false
+    var isBudgetRangeFilterActive: Bool = false
+
+    // MARK: - Saved Templates
+
+    var savedTemplates: [EstimateDisplayModel] = []
+
     // MARK: - Editor State
 
     var editorSelectedCustomerID: UUID?
     var editorTasks: [EstimateTaskItem] = []
     var editorTaxRate: Double = 0.08
     var editorDiscountPercent: Double = 0.0
+    var editorExpiresAt: Date = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
     var showTaskTemplatePicker: Bool = false
     var isGenerating: Bool = false
 
@@ -190,6 +238,76 @@ final class EstimateBuilderViewModel {
             }
         }
 
+        // Creation Date filter (dateRange type — only active after user changes dates)
+        if isCreationDateFilterActive {
+            results = results.filter { estimate in
+                estimate.createdAt >= filterDateFrom && estimate.createdAt <= filterDateTo
+            }
+        }
+
+        // Budget Range filter (range type — only active after user lowers the max)
+        if isBudgetRangeFilterActive {
+            results = results.filter { estimate in
+                estimate.grandTotal <= filterBudgetMax
+            }
+        }
+
+        // Payment Status filter
+        let selectedPayments = activeOptions(for: "Payment Status")
+        if !selectedPayments.isEmpty {
+            results = results.filter { selectedPayments.contains($0.paymentStatus) }
+        }
+
+        // Project Status filter
+        let selectedProjectStatuses = activeOptions(for: "Project Status")
+        if !selectedProjectStatuses.isEmpty {
+            results = results.filter { selectedProjectStatuses.contains($0.projectStatus) }
+        }
+
+        // Material Costs filter
+        let selectedMaterialCosts = activeOptions(for: "Material Costs")
+        if !selectedMaterialCosts.isEmpty {
+            results = results.filter { estimate in
+                for range in selectedMaterialCosts {
+                    switch range {
+                    case "Under $200":
+                        if estimate.materialCost < 200 { return true }
+                    case "$200 - $1,000":
+                        if estimate.materialCost >= 200 && estimate.materialCost <= 1000 { return true }
+                    case "Over $1,000":
+                        if estimate.materialCost > 1000 { return true }
+                    default:
+                        break
+                    }
+                }
+                return false
+            }
+        }
+
+        // Time Options filter
+        let selectedTimeOptions = activeOptions(for: "Time Options")
+        if !selectedTimeOptions.isEmpty {
+            let now = Date()
+            results = results.filter { estimate in
+                let daysSinceCreation = Calendar.current.dateComponents([.day], from: estimate.createdAt, to: now).day ?? 0
+                for option in selectedTimeOptions {
+                    switch option {
+                    case "Last 7 days":
+                        if daysSinceCreation <= 7 { return true }
+                    case "Last 30 days":
+                        if daysSinceCreation <= 30 { return true }
+                    case "Last 90 days":
+                        if daysSinceCreation <= 90 { return true }
+                    case "Over 90 days":
+                        if daysSinceCreation > 90 { return true }
+                    default:
+                        break
+                    }
+                }
+                return false
+            }
+        }
+
         return results
     }
 
@@ -210,9 +328,12 @@ final class EstimateBuilderViewModel {
     }
 
     var activeFilterCount: Int {
-        filterSections.reduce(0) { total, section in
+        var count = filterSections.reduce(0) { total, section in
             total + section.options.filter(\.isSelected).count
         }
+        if isCreationDateFilterActive { count += 1 }
+        if isBudgetRangeFilterActive { count += 1 }
+        return count
     }
 
     // MARK: - Editor Computed
@@ -249,6 +370,7 @@ final class EstimateBuilderViewModel {
         editorTasks = estimate.tasks
         editorTaxRate = estimate.taxRate
         editorDiscountPercent = estimate.discountPercent
+        editorExpiresAt = estimate.expiresAt
         editorSelectedCustomerID = customers.first(where: { $0.name == estimate.customerName })?.id
         showEditor = true
     }
@@ -258,6 +380,7 @@ final class EstimateBuilderViewModel {
         editorTasks = []
         editorTaxRate = 0.08
         editorDiscountPercent = 0.0
+        editorExpiresAt = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
         editorSelectedCustomerID = nil
         showCreateNew = true
     }
@@ -290,26 +413,114 @@ final class EstimateBuilderViewModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             guard let self else { return }
             let customer = self.customers.first(where: { $0.id == self.editorSelectedCustomerID })
-            let newEstimate = EstimateDisplayModel(
-                id: UUID(),
-                estimateNumber: "EST-2026-\(String(format: "%03d", self.estimates.count + 1))",
-                customerName: customer?.name ?? "Unknown",
-                customerAddress: customer?.address ?? "",
-                status: .draft,
-                tasks: self.editorTasks,
-                taxRate: self.editorTaxRate,
-                discountPercent: self.editorDiscountPercent,
-                createdAt: Date(),
-                expiresAt: Calendar.current.date(byAdding: .day, value: 30, to: Date())!,
-                region: "North",
-                projectType: "Installation",
-                technicianName: "Unassigned"
-            )
-            self.estimates.insert(newEstimate, at: 0)
+
+            if let existing = self.selectedEstimate,
+               let index = self.estimates.firstIndex(where: { $0.id == existing.id }) {
+                // BUG 1 FIX: Update the existing estimate in place
+                self.estimates[index].customerName = customer?.name ?? existing.customerName
+                self.estimates[index].customerAddress = customer?.address ?? existing.customerAddress
+                self.estimates[index].tasks = self.editorTasks
+                self.estimates[index].taxRate = self.editorTaxRate
+                self.estimates[index].discountPercent = self.editorDiscountPercent
+                self.estimates[index].expiresAt = self.editorExpiresAt
+            } else {
+                // Create a brand-new estimate
+                let newEstimate = EstimateDisplayModel(
+                    id: UUID(),
+                    estimateNumber: "EST-2026-\(String(format: "%03d", self.estimates.count + 1))",
+                    customerName: customer?.name ?? "Unknown",
+                    customerAddress: customer?.address ?? "",
+                    status: .draft,
+                    tasks: self.editorTasks,
+                    taxRate: self.editorTaxRate,
+                    discountPercent: self.editorDiscountPercent,
+                    createdAt: Date(),
+                    expiresAt: self.editorExpiresAt,
+                    region: "North",
+                    projectType: "Installation",
+                    technicianName: "Unassigned",
+                    paymentStatus: "Unpaid",
+                    projectStatus: "Not Started",
+                    materialCost: 0
+                )
+                self.estimates.insert(newEstimate, at: 0)
+            }
+
+            self.persistEstimates()
             self.isGenerating = false
             self.showCreateNew = false
             self.showEditor = false
         }
+    }
+
+    // MARK: - Save as Draft (BUG 3 FIX)
+
+    func saveAsDraft() {
+        let customer = customers.first(where: { $0.id == editorSelectedCustomerID })
+
+        if let existing = selectedEstimate,
+           let index = estimates.firstIndex(where: { $0.id == existing.id }) {
+            // Update existing estimate as draft
+            estimates[index].status = .draft
+            estimates[index].customerName = customer?.name ?? existing.customerName
+            estimates[index].customerAddress = customer?.address ?? existing.customerAddress
+            estimates[index].tasks = editorTasks
+            estimates[index].taxRate = editorTaxRate
+            estimates[index].discountPercent = editorDiscountPercent
+            estimates[index].expiresAt = editorExpiresAt
+        } else {
+            // Create new draft estimate
+            let draft = EstimateDisplayModel(
+                id: UUID(),
+                estimateNumber: "EST-2026-\(String(format: "%03d", estimates.count + 1))",
+                customerName: customer?.name ?? "Unknown",
+                customerAddress: customer?.address ?? "",
+                status: .draft,
+                tasks: editorTasks,
+                taxRate: editorTaxRate,
+                discountPercent: editorDiscountPercent,
+                createdAt: Date(),
+                expiresAt: editorExpiresAt,
+                region: "North",
+                projectType: "Installation",
+                technicianName: "Unassigned",
+                paymentStatus: "Unpaid",
+                projectStatus: "Not Started",
+                materialCost: 0
+            )
+            estimates.insert(draft, at: 0)
+        }
+
+        persistEstimates()
+        showCreateNew = false
+        showEditor = false
+    }
+
+    // MARK: - Save as Template (BUG 3 FIX)
+
+    func saveAsTemplate() {
+        let customer = customers.first(where: { $0.id == editorSelectedCustomerID })
+        let template = EstimateDisplayModel(
+            id: UUID(),
+            estimateNumber: "TMPL-\(String(format: "%03d", savedTemplates.count + 1))",
+            customerName: customer?.name ?? "Template",
+            customerAddress: customer?.address ?? "",
+            status: .draft,
+            tasks: editorTasks,
+            taxRate: editorTaxRate,
+            discountPercent: editorDiscountPercent,
+            createdAt: Date(),
+            expiresAt: editorExpiresAt,
+            region: "North",
+            projectType: "Installation",
+            technicianName: "Unassigned",
+            paymentStatus: "Unpaid",
+            projectStatus: "Not Started",
+            materialCost: 0
+        )
+        savedTemplates.append(template)
+        showCreateNew = false
+        showEditor = false
     }
 
     // MARK: - Helpers

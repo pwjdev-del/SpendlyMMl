@@ -7,45 +7,57 @@ public struct SettingsNotificationsRootView: View {
 
     @State private var viewModel = SettingsNotificationsViewModel()
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(AuthState.self) private var authState
+    @State private var showLogoutConfirmation = false
+    @State private var showChangePassword = false
+    @State private var showHelpCenter = false
+
+    private let biometricAuth = BiometricAuth.shared
 
     public init() {}
 
     public var body: some View {
-        NavigationStack {
-            ZStack {
-                SpendlyColors.background(for: colorScheme)
-                    .ignoresSafeArea()
+        ZStack {
+            SpendlyColors.background(for: colorScheme)
+                .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        profileHeader
-                        notificationsSection
-                        securitySection
-                        appPreferencesSection
-                        supportSection
-                    }
-                    .padding(.bottom, SpendlySpacing.xxxl)
+            ScrollView {
+                VStack(spacing: 0) {
+                    profileHeader
+                    notificationsSection
+                    securitySection
+                    appPreferencesSection
+                    supportSection
                 }
+                .padding(.bottom, SpendlySpacing.xxxl)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Settings")
-                        .font(SpendlyFont.headline())
-                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
-                }
+        }
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $viewModel.activeSheet) { sheet in
+            switch sheet {
+            case .notifications:
+                NotificationSettingsView(viewModel: viewModel)
+            case .general:
+                GeneralSettingsView(viewModel: viewModel)
+            default:
+                EmptyView()
             }
-            .sheet(item: $viewModel.activeSheet) { sheet in
-                switch sheet {
-                case .notifications:
-                    NotificationSettingsView(viewModel: viewModel)
-                case .general:
-                    GeneralSettingsView(viewModel: viewModel)
-                default:
-                    EmptyView()
-                }
+        }
+        .preferredColorScheme(viewModel.darkModeColorScheme)
+        .alert("Sign Out", isPresented: $showLogoutConfirmation) {
+            Button("Sign Out", role: .destructive) {
+                authState.logout()
             }
-            .preferredColorScheme(viewModel.darkModeColorScheme)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to sign out?")
+        }
+        .sheet(isPresented: $showChangePassword) {
+            ChangePasswordSheetView()
+        }
+        .sheet(isPresented: $showHelpCenter) {
+            HelpCenterSheetView()
         }
     }
 
@@ -165,17 +177,21 @@ public struct SettingsNotificationsRootView: View {
                         icon: SpendlyIcon.lock.systemName,
                         label: "Change Password"
                     ) {
-                        // Placeholder action
+                        showChangePassword = true
                     }
 
-                    rowDivider
+                    // Face ID / Touch ID toggle (only shown on devices with biometric capability)
+                    if biometricAuth.canUseBiometrics() {
+                        rowDivider
 
-                    // Biometric Login
-                    settingsToggleRow(
-                        icon: SpendlyIcon.fingerprint.systemName,
-                        label: "Biometric Login",
-                        isOn: $viewModel.biometricLoginEnabled
-                    )
+                        settingsToggleRow(
+                            icon: biometricAuth.biometricTypeName == "Touch ID"
+                                ? SpendlyIcon.fingerprint.systemName
+                                : SpendlyIcon.face.systemName,
+                            label: "\(biometricAuth.biometricTypeName) Login",
+                            isOn: $viewModel.biometricLoginEnabled
+                        )
+                    }
                 }
             }
             .padding(.horizontal, SpendlySpacing.lg)
@@ -264,7 +280,7 @@ public struct SettingsNotificationsRootView: View {
 
                     // Logout
                     Button {
-                        // Logout action placeholder
+                        showLogoutConfirmation = true
                     } label: {
                         Text("Logout")
                             .font(SpendlyFont.bodySemibold())
@@ -366,7 +382,7 @@ public struct SettingsNotificationsRootView: View {
         label: String
     ) -> some View {
         Button {
-            // External link placeholder
+            showHelpCenter = true
         } label: {
             HStack(spacing: SpendlySpacing.md) {
                 Image(systemName: icon)
@@ -391,13 +407,99 @@ public struct SettingsNotificationsRootView: View {
     }
 }
 
+// MARK: - Change Password Sheet
+
+private struct ChangePasswordSheetView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var currentPassword = ""
+    @State private var newPassword = ""
+    @State private var confirmPassword = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Current Password") {
+                    SecureField("Enter current password", text: $currentPassword)
+                }
+                Section("New Password") {
+                    SecureField("Enter new password", text: $newPassword)
+                    SecureField("Confirm new password", text: $confirmPassword)
+                }
+                Section {
+                    Button("Update Password") {
+                        // TODO: Implement password change logic
+                        dismiss()
+                    }
+                    .disabled(currentPassword.isEmpty || newPassword.isEmpty || newPassword != confirmPassword)
+                }
+            }
+            .navigationTitle("Change Password")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Help Center Sheet
+
+private struct HelpCenterSheetView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Frequently Asked Questions") {
+                    helpRow(question: "How do I create a new work order?",
+                            answer: "Navigate to the Dashboard and tap the + button to create a new work order.")
+                    helpRow(question: "How do I manage my team?",
+                            answer: "Go to Resources in the More menu to view and manage team members.")
+                    helpRow(question: "How do I generate invoices?",
+                            answer: "Open Invoicing from the More menu, then tap Create Invoice.")
+                    helpRow(question: "How do I reset my password?",
+                            answer: "Go to Settings > Security > Change Password to update your credentials.")
+                }
+                Section("Contact Support") {
+                    Label("support@spendly.com", systemImage: "envelope")
+                    Label("1-800-SPENDLY", systemImage: "phone")
+                }
+            }
+            .navigationTitle("Help Center")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func helpRow(question: String, answer: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(question)
+                .font(SpendlyFont.bodySemibold())
+            Text(answer)
+                .font(SpendlyFont.body())
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Settings Root") {
     SettingsNotificationsRootView()
+        .environment(AuthState())
 }
 
 #Preview("Settings Root - Dark") {
     SettingsNotificationsRootView()
+        .environment(AuthState())
         .preferredColorScheme(.dark)
 }

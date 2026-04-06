@@ -6,7 +6,20 @@ import SpendlyCore
 /// Lightweight view-model struct used for UI display in the Knowledge Base module.
 /// Maps loosely to `Article` from CoreModels but adds KB-specific display fields
 /// (author name, read time, thumbnail, category icon, view count, bookmarked state).
-struct KBArticle: Identifiable, Hashable {
+/// Represents a file attachment on an article (name + optional size label).
+struct KBAttachment: Identifiable, Hashable, Codable {
+    let id: UUID
+    let fileName: String
+    let fileSize: String          // human-readable, e.g. "2.4 MB"
+
+    init(id: UUID = UUID(), fileName: String, fileSize: String = "") {
+        self.id = id
+        self.fileName = fileName
+        self.fileSize = fileSize
+    }
+}
+
+struct KBArticle: Identifiable, Hashable, Codable {
     let id: UUID
     let title: String
     let summary: String
@@ -22,6 +35,7 @@ struct KBArticle: Identifiable, Hashable {
     let tags: [String]
     var isBookmarked: Bool
     var privateNotes: [KBNote]
+    var attachments: [KBAttachment]
 
     // Computed
     var formattedDate: String {
@@ -37,7 +51,7 @@ struct KBArticle: Identifiable, Hashable {
 
 // MARK: - Knowledge Base Category
 
-enum KBCategory: String, CaseIterable, Hashable, Identifiable {
+enum KBCategory: String, CaseIterable, Hashable, Identifiable, Codable {
     case commonRepairs     = "Common Repairs"
     case machineManuals    = "Machine Manuals"
     case troubleshooting   = "Troubleshooting"
@@ -75,7 +89,7 @@ enum KBCategory: String, CaseIterable, Hashable, Identifiable {
 
 // MARK: - Private Note
 
-struct KBNote: Identifiable, Hashable {
+struct KBNote: Identifiable, Hashable, Codable {
     let id: UUID
     var content: String
     let createdAt: Date
@@ -113,7 +127,7 @@ enum KnowledgeBaseMockData {
 
     // Date helpers
     private static func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: y, month: m, day: d))!
+        Calendar.current.date(from: DateComponents(year: y, month: m, day: d)) ?? Date()
     }
 
     // MARK: Articles
@@ -163,6 +177,9 @@ enum KnowledgeBaseMockData {
             isBookmarked: true,
             privateNotes: [
                 KBNote(content: "Used this guide on the Industrial Unit #102 job. Step 2 was the key fix - bad capacitor.", createdAt: date(2025, 11, 5))
+            ],
+            attachments: [
+                KBAttachment(fileName: "compressor_wiring_diagram.pdf", fileSize: "1.2 MB")
             ]
         ),
         KBArticle(
@@ -208,7 +225,11 @@ enum KnowledgeBaseMockData {
             status: .published,
             tags: ["Compressor", "Maintenance", "Gen-X", "Valves"],
             isBookmarked: false,
-            privateNotes: []
+            privateNotes: [],
+            attachments: [
+                KBAttachment(fileName: "gen_x_valve_specs.pdf", fileSize: "3.1 MB"),
+                KBAttachment(fileName: "oil_analysis_form.xlsx", fileSize: "84 KB")
+            ]
         ),
         KBArticle(
             id: UUID(),
@@ -248,7 +269,8 @@ enum KnowledgeBaseMockData {
             status: .published,
             tags: ["OSHA", "Safety", "High Voltage", "PPE", "Compliance"],
             isBookmarked: true,
-            privateNotes: []
+            privateNotes: [],
+            attachments: []
         ),
         KBArticle(
             id: UUID(),
@@ -297,7 +319,8 @@ enum KnowledgeBaseMockData {
             isBookmarked: false,
             privateNotes: [
                 KBNote(content: "This works great on the H-12 pump systems. Saved 30 minutes on the last job.", createdAt: date(2025, 12, 3))
-            ]
+            ],
+            attachments: []
         ),
         KBArticle(
             id: UUID(),
@@ -347,7 +370,8 @@ enum KnowledgeBaseMockData {
             status: .published,
             tags: ["HVAC", "Leak Detection", "Refrigerant", "Split-System"],
             isBookmarked: false,
-            privateNotes: []
+            privateNotes: [],
+            attachments: []
         ),
         KBArticle(
             id: UUID(),
@@ -401,7 +425,8 @@ enum KnowledgeBaseMockData {
             status: .published,
             tags: ["Crane", "Heavy Lift", "Safety", "Checklist", "Operations"],
             isBookmarked: false,
-            privateNotes: []
+            privateNotes: [],
+            attachments: []
         ),
     ]
 

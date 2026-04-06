@@ -48,14 +48,20 @@ public struct TripReportRootView: View {
                 case .completion(let id):
                     if let trip = viewModel.completedTrips.first(where: { $0.id == id }) {
                         TripCompletionView(trip: trip, viewModel: viewModel)
+                    } else {
+                        ContentUnavailableView("Trip Not Found", systemImage: "doc.text", description: Text("This trip report is no longer available."))
                     }
                 case .pdfPreview(let id):
                     if let trip = viewModel.completedTrips.first(where: { $0.id == id }) {
                         TripReportPDFView(trip: trip, viewModel: viewModel)
+                    } else {
+                        ContentUnavailableView("Trip Not Found", systemImage: "doc.text", description: Text("This trip report is no longer available."))
                     }
                 case .emailReport(let id):
                     if let trip = viewModel.completedTrips.first(where: { $0.id == id }) {
                         EmailReportView(trip: trip, viewModel: viewModel)
+                    } else {
+                        ContentUnavailableView("Trip Not Found", systemImage: "doc.text", description: Text("This trip report is no longer available."))
                     }
                 case .sendSuccess(let sentTo):
                     SendSuccessView(sentEmails: sentTo, viewModel: viewModel)

@@ -6,6 +6,7 @@ import SpendlyCore
 public struct InvoicingBillingRootView: View {
 
     @State private var viewModel = InvoicingBillingViewModel()
+    @State private var showAllReadyToInvoice = false
     @Environment(\.colorScheme) private var colorScheme
 
     public init() {}
@@ -57,6 +58,8 @@ public struct InvoicingBillingRootView: View {
         .navigationDestination(isPresented: $viewModel.showInvoiceDetail) {
             if let invoice = viewModel.selectedInvoice {
                 InvoiceDetailView(viewModel: viewModel, invoice: invoice)
+            } else {
+                ContentUnavailableView("Invoice Not Found", systemImage: "doc.plaintext", description: Text("This invoice is no longer available."))
             }
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.isSearchActive)
@@ -280,9 +283,11 @@ public struct InvoicingBillingRootView: View {
                 Spacer()
 
                 Button {
-                    // View all action
+                    withAnimation {
+                        showAllReadyToInvoice.toggle()
+                    }
                 } label: {
-                    Text("View All")
+                    Text(showAllReadyToInvoice ? "Show Less" : "View All")
                         .font(SpendlyFont.bodySemibold())
                         .foregroundStyle(SpendlyColors.primary)
                 }
@@ -290,7 +295,7 @@ public struct InvoicingBillingRootView: View {
             .padding(.horizontal, SpendlySpacing.xs)
 
             // Job cards
-            ForEach(viewModel.readyToInvoiceJobs) { job in
+            ForEach(showAllReadyToInvoice ? viewModel.readyToInvoiceJobs : Array(viewModel.readyToInvoiceJobs.prefix(3))) { job in
                 ReadyToInvoiceCard(job: job, viewModel: viewModel)
             }
         }

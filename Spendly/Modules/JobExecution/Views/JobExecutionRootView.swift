@@ -6,31 +6,43 @@ import SpendlyCore
 public struct JobExecutionRootView: View {
 
     @State private var viewModel = JobExecutionViewModel()
+    @State private var showFullMonthSheet: Bool = false
+    @State private var showNotificationsSheet: Bool = false
     @Environment(\.colorScheme) private var colorScheme
 
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // MARK: - Header + Weekly Strip
-                scheduleHeader
+        VStack(spacing: 0) {
+            // MARK: - Header + Weekly Strip
+            scheduleHeader
 
-                // MARK: - Timeline Content
-                ScrollView {
-                    VStack(spacing: 0) {
-                        timelineView
-                    }
-                    .padding(.top, SpendlySpacing.lg)
-                    .padding(.bottom, 80)
+            // MARK: - Timeline Content
+            ScrollView {
+                VStack(spacing: 0) {
+                    timelineView
                 }
-                .background(SpendlyColors.background(for: colorScheme))
+                .padding(.top, SpendlySpacing.lg)
+                .padding(.bottom, 80)
             }
             .background(SpendlyColors.background(for: colorScheme))
-            .navigationBarHidden(true)
-            .sheet(isPresented: $viewModel.showTimerView) {
-                if let job = viewModel.selectedJob {
-                    JobExecutionTimerView(viewModel: viewModel, job: job)
-                }
-            }
+        }
+        .background(SpendlyColors.background(for: colorScheme))
+        .navigationBarHidden(true)
+        .sheet(isPresented: $viewModel.showTimerView) {
+            JobExecutionTimerView(viewModel: viewModel)
+        }
+        .sheet(item: $viewModel.mapJob) { job in
+            JobLocationMapView(
+                jobTitle: job.title,
+                address: job.location,
+                latitude: job.latitude,
+                longitude: job.longitude
+            )
+        }
+        .sheet(isPresented: $showFullMonthSheet) {
+            fullMonthCalendarSheet
+        }
+        .sheet(isPresented: $showNotificationsSheet) {
+            notificationsSheet
         }
     }
 
@@ -40,7 +52,17 @@ public struct JobExecutionRootView: View {
         VStack(spacing: 0) {
             // Top bar
             HStack {
-                Button {} label: {
+                Menu {
+                    Button { viewModel.sortBy = .date } label: {
+                        Label("Sort by Date", systemImage: "calendar")
+                    }
+                    Button { viewModel.sortBy = .priority } label: {
+                        Label("Sort by Priority", systemImage: "exclamationmark.triangle")
+                    }
+                    Button { viewModel.sortBy = .status } label: {
+                        Label("Sort by Status", systemImage: "circle.grid.2x2")
+                    }
+                } label: {
                     Image(systemName: SpendlyIcon.menu.systemName)
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(SpendlyColors.secondary)
@@ -56,7 +78,9 @@ public struct JobExecutionRootView: View {
                 Spacer()
 
                 HStack(spacing: SpendlySpacing.sm) {
-                    Button {} label: {
+                    Button {
+                        showNotificationsSheet = true
+                    } label: {
                         Image(systemName: SpendlyIcon.notifications.systemName)
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(SpendlyColors.secondary)
@@ -84,7 +108,9 @@ public struct JobExecutionRootView: View {
 
                 Spacer()
 
-                Button {} label: {
+                Button {
+                    showFullMonthSheet = true
+                } label: {
                     HStack(spacing: SpendlySpacing.xs) {
                         Text("Full Month")
                             .font(SpendlyFont.caption())
@@ -287,7 +313,9 @@ public struct JobExecutionRootView: View {
                     Spacer()
 
                     if job.status == .inProgress {
-                        Button {} label: {
+                        Button {
+                            viewModel.openMapForJob(job)
+                        } label: {
                             Image(systemName: "location.north.fill")
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(.white)
@@ -386,7 +414,7 @@ public struct JobExecutionRootView: View {
     private func inProgressButtons(for job: JobDisplayModel) -> some View {
         HStack(spacing: SpendlySpacing.sm) {
             Button {
-                viewModel.openJob(job)
+                viewModel.openMapForJob(job)
             } label: {
                 HStack(spacing: SpendlySpacing.sm) {
                     Image(systemName: SpendlyIcon.directions.systemName)
@@ -417,7 +445,7 @@ public struct JobExecutionRootView: View {
 
     private func upcomingButtons(for job: JobDisplayModel) -> some View {
         Button {
-            viewModel.openJob(job)
+            viewModel.openMapForJob(job)
         } label: {
             HStack(spacing: SpendlySpacing.sm) {
                 Image(systemName: SpendlyIcon.directions.systemName)
@@ -434,6 +462,183 @@ public struct JobExecutionRootView: View {
                 RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
                     .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
             )
+        }
+    }
+    // MARK: - Full Month Calendar Sheet
+
+    private var fullMonthCalendarSheet: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                DatePicker(
+                    "Select Date",
+                    selection: Binding(
+                        get: { viewModel.selectedDate },
+                        set: { newDate in
+                            if let idx = viewModel.weekDays.firstIndex(where: {
+                                Calendar.current.isDate($0.date, inSameDayAs: newDate)
+                            }) {
+                                viewModel.selectDay(at: idx)
+                            }
+                            showFullMonthSheet = false
+                        }
+                    ),
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.graphical)
+                .tint(SpendlyColors.primary)
+                .padding(SpendlySpacing.lg)
+
+                VStack(alignment: .leading, spacing: SpendlySpacing.md) {
+                    Text("Jobs on Selected Day")
+                        .font(SpendlyFont.bodySemibold())
+                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        .padding(.horizontal, SpendlySpacing.lg)
+
+                    if viewModel.jobsForSelectedDay.isEmpty {
+                        Text("No jobs scheduled")
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(SpendlyColors.secondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, SpendlySpacing.xl)
+                    } else {
+                        ForEach(viewModel.jobsForSelectedDay) { job in
+                            HStack(spacing: SpendlySpacing.md) {
+                                Circle()
+                                    .fill(job.status.dotColor)
+                                    .frame(width: 8, height: 8)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(job.title)
+                                        .font(SpendlyFont.caption())
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                                    Text(job.scheduledTimeRange)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                }
+                                Spacer()
+                                SPBadge(job.status.rawValue, style: job.status.badgeStyle)
+                            }
+                            .padding(.horizontal, SpendlySpacing.lg)
+                            .padding(.vertical, SpendlySpacing.sm)
+                        }
+                    }
+                }
+
+                Spacer()
+            }
+            .background(SpendlyColors.background(for: colorScheme))
+            .navigationTitle("Full Month")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        showFullMonthSheet = false
+                    }
+                    .font(SpendlyFont.bodySemibold())
+                    .foregroundStyle(SpendlyColors.primary)
+                }
+            }
+        }
+    }
+
+    // MARK: - Notifications Sheet
+
+    private var notificationsSheet: some View {
+        NavigationStack {
+            List {
+                ForEach(viewModel.jobs) { job in
+                    HStack(spacing: SpendlySpacing.md) {
+                        ZStack {
+                            Circle()
+                                .fill(notificationIconColor(for: job).opacity(0.15))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: notificationIcon(for: job))
+                                .font(.system(size: 16))
+                                .foregroundStyle(notificationIconColor(for: job))
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(notificationTitle(for: job))
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Text(job.title)
+                                .font(SpendlyFont.caption())
+                                .foregroundStyle(SpendlyColors.secondary)
+                            Text(job.startTimeLabel)
+                                .font(.system(size: 11))
+                                .foregroundStyle(SpendlyColors.secondary.opacity(0.7))
+                        }
+
+                        Spacer()
+
+                        Circle()
+                            .fill(job.status == .inProgress ? SpendlyColors.primary : .clear)
+                            .frame(width: 8, height: 8)
+                    }
+                    .listRowBackground(SpendlyColors.surface(for: colorScheme))
+                }
+
+                if viewModel.isOffline {
+                    HStack(spacing: SpendlySpacing.md) {
+                        ZStack {
+                            Circle()
+                                .fill(SpendlyColors.warning.opacity(0.15))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: "wifi.slash")
+                                .font(.system(size: 16))
+                                .foregroundStyle(SpendlyColors.warning)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Offline Mode Active")
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Text("Some data may not be synced")
+                                .font(SpendlyFont.caption())
+                                .foregroundStyle(SpendlyColors.secondary)
+                        }
+                    }
+                    .listRowBackground(SpendlyColors.surface(for: colorScheme))
+                }
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(SpendlyColors.background(for: colorScheme))
+            .navigationTitle("Notifications")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        showNotificationsSheet = false
+                    }
+                    .font(SpendlyFont.bodySemibold())
+                    .foregroundStyle(SpendlyColors.primary)
+                }
+            }
+        }
+    }
+
+    private func notificationTitle(for job: JobDisplayModel) -> String {
+        switch job.status {
+        case .completed:  return "Job Completed"
+        case .inProgress: return "Job In Progress"
+        case .upcoming:   return "Upcoming Job"
+        }
+    }
+
+    private func notificationIcon(for job: JobDisplayModel) -> String {
+        switch job.status {
+        case .completed:  return "checkmark.circle.fill"
+        case .inProgress: return "clock.fill"
+        case .upcoming:   return "calendar.badge.clock"
+        }
+    }
+
+    private func notificationIconColor(for job: JobDisplayModel) -> Color {
+        switch job.status {
+        case .completed:  return SpendlyColors.success
+        case .inProgress: return SpendlyColors.primary
+        case .upcoming:   return SpendlyColors.warning
         }
     }
 }

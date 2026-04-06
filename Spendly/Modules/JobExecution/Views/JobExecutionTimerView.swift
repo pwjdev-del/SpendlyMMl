@@ -6,16 +6,27 @@ import SpendlyCore
 struct JobExecutionTimerView: View {
 
     @Bindable var viewModel: JobExecutionViewModel
-    let job: JobDisplayModel
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
 
     @State private var showMaterialSheet: Bool = false
     @State private var showPhotoCapture: Bool = false
+    @State private var showJobInfoSheet: Bool = false
     @State private var materialName: String = ""
     @State private var materialQuantity: String = "1"
     @State private var materialCost: String = ""
+
+    /// Always read the live job from the viewModel's jobs array so mutations are visible.
+    /// This is non-optional because the view should only be shown when a job is selected.
+    private var job: JobDisplayModel {
+        if let sel = viewModel.selectedJob,
+           let live = viewModel.jobs.first(where: { $0.id == sel.id }) {
+            return live
+        }
+        // Fallback to selectedJob; in practice this view is only shown when selectedJob != nil
+        return viewModel.selectedJob ?? JobDisplayModel.placeholder
+    }
 
     var body: some View {
         NavigationStack {
@@ -48,6 +59,9 @@ struct JobExecutionTimerView: View {
             .sheet(isPresented: $showPhotoCapture) {
                 PhotoCaptureView(viewModel: viewModel, jobID: job.id)
             }
+            .sheet(isPresented: $showJobInfoSheet) {
+                jobInfoSheet
+            }
         }
     }
 
@@ -76,7 +90,9 @@ struct JobExecutionTimerView: View {
 
             Spacer()
 
-            Button {} label: {
+            Button {
+                showJobInfoSheet = true
+            } label: {
                 Image(systemName: SpendlyIcon.info.systemName)
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
@@ -650,12 +666,138 @@ struct JobExecutionTimerView: View {
         }
         .presentationDetents([.medium])
     }
+
+    // MARK: - Job Info Sheet
+
+    private var jobInfoSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: SpendlySpacing.xl) {
+                    // Job header
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        SPBadge(job.status.rawValue, style: job.status.badgeStyle)
+                        Text(job.title)
+                            .font(SpendlyFont.title())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Text("Job \(job.jobNumber) -- \(job.jobType.rawValue)")
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(SpendlyColors.secondary)
+                    }
+
+                    Divider()
+
+                    // Schedule
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Label("Schedule", systemImage: SpendlyIcon.schedule.systemName)
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Text(job.scheduledTimeRange)
+                            .font(SpendlyFont.body())
+                            .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                    }
+
+                    // Location
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Label("Location", systemImage: SpendlyIcon.location.systemName)
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Text(job.location)
+                            .font(SpendlyFont.body())
+                            .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                    }
+
+                    // Client
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Label("Client", systemImage: SpendlyIcon.person.systemName)
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Text(job.client.name)
+                            .font(SpendlyFont.body())
+                            .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                        if !job.client.phone.isEmpty {
+                            Text(job.client.phone)
+                                .font(SpendlyFont.caption())
+                                .foregroundStyle(SpendlyColors.secondary)
+                        }
+                        Text(job.client.address)
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(SpendlyColors.secondary)
+                    }
+
+                    // Notes
+                    if !job.client.notes.isEmpty {
+                        VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                            Label("Notes", systemImage: "note.text")
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Text(job.client.notes)
+                                .font(SpendlyFont.body())
+                                .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                        }
+                    }
+
+                    // Progress
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        Label("Checklist Progress", systemImage: "checklist")
+                            .font(SpendlyFont.bodySemibold())
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                        Text("\(job.completedTaskCount) of \(job.totalTaskCount) tasks completed")
+                            .font(SpendlyFont.body())
+                            .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                        ProgressView(value: job.totalTaskCount > 0 ? Double(job.completedTaskCount) / Double(job.totalTaskCount) : 0)
+                            .tint(SpendlyColors.primary)
+                    }
+
+                    // Materials summary
+                    if !job.materials.isEmpty {
+                        VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                            Label("Materials", systemImage: SpendlyIcon.inventory.systemName)
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Text("\(job.materials.count) items logged")
+                                .font(SpendlyFont.body())
+                                .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                            if viewModel.canViewCosts {
+                                Text("Total: $\(String(format: "%.2f", job.materials.reduce(0) { $0 + $1.totalCost }))")
+                                    .font(SpendlyFont.bodySemibold())
+                                    .foregroundStyle(SpendlyColors.primary)
+                            }
+                        }
+                    }
+
+                    // Photos summary
+                    if !job.photos.isEmpty {
+                        VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                            Label("Photos", systemImage: SpendlyIcon.camera.systemName)
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Text("\(job.photos.count) photos captured")
+                                .font(SpendlyFont.body())
+                                .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                        }
+                    }
+                }
+                .padding(SpendlySpacing.xl)
+            }
+            .background(SpendlyColors.background(for: colorScheme))
+            .navigationTitle("Job Summary")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        showJobInfoSheet = false
+                    }
+                    .font(SpendlyFont.bodySemibold())
+                    .foregroundStyle(SpendlyColors.primary)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Preview
 
 #Preview {
     let vm = JobExecutionViewModel()
-    let job = JobExecutionMockData.jobs[1]
-    JobExecutionTimerView(viewModel: vm, job: job)
+    JobExecutionTimerView(viewModel: vm)
 }

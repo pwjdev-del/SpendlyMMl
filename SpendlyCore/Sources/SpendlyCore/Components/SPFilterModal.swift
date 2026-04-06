@@ -26,11 +26,13 @@ public struct SPFilterSection: Identifiable {
     public let title: String
     public let type: SPFilterType
     public var options: [SPFilterOption]
+    public var rangeValue: Double?
 
-    public init(title: String, type: SPFilterType, options: [SPFilterOption]) {
+    public init(title: String, type: SPFilterType, options: [SPFilterOption], rangeValue: Double? = nil) {
         self.title = title
         self.type = type
         self.options = options
+        self.rangeValue = rangeValue
     }
 }
 
@@ -43,8 +45,6 @@ public struct SPFilterModal: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var dateFrom: Date = Date()
     @State private var dateTo: Date = Date()
-    @State private var rangeValue: Double = 0
-
     public init(
         isPresented: Binding<Bool>,
         sections: Binding<[SPFilterSection]>
@@ -166,13 +166,19 @@ public struct SPFilterModal: View {
 
             case .range(let min, let max):
                 VStack {
-                    Slider(value: $rangeValue, in: min...max)
-                        .tint(SpendlyColors.primary)
+                    Slider(
+                        value: Binding(
+                            get: { section.wrappedValue.rangeValue ?? min },
+                            set: { section.wrappedValue.rangeValue = $0 }
+                        ),
+                        in: min...max
+                    )
+                    .tint(SpendlyColors.primary)
                     HStack {
                         Text(String(format: "%.0f", min))
                             .font(SpendlyFont.caption())
                         Spacer()
-                        Text(String(format: "%.0f", rangeValue))
+                        Text(String(format: "%.0f", section.wrappedValue.rangeValue ?? min))
                             .font(SpendlyFont.bodyMedium())
                             .foregroundStyle(SpendlyColors.primary)
                         Spacer()
@@ -258,6 +264,7 @@ public struct SPFilterModal: View {
             for optionIndex in sections[sectionIndex].options.indices {
                 sections[sectionIndex].options[optionIndex].isSelected = false
             }
+            sections[sectionIndex].rangeValue = nil
         }
     }
 }

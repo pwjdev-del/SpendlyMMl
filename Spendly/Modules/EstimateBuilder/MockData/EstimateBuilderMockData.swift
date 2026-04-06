@@ -4,7 +4,7 @@ import SpendlyCore
 
 // MARK: - Estimate Display Model
 
-struct EstimateDisplayModel: Identifiable {
+struct EstimateDisplayModel: Identifiable, Codable {
     let id: UUID
     var estimateNumber: String
     var customerName: String
@@ -18,6 +18,9 @@ struct EstimateDisplayModel: Identifiable {
     var region: String
     var projectType: String
     var technicianName: String
+    var paymentStatus: String   // "Unpaid", "Partial", "Paid"
+    var projectStatus: String   // "Not Started", "In Progress", "Completed"
+    var materialCost: Double    // total material costs for the estimate
 
     var subtotal: Double {
         tasks.reduce(0) { $0 + $1.lineTotal }
@@ -38,7 +41,7 @@ struct EstimateDisplayModel: Identifiable {
     var customerInitials: String {
         let parts = customerName.split(separator: " ")
         let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
+        let last = parts.count > 1 ? (parts.last?.prefix(1) ?? "") : ""
         return "\(first)\(last)".uppercased()
     }
 
@@ -67,7 +70,7 @@ struct EstimateDisplayModel: Identifiable {
 
 // MARK: - Estimate Task Item
 
-struct EstimateTaskItem: Identifiable {
+struct EstimateTaskItem: Identifiable, Codable {
     let id: UUID
     var name: String
     var description: String
@@ -206,11 +209,14 @@ enum EstimateBuilderMockData {
             ],
             taxRate: 0.08,
             discountPercent: 0.0,
-            createdAt: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
-            expiresAt: Calendar.current.date(byAdding: .day, value: 29, to: Date())!,
+            createdAt: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
+            expiresAt: Calendar.current.date(byAdding: .day, value: 29, to: Date()) ?? Date(),
             region: "North",
             projectType: "Installation",
-            technicianName: "Amit Shah"
+            technicianName: "Amit Shah",
+            paymentStatus: "Unpaid",
+            projectStatus: "Not Started",
+            materialCost: 150
         ),
 
         EstimateDisplayModel(
@@ -247,11 +253,14 @@ enum EstimateBuilderMockData {
             ],
             taxRate: 0.07,
             discountPercent: 0.05,
-            createdAt: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
-            expiresAt: Calendar.current.date(byAdding: .day, value: 23, to: Date())!,
+            createdAt: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date(),
+            expiresAt: Calendar.current.date(byAdding: .day, value: 23, to: Date()) ?? Date(),
             region: "South",
             projectType: "Maintenance",
-            technicianName: "Priya Nair"
+            technicianName: "Priya Nair",
+            paymentStatus: "Partial",
+            projectStatus: "In Progress",
+            materialCost: 450
         ),
 
         EstimateDisplayModel(
@@ -272,11 +281,14 @@ enum EstimateBuilderMockData {
             ],
             taxRate: 0.06,
             discountPercent: 0.10,
-            createdAt: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
-            expiresAt: Calendar.current.date(byAdding: .day, value: 16, to: Date())!,
+            createdAt: Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date(),
+            expiresAt: Calendar.current.date(byAdding: .day, value: 16, to: Date()) ?? Date(),
             region: "West",
             projectType: "Emergency Repair",
-            technicianName: "Vikram Desai"
+            technicianName: "Vikram Desai",
+            paymentStatus: "Paid",
+            projectStatus: "Completed",
+            materialCost: 1200
         )
     ]
 }

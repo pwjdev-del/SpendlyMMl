@@ -7,22 +7,25 @@ public struct TeamChatRootView: View {
     @State private var viewModel = TeamChatViewModel()
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) private var dismiss
 
     public var body: some View {
-        NavigationStack(path: $viewModel.navigationPath) {
-            VStack(spacing: 0) {
-                headerSection
-                searchBar
-                chatRoomList
-            }
-            .background(SpendlyColors.background(for: colorScheme))
-            .navigationBarHidden(true)
-            .navigationDestination(for: TeamChatDestination.self) { destination in
-                switch destination {
-                case .chatRoom(let roomID):
-                    if let room = viewModel.chatRooms.first(where: { $0.id == roomID }) {
-                        ChatRoomView(viewModel: viewModel, room: room)
-                    }
+        VStack(spacing: 0) {
+            headerSection
+            searchBar
+            chatRoomList
+        }
+        .background(SpendlyColors.background(for: colorScheme))
+        .navigationTitle("Team Chat")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: TeamChatDestination.self) { destination in
+            switch destination {
+            case .chatRoom(let roomID):
+                if let room = viewModel.chatRooms.first(where: { $0.id == roomID }) {
+                    ChatRoomView(viewModel: viewModel, room: room)
+                        .onAppear { viewModel.selectRoom(room) }
+                } else {
+                    ContentUnavailableView("Chat Not Found", systemImage: "bubble.left.and.bubble.right", description: Text("This chat room is no longer available."))
                 }
             }
         }
@@ -33,14 +36,9 @@ public struct TeamChatRootView: View {
     private var headerSection: some View {
         VStack(spacing: 0) {
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Team Chat")
-                        .font(SpendlyFont.title())
-                        .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
-                    Text("\(viewModel.chatRooms.count) active conversations")
-                        .font(SpendlyFont.caption())
-                        .foregroundStyle(SpendlyColors.secondary)
-                }
+                Text("\(viewModel.chatRooms.count) active conversations")
+                    .font(SpendlyFont.caption())
+                    .foregroundStyle(SpendlyColors.secondary)
 
                 Spacer()
 
@@ -50,8 +48,7 @@ public struct TeamChatRootView: View {
                 }
             }
             .padding(.horizontal, SpendlySpacing.lg)
-            .padding(.top, SpendlySpacing.lg)
-            .padding(.bottom, SpendlySpacing.md)
+            .padding(.vertical, SpendlySpacing.sm)
         }
         .background(SpendlyColors.surface(for: colorScheme))
     }
@@ -116,9 +113,7 @@ public struct TeamChatRootView: View {
     // MARK: - Chat Room Row
 
     private func chatRoomRow(_ room: ChatRoomSummary) -> some View {
-        Button {
-            viewModel.selectRoom(room)
-        } label: {
+        NavigationLink(value: TeamChatDestination.chatRoom(roomID: room.id)) {
             HStack(spacing: SpendlySpacing.md) {
                 // Ticket icon avatar
                 ZStack(alignment: .bottomTrailing) {

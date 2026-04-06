@@ -5,6 +5,10 @@ import SpendlyCore
 
 public struct AIDiagnosticsRootView: View {
     @State private var viewModel = AIDiagnosticsViewModel()
+    @State private var showSettingsSheet = false
+    @State private var selectedLanguageIndex = 0
+    @State private var confidenceThreshold: Double = 0.7
+    @State private var autoSuggestEnabled = true
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
 
@@ -45,6 +49,39 @@ public struct AIDiagnosticsRootView: View {
             }
             .sheet(isPresented: $viewModel.showDiagnosticWizard) {
                 DiagnosticWizardView(viewModel: viewModel)
+            }
+            .sheet(isPresented: $showSettingsSheet) {
+                NavigationStack {
+                    Form {
+                        Section("Language") {
+                            Picker("Recognition Language", selection: $selectedLanguageIndex) {
+                                ForEach(Array(viewModel.supportedLanguages.enumerated()), id: \.offset) { index, lang in
+                                    Text(lang.name).tag(index)
+                                }
+                            }
+                        }
+                        Section("Confidence") {
+                            VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                                Text("Threshold: \(Int(confidenceThreshold * 100))%")
+                                    .font(SpendlyFont.bodyMedium())
+                                Slider(value: $confidenceThreshold, in: 0.3...1.0, step: 0.05)
+                                    .tint(SpendlyColors.primary)
+                            }
+                        }
+                        Section("Behavior") {
+                            Toggle("Auto-Suggest Diagnostics", isOn: $autoSuggestEnabled)
+                                .tint(SpendlyColors.primary)
+                        }
+                    }
+                    .navigationTitle("AI Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { showSettingsSheet = false }
+                        }
+                    }
+                }
+                .presentationDetents([.medium])
             }
             .onDisappear {
                 viewModel.cleanup()
@@ -88,7 +125,7 @@ public struct AIDiagnosticsRootView: View {
             }
 
             Button {
-                // Settings placeholder
+                showSettingsSheet = true
             } label: {
                 Image(systemName: SpendlyIcon.settings.systemName)
                     .font(.system(size: 16, weight: .medium))

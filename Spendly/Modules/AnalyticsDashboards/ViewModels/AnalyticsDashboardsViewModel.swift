@@ -258,6 +258,18 @@ final class AnalyticsDashboardsViewModel {
         savedComparisonGroups.removeAll { $0.id == group.id }
     }
 
+    func cycleFilter(for label: String) {
+        if label.contains("Region") || label == selectedRegion {
+            let regions = ["All Regions", "North", "South", "East", "West"]
+            if let idx = regions.firstIndex(of: selectedRegion) {
+                selectedRegion = regions[(idx + 1) % regions.count]
+            }
+        } else {
+            // Technician filter cycle — just toggle the filter modal
+            showFilterModal = true
+        }
+    }
+
     func regionTechnicians(for region: String) -> [TechnicianPerformance] {
         technicians.filter { $0.region == region }
     }

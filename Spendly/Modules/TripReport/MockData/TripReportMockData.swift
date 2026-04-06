@@ -133,7 +133,7 @@ enum TripReportMockData {
             customerCity: "Chicago",
             customerState: "IL",
             customerPostalCode: "60601",
-            serviceDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!,
+            serviceDate: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
             technicianName: "Robert Wilson",
             technicianEmail: "r.wilson@fieldservicepro.com",
             completedTasks: [
@@ -165,8 +165,8 @@ enum TripReportMockData {
             tripNotes: "Customer requested follow-up visit in 3 months for seasonal maintenance. Building access code: 4521.",
             manualTimeEntry: TimeEntry(
                 id: UUID(),
-                startTime: Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date())!,
-                endTime: Calendar.current.date(bySettingHour: 11, minute: 30, second: 0, of: Date())!,
+                startTime: Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date(),
+                endTime: Calendar.current.date(bySettingHour: 11, minute: 30, second: 0, of: Date()) ?? Date(),
                 breakMinutes: 0
             ),
             companyName: "Field Service Pro",
@@ -181,7 +181,7 @@ enum TripReportMockData {
             customerCity: "Dallas",
             customerState: "TX",
             customerPostalCode: "75201",
-            serviceDate: Calendar.current.date(byAdding: .day, value: -2, to: Date())!,
+            serviceDate: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
             technicianName: "Sarah Chen",
             technicianEmail: "s.chen@fieldservicepro.com",
             completedTasks: [
@@ -220,7 +220,7 @@ enum TripReportMockData {
             customerCity: "Phoenix",
             customerState: "AZ",
             customerPostalCode: "85001",
-            serviceDate: Calendar.current.date(byAdding: .day, value: -5, to: Date())!,
+            serviceDate: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date(),
             technicianName: "James Martinez",
             technicianEmail: "j.martinez@fieldservicepro.com",
             completedTasks: [

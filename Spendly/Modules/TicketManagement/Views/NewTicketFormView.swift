@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 import SpendlyCore
 
 struct NewTicketFormView: View {
@@ -17,6 +18,14 @@ struct NewTicketFormView: View {
     // Form step tracking
     @State private var currentStep: Int = 1
     private let totalSteps: Int = 5
+
+    // BUG 2 FIX: Subcategory selection state
+    @State private var selectedSubcategory: String?
+
+    // BUG 3 FIX: Photo attachment state
+    @State private var attachedPhotos: [SPPhotoItem] = []
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
+    @State private var showPhotoPicker: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -38,6 +47,7 @@ struct NewTicketFormView: View {
                     .padding(.horizontal, SpendlySpacing.lg)
                     .padding(.bottom, SpendlySpacing.xxxl * 2)
                 }
+                .scrollDismissesKeyboard(.interactively)
 
                 // Success overlay
                 if viewModel.showSubmitSuccess {
@@ -115,6 +125,9 @@ struct NewTicketFormView: View {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             viewModel.newTicketCategory = category.rawValue
+                            // Clear subcategory when category changes
+                            selectedSubcategory = nil
+                            viewModel.newTicketSubcategory = nil
                             if currentStep < 2 { currentStep = 2 }
                         }
                     } label: {
@@ -184,13 +197,24 @@ struct NewTicketFormView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SpendlySpacing.sm) {
                     ForEach(subcategories, id: \.self) { sub in
-                        Text(sub)
-                            .font(.system(size: 12, weight: .medium))
-                            .padding(.horizontal, SpendlySpacing.md)
-                            .padding(.vertical, SpendlySpacing.sm)
-                            .foregroundStyle(chipColor)
-                            .background(chipColor.opacity(0.1))
-                            .clipShape(Capsule())
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if selectedSubcategory == sub {
+                                    selectedSubcategory = nil
+                                } else {
+                                    selectedSubcategory = sub
+                                }
+                                viewModel.newTicketSubcategory = selectedSubcategory
+                            }
+                        } label: {
+                            Text(sub)
+                                .font(.system(size: 12, weight: .medium))
+                                .padding(.horizontal, SpendlySpacing.md)
+                                .padding(.vertical, SpendlySpacing.sm)
+                                .foregroundStyle(selectedSubcategory == sub ? .white : chipColor)
+                                .background(selectedSubcategory == sub ? chipColor : chipColor.opacity(0.1))
+                                .clipShape(Capsule())
+                        }
                     }
                 }
             }
@@ -304,15 +328,43 @@ struct NewTicketFormView: View {
             stepHeader(number: 4, title: "Media Upload")
 
             SPPhotoGrid(
-                images: [],
+                images: attachedPhotos,
                 onAdd: {
-                    // Camera / photo picker trigger
+                    if attachedPhotos.count < 5 {
+                        showPhotoPicker = true
+                    }
                     if currentStep < 5 { currentStep = 5 }
                 },
-                onRemove: { _ in }
+                onRemove: { item in
+                    attachedPhotos.removeAll { $0.id == item.id }
+                    viewModel.newTicketPhotoCount = attachedPhotos.count
+                }
             )
+            .photosPicker(
+                isPresented: $showPhotoPicker,
+                selection: $selectedPhotoItems,
+                maxSelectionCount: max(1, 5 - attachedPhotos.count),
+                matching: .images
+            )
+            .onChange(of: selectedPhotoItems) { _, newItems in
+                Task {
+                    for item in newItems {
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let uiImage = UIImage(data: data) {
+                            let photo = SPPhotoItem(image: Image(uiImage: uiImage))
+                            if attachedPhotos.count < 5 {
+                                attachedPhotos.append(photo)
+                            }
+                        }
+                    }
+                    viewModel.newTicketPhotoCount = attachedPhotos.count
+                    selectedPhotoItems = []
+                }
+            }
 
-            Text("Up to 5 photos or videos. Max file size 20MB.")
+            Text(attachedPhotos.isEmpty
+                 ? "Up to 5 photos or videos. Max file size 20MB."
+                 : "\(attachedPhotos.count)/5 photos attached.")
                 .font(SpendlyFont.caption())
                 .foregroundStyle(SpendlyColors.secondary)
                 .italic()

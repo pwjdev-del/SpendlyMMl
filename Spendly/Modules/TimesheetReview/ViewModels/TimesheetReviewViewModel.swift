@@ -15,12 +15,41 @@ final class TimesheetReviewViewModel {
     }
 
     var selectedTab: Tab = .mySummary
+    var weekOffset: Int = 0
 
     // MARK: Timesheet Entries
 
     var entries: [TimesheetDayEntry] = TimesheetReviewMockData.weekEntries
     var comments: [TimesheetComment] = TimesheetReviewMockData.sampleComments
     var teamTimesheets: [TeamTimesheetSummary] = TimesheetReviewMockData.teamTimesheets
+
+    // MARK: - Week Navigation
+
+    var currentWeekLabel: String {
+        let calendar = Calendar.current
+        let today = Date()
+        guard let startOfWeek = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: today) else {
+            return TimesheetReviewMockData.weekLabel
+        }
+        let weekStart = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: startOfWeek)
+        guard let monday = calendar.date(from: weekStart),
+              let sunday = calendar.date(byAdding: .day, value: 6, to: monday) else {
+            return TimesheetReviewMockData.weekLabel
+        }
+        let fmt = DateFormatter()
+        fmt.dateFormat = "MMM d"
+        let endFmt = DateFormatter()
+        endFmt.dateFormat = "MMM d, yyyy"
+        return "\(fmt.string(from: monday)) - \(endFmt.string(from: sunday))"
+    }
+
+    func goToPreviousWeek() {
+        weekOffset -= 1
+    }
+
+    func goToNextWeek() {
+        weekOffset += 1
+    }
 
     // MARK: Computed — Weekly Totals
 

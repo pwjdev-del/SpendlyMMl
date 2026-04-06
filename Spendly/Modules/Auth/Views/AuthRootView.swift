@@ -8,18 +8,15 @@ public struct AuthRootView: View {
     @State private var viewModel = AuthViewModel()
     @State private var showSignUp = false
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     public var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // MARK: - Header
-                    headerSection
-
-                    // MARK: - Form
-                    formSection
-
-                    // MARK: - Footer
-                    footerSection
+            Group {
+                if sizeClass == .regular {
+                    iPadLoginLayout
+                } else {
+                    iPhoneLoginLayout
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -50,6 +47,15 @@ public struct AuthRootView: View {
                 if let msg = viewModel.biometricError {
                     Text(msg)
                 }
+            }
+            .alert("Enable \(viewModel.biometricTypeName)?",
+                   isPresented: $viewModel.showBiometricEnrollment) {
+                Button("Enable") {
+                    viewModel.enableBiometricLogin()
+                }
+                Button("Not Now", role: .cancel) {}
+            } message: {
+                Text("Would you like to use \(viewModel.biometricTypeName) to sign in next time? You can change this later in Settings.")
             }
             .onAppear {
                 viewModel.restoreSavedSession()
@@ -110,17 +116,17 @@ public struct AuthRootView: View {
             // Password field
             passwordField
 
-            // Keep me logged in toggle
-            SPToggle(isOn: $viewModel.keepLoggedIn, label: "Keep me logged in")
+            // Remember Me toggle
+            SPToggle(isOn: $viewModel.rememberMe, label: "Remember Me")
 
             // Sign In button
             signInButton
 
-            // Biometric divider
-            orDivider
-
-            // Biometric buttons (2-column grid)
-            biometricButtons
+            // Biometric login (only shown when device supports it and user has enrolled)
+            if viewModel.shouldShowBiometricLogin {
+                orDivider
+                biometricLoginButton
+            }
 
             // Create Account link
             HStack(spacing: SpendlySpacing.xs) {
@@ -261,7 +267,7 @@ public struct AuthRootView: View {
     private var orDivider: some View {
         HStack(spacing: SpendlySpacing.md) {
             SPDivider()
-            Text("Or use biometrics")
+            Text("Or sign in with \(viewModel.biometricTypeName)")
                 .font(SpendlyFont.caption())
                 .foregroundStyle(SpendlyColors.secondary)
                 .fixedSize()
@@ -270,39 +276,23 @@ public struct AuthRootView: View {
         .padding(.vertical, SpendlySpacing.xs)
     }
 
-    // MARK: - Biometric Buttons (2-column grid)
+    // MARK: - Biometric Login Button
 
-    private var biometricButtons: some View {
-        HStack(spacing: SpendlySpacing.lg) {
-            // Face ID button
-            biometricTile(
-                icon: SpendlyIcon.face.systemName,
-                label: "Face ID"
-            )
-
-            // Touch ID / Fingerprint button
-            biometricTile(
-                icon: SpendlyIcon.fingerprint.systemName,
-                label: "Touch ID"
-            )
-        }
-    }
-
-    private func biometricTile(icon: String, label: String) -> some View {
+    /// A single adaptive biometric button that shows Face ID or Touch ID based on the device.
+    private var biometricLoginButton: some View {
         Button {
             Task {
                 await viewModel.signInWithBiometrics(authState: authState)
             }
         } label: {
-            VStack(spacing: SpendlySpacing.sm) {
-                Image(systemName: icon)
-                    .font(.system(size: 28))
+            HStack(spacing: SpendlySpacing.md) {
+                Image(systemName: viewModel.biometricIconName)
+                    .font(.system(size: 24))
                     .foregroundStyle(SpendlyColors.primary)
 
-                Text(label)
-                    .font(SpendlyFont.caption())
-                    .fontWeight(.medium)
-                    .foregroundStyle(SpendlyColors.secondary)
+                Text("Sign in with \(viewModel.biometricTypeName)")
+                    .font(SpendlyFont.bodySemibold())
+                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, SpendlySpacing.lg)
@@ -311,10 +301,8 @@ public struct AuthRootView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous)
                     .strokeBorder(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.1)
-                            : SpendlyColors.secondary.opacity(0.15),
-                        lineWidth: 1
+                        SpendlyColors.primary.opacity(0.3),
+                        lineWidth: 1.5
                     )
             )
         }
@@ -351,6 +339,136 @@ public struct AuthRootView: View {
             .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.small, style: .continuous))
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - iPad Login Layout (Split: hero left, form right)
+
+    private var iPadLoginLayout: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                // Left: branding hero panel
+                ZStack {
+                    SpendlyColors.primary
+                        .ignoresSafeArea()
+
+                    VStack(spacing: SpendlySpacing.xl) {
+                        Spacer()
+
+                        RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous)
+                            .fill(.white.opacity(0.15))
+                            .frame(width: 80, height: 80)
+                            .overlay(
+                                Image(systemName: "shield.checkered")
+                                    .font(.system(size: 40, weight: .regular))
+                                    .foregroundStyle(.white)
+                            )
+
+                        Text("Spendly")
+                            .font(.custom("Inter-Bold", size: 36))
+                            .foregroundStyle(.white)
+
+                        Text("Secure Service Platform")
+                            .font(SpendlyFont.headline())
+                            .foregroundStyle(.white.opacity(0.7))
+
+                        Spacer()
+
+                        // Version footer
+                        VStack(spacing: SpendlySpacing.xs) {
+                            SpendlyColors.accent
+                                .frame(height: 3)
+                                .frame(maxWidth: 120)
+                                .clipShape(Capsule())
+
+                            Text("\u{00A9} \(Calendar.current.component(.year, from: Date())) Spendly")
+                                .font(SpendlyFont.caption())
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
+                        .padding(.bottom, SpendlySpacing.xxxl)
+                    }
+                }
+                .frame(width: geo.size.width * 0.4)
+
+                // Right: scrollable form
+                ScrollView {
+                    VStack(spacing: SpendlySpacing.xl) {
+                        Spacer().frame(height: SpendlySpacing.xxxl)
+
+                        Text("Welcome Back")
+                            .font(.custom("Inter-Bold", size: 28))
+                            .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        Text("Sign in to your account to continue")
+                            .font(SpendlyFont.body())
+                            .foregroundStyle(SpendlyColors.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, -SpendlySpacing.md)
+
+                        emailField
+                        passwordField
+
+                        SPToggle(isOn: $viewModel.rememberMe, label: "Remember Me")
+
+                        signInButton
+
+                        if viewModel.shouldShowBiometricLogin {
+                            orDivider
+                            biometricLoginButton
+                        }
+
+                        HStack(spacing: SpendlySpacing.xs) {
+                            Text("Don't have an account?")
+                                .font(SpendlyFont.body())
+                                .foregroundStyle(SpendlyColors.secondary)
+                            Button {
+                                showSignUp = true
+                            } label: {
+                                Text("Sign Up")
+                                    .font(SpendlyFont.bodySemibold())
+                                    .foregroundStyle(SpendlyColors.accent)
+                            }
+                        }
+
+                        // Demo credentials
+                        VStack(spacing: SpendlySpacing.sm) {
+                            SPDivider()
+                                .padding(.vertical, SpendlySpacing.xs)
+
+                            Text("DEMO CREDENTIALS")
+                                .font(SpendlyFont.caption())
+                                .fontWeight(.bold)
+                                .foregroundStyle(SpendlyColors.secondary)
+                                .tracking(1)
+
+                            VStack(spacing: SpendlySpacing.xs) {
+                                demoCredentialRow(role: "Manager", email: "manager@spendly.io", password: "demo1234")
+                                demoCredentialRow(role: "Technician", email: "tech@spendly.io", password: "demo1234")
+                                demoCredentialRow(role: "Customer", email: "customer@spendly.io", password: "demo1234")
+                                demoCredentialRow(role: "Admin", email: "admin@spendly.io", password: "demo1234")
+                            }
+                        }
+
+                        Spacer().frame(height: SpendlySpacing.xxxl)
+                    }
+                    .padding(.horizontal, SpendlySpacing.xxxl + SpendlySpacing.lg)
+                }
+                .frame(width: geo.size.width * 0.6)
+                .background(SpendlyColors.background(for: colorScheme))
+            }
+        }
+    }
+
+    // MARK: - iPhone Login Layout (original stacked)
+
+    private var iPhoneLoginLayout: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                headerSection
+                formSection
+                footerSection
+            }
+        }
     }
 
     // MARK: - Footer Section

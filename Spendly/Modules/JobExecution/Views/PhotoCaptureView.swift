@@ -1,4 +1,7 @@
 import SwiftUI
+import AVFoundation
+import PhotosUI
+import Combine
 import SpendlyCore
 
 // MARK: - PhotoCaptureView
@@ -14,6 +17,13 @@ struct PhotoCaptureView: View {
     @State private var selectedTab: PhotoTab = .before
     @State private var captionText: String = ""
     @State private var showCamera: Bool = false
+    @State private var showVoiceRecorder: Bool = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+
+    // Video recording state
+    @State private var isRecordingVideo: Bool = false
+    @State private var videoRecordingSeconds: TimeInterval = 0
+    @State private var videoTimerCancellable: AnyCancellable?
 
     enum PhotoTab: String, CaseIterable {
         case before = "Before"
@@ -36,6 +46,10 @@ struct PhotoCaptureView: View {
         selectedTab == .before ? beforePhotos : afterPhotos
     }
 
+    private var voiceNotes: [VoiceNote] {
+        currentJob?.voiceNotes ?? []
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -46,6 +60,11 @@ struct PhotoCaptureView: View {
                     VStack(spacing: SpendlySpacing.xl) {
                         // Photo grid
                         photoGrid
+
+                        // Voice notes section
+                        if !voiceNotes.isEmpty {
+                            voiceNotesSection
+                        }
 
                         // Caption input
                         captionInput
@@ -67,6 +86,14 @@ struct PhotoCaptureView: View {
                     }
                     .font(SpendlyFont.bodySemibold())
                     .foregroundStyle(SpendlyColors.primary)
+                }
+            }
+            .sheet(isPresented: $showVoiceRecorder) {
+                VoiceNoteRecorderView(viewModel: viewModel, jobID: jobID)
+            }
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                Task {
+                    await loadPhoto(from: newItem)
                 }
             }
         }
@@ -173,20 +200,30 @@ struct PhotoCaptureView: View {
     private func photoThumbnail(photo: PhotoCaptureItem) -> some View {
         VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
             ZStack(alignment: .topTrailing) {
-                // Placeholder image
+                // Show actual image if available, otherwise placeholder SF Symbol
                 RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
                     .fill(SpendlyColors.primary.opacity(0.08))
                     .aspectRatio(1, contentMode: .fit)
                     .overlay(
-                        VStack(spacing: SpendlySpacing.xs) {
-                            Image(systemName: "photo")
-                                .font(.system(size: 24))
-                                .foregroundStyle(SpendlyColors.secondary.opacity(0.4))
-                            Text(timeLabel(for: photo.timestamp))
-                                .font(.system(size: 9, weight: .medium))
-                                .foregroundStyle(SpendlyColors.secondary)
+                        Group {
+                            if let data = photo.imageData,
+                               let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                            } else {
+                                VStack(spacing: SpendlySpacing.xs) {
+                                    Image(systemName: photo.placeholderIcon)
+                                        .font(.system(size: 28))
+                                        .foregroundStyle(SpendlyColors.primary.opacity(0.6))
+                                    Text(timeLabel(for: photo.timestamp))
+                                        .font(.system(size: 9, weight: .medium))
+                                        .foregroundStyle(SpendlyColors.secondary)
+                                }
+                            }
                         }
                     )
+                    .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
 
                 // Delete button
                 Button {
@@ -259,20 +296,131 @@ struct PhotoCaptureView: View {
         }
     }
 
+    // MARK: - Voice Notes Section
+
+    private var voiceNotesSection: some View {
+        VStack(alignment: .leading, spacing: SpendlySpacing.md) {
+            HStack {
+                Image(systemName: SpendlyIcon.mic.systemName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(SpendlyColors.primary)
+
+                Text("Voice Notes")
+                    .font(SpendlyFont.headline())
+                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+
+                Spacer()
+
+                Text("\(voiceNotes.count)")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 18, height: 18)
+                    .background(SpendlyColors.primary)
+                    .clipShape(Circle())
+            }
+
+            VStack(spacing: SpendlySpacing.sm) {
+                ForEach(voiceNotes) { note in
+                    voiceNoteRow(note: note)
+                }
+            }
+        }
+    }
+
+    @State private var playingNoteID: UUID?
+    @State private var notePlayer: AVAudioPlayer?
+
+    private func voiceNoteRow(note: VoiceNote) -> some View {
+        HStack(spacing: SpendlySpacing.md) {
+            // Play button
+            Button {
+                toggleNotePlayback(note: note)
+            } label: {
+                Image(systemName: playingNoteID == note.id ? "stop.circle.fill" : "play.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(SpendlyColors.primary)
+            }
+
+            // Info
+            VStack(alignment: .leading, spacing: SpendlySpacing.xs) {
+                Text("Voice Note")
+                    .font(SpendlyFont.bodySemibold())
+                    .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+
+                HStack(spacing: SpendlySpacing.sm) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 10))
+                    Text(note.formattedDuration)
+                        .font(SpendlyFont.caption())
+
+                    Text("--")
+                        .font(SpendlyFont.caption())
+
+                    Text(timeLabel(for: note.createdAt))
+                        .font(SpendlyFont.caption())
+                }
+                .foregroundStyle(SpendlyColors.secondary)
+            }
+
+            Spacer()
+
+            // Delete button
+            Button {
+                if playingNoteID == note.id {
+                    notePlayer?.stop()
+                    notePlayer = nil
+                    playingNoteID = nil
+                }
+                viewModel.removeVoiceNote(from: jobID, voiceNoteID: note.id)
+            } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(SpendlyColors.error.opacity(0.7))
+                    .frame(width: 32, height: 32)
+                    .background(SpendlyColors.error.opacity(0.08))
+                    .clipShape(Circle())
+            }
+        }
+        .padding(SpendlySpacing.md)
+        .background(SpendlyColors.surface(for: colorScheme))
+        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: SpendlyRadius.medium, style: .continuous)
+                .strokeBorder(SpendlyColors.secondary.opacity(0.1), lineWidth: 1)
+        )
+    }
+
+    private func toggleNotePlayback(note: VoiceNote) {
+        if playingNoteID == note.id {
+            notePlayer?.stop()
+            notePlayer = nil
+            playingNoteID = nil
+            return
+        }
+
+        guard let url = note.fileURL else { return }
+
+        notePlayer?.stop()
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            notePlayer = try AVAudioPlayer(contentsOf: url)
+            notePlayer?.play()
+            playingNoteID = note.id
+        } catch {
+            playingNoteID = nil
+        }
+    }
+
     // MARK: - Capture Button
 
     private var captureButton: some View {
         VStack(spacing: SpendlySpacing.md) {
-            // Primary capture button
-            Button {
-                let photo = PhotoCaptureItem(
-                    caption: captionText,
-                    isBefore: selectedTab == .before,
-                    timestamp: Date()
-                )
-                viewModel.addPhoto(to: jobID, photo: photo)
-                captionText = ""
-            } label: {
+            // Primary capture button using PhotosPicker
+            PhotosPicker(
+                selection: $selectedPhotoItem,
+                matching: .images,
+                photoLibrary: .shared()
+            ) {
                 HStack(spacing: SpendlySpacing.sm) {
                     Image(systemName: SpendlyIcon.camera.systemName)
                         .font(.system(size: 18, weight: .semibold))
@@ -287,7 +435,7 @@ struct PhotoCaptureView: View {
             }
 
             // Voice note button
-            Button {} label: {
+            Button { showVoiceRecorder = true } label: {
                 HStack(spacing: SpendlySpacing.sm) {
                     Image(systemName: SpendlyIcon.mic.systemName)
                         .font(.system(size: 16, weight: .semibold))
@@ -305,18 +453,137 @@ struct PhotoCaptureView: View {
                 )
             }
 
-            // Video thumbnail placeholder
-            Button {} label: {
+            // Video record button
+            Button {
+                if isRecordingVideo {
+                    stopVideoRecording()
+                } else {
+                    startVideoRecording()
+                }
+            } label: {
                 HStack(spacing: SpendlySpacing.sm) {
-                    Image(systemName: "video.fill")
+                    Image(systemName: isRecordingVideo ? "stop.fill" : "video.fill")
                         .font(.system(size: 14, weight: .semibold))
-                    Text("Record Video")
+                    Text(isRecordingVideo ? "Stop Video" : "Record Video")
                         .font(SpendlyFont.caption())
                         .fontWeight(.semibold)
                 }
-                .foregroundStyle(SpendlyColors.secondary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .foregroundStyle(isRecordingVideo ? .white : SpendlyColors.secondary)
+                .background(isRecordingVideo ? SpendlyColors.error : .clear)
+                .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
+                .overlay(
+                    isRecordingVideo
+                        ? nil
+                        : RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous)
+                            .strokeBorder(SpendlyColors.secondary.opacity(0.2), lineWidth: 1)
+                )
+            }
+
+            // Video recording indicator
+            if isRecordingVideo {
+                videoRecordingIndicator
             }
         }
+    }
+
+    // MARK: - Video Recording Indicator
+
+    private var videoRecordingIndicator: some View {
+        HStack(spacing: SpendlySpacing.md) {
+            Circle()
+                .fill(SpendlyColors.error)
+                .frame(width: 10, height: 10)
+
+            Text("REC")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(SpendlyColors.error)
+
+            Text(formattedRecordingTime(videoRecordingSeconds))
+                .font(.system(size: 16, weight: .bold, design: .monospaced))
+                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+
+            Spacer()
+
+            Button {
+                stopVideoRecording()
+            } label: {
+                HStack(spacing: SpendlySpacing.xs) {
+                    Image(systemName: "stop.circle.fill")
+                        .font(.system(size: 14))
+                    Text("Stop & Save")
+                        .font(SpendlyFont.caption())
+                        .fontWeight(.bold)
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, SpendlySpacing.md)
+                .padding(.vertical, SpendlySpacing.sm)
+                .background(SpendlyColors.error)
+                .clipShape(Capsule())
+            }
+        }
+        .padding(SpendlySpacing.md)
+        .background(SpendlyColors.error.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.medium))
+        .overlay(
+            RoundedRectangle(cornerRadius: SpendlyRadius.medium)
+                .strokeBorder(SpendlyColors.error.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    // MARK: - Helper Methods
+
+    private func formattedRecordingTime(_ seconds: TimeInterval) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return String(format: "%02d:%02d", mins, secs)
+    }
+
+    private func loadPhoto(from item: PhotosPickerItem?) async {
+        guard let item else { return }
+        if let data = try? await item.loadTransferable(type: Data.self) {
+            let photo = PhotoCaptureItem(
+                caption: captionText,
+                isBefore: selectedTab == .before,
+                timestamp: Date(),
+                imageData: data,
+                placeholderIcon: "photo.on.rectangle.angled"
+            )
+            viewModel.addPhoto(to: jobID, photo: photo)
+            captionText = ""
+            selectedPhotoItem = nil
+        }
+    }
+
+    private func startVideoRecording() {
+        isRecordingVideo = true
+        videoRecordingSeconds = 0
+        videoTimerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                if self.isRecordingVideo {
+                    self.videoRecordingSeconds += 1
+                }
+            }
+    }
+
+    private func stopVideoRecording() {
+        isRecordingVideo = false
+        videoTimerCancellable?.cancel()
+        videoTimerCancellable = nil
+
+        // Store as a mock video entry with a video icon placeholder
+        let photo = PhotoCaptureItem(
+            caption: captionText.isEmpty ? "Video (\(formattedRecordingTime(videoRecordingSeconds)))" : captionText,
+            isBefore: selectedTab == .before,
+            timestamp: Date(),
+            imageData: nil,
+            placeholderIcon: "video.fill"
+        )
+        viewModel.addPhoto(to: jobID, photo: photo)
+        captionText = ""
+        videoRecordingSeconds = 0
     }
 }
 

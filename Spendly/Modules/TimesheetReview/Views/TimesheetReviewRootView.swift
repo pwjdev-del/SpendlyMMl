@@ -171,7 +171,7 @@ public struct TimesheetReviewRootView: View {
         SPCard(elevation: .low) {
             HStack {
                 Button {
-                    // Previous week placeholder
+                    vm.goToPreviousWeek()
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 14, weight: .semibold))
@@ -184,7 +184,7 @@ public struct TimesheetReviewRootView: View {
                 Spacer()
 
                 VStack(spacing: SpendlySpacing.xs) {
-                    Text(TimesheetReviewMockData.weekLabel)
+                    Text(vm.currentWeekLabel)
                         .font(SpendlyFont.bodySemibold())
                         .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
                     SPBadge(
@@ -196,7 +196,7 @@ public struct TimesheetReviewRootView: View {
                 Spacer()
 
                 Button {
-                    // Next week placeholder
+                    vm.goToNextWeek()
                 } label: {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .semibold))

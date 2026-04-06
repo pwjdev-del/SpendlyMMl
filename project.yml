@@ -9,9 +9,9 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: ""
-    CODE_SIGN_IDENTITY: ""
-    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_ALLOWED: "YES"
+    CODE_SIGN_STYLE: Automatic
+    COPY_PHASE_STRIP: "NO"
 
 packages:
   SpendlyCore:
@@ -26,7 +26,7 @@ targets:
     settings:
       base:
         INFOPLIST_FILE: Spendly/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.spendly.ios
+        PRODUCT_BUNDLE_IDENTIFIER: com.kathanpatel.spendly
         PRODUCT_NAME: Spendly
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     dependencies:
@@ -39,8 +39,19 @@ targets:
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
         UILaunchScreen: {}
+        UIRequiresFullScreen: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSFaceIDUsageDescription: "Spendly uses Face ID for quick, secure login"
+        NSLocationWhenInUseUsageDescription: "Spendly uses your location to show your position on the job map and provide driving directions."
+        NSMicrophoneUsageDescription: "Spendly needs microphone access to record voice notes during job execution"
         UIAppFonts:
           - Inter-Regular.ttf
           - Inter-Medium.ttf
@@ -51,3 +62,14 @@ targets:
           - Manrope-SemiBold.ttf
           - Manrope-Bold.ttf
           - Manrope-ExtraBold.ttf
+
+  SpendlyUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: SpendlyUITests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+    dependencies:
+      - target: Spendly

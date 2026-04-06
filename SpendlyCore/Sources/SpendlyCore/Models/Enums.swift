@@ -17,6 +17,7 @@ public enum SyncStatus: String, Codable, Sendable {
 
 // MARK: - Ticket Status
 public enum TicketStatus: String, Codable, Sendable, CaseIterable {
+    case draft
     case open
     case inProgress
     case onHold

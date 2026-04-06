@@ -1,5 +1,19 @@
 import SwiftUI
+import UIKit
 import SpendlyCore
+
+// MARK: - UIKit Share Sheet Representable
+
+private struct ActivityViewController: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    let applicationActivities: [UIActivity]? = nil
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
 
 struct ArticleDetailView: View {
 
@@ -14,7 +28,7 @@ struct ArticleDetailView: View {
     @State private var showNoteEditor: Bool = false
 
     var body: some View {
-        NavigationStack {
+        NavigationStack {  // ArticleDetailView is presented as a sheet — NavigationStack is correct here
             ZStack {
                 SpendlyTheme.blueprint.backgroundColor(for: colorScheme)
                     .ignoresSafeArea()
@@ -59,7 +73,7 @@ struct ArticleDetailView: View {
                             Label("Share", systemImage: SpendlyIcon.share.systemName)
                         }
                         Button {
-                            // Print action placeholder
+                            printArticle()
                         } label: {
                             Label("Print PDF", systemImage: "printer")
                         }
@@ -70,7 +84,45 @@ struct ArticleDetailView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showShareSheet) {
+                let shareText = "\(article.title)\n\n\(article.summary)\n\n\(article.content)"
+                ActivityViewController(activityItems: [shareText])
+            }
         }
+    }
+
+    // MARK: - Print
+
+    private func printArticle() {
+        let printController = UIPrintInteractionController.shared
+        let printInfo = UIPrintInfo.printInfo()
+        printInfo.jobName = article.title
+        printInfo.outputType = .general
+        printController.printInfo = printInfo
+
+        let formatter = UIMarkupTextPrintFormatter(markupText: buildPrintHTML())
+        formatter.perPageContentInsets = UIEdgeInsets(top: 72, left: 72, bottom: 72, right: 72)
+        printController.printFormatter = formatter
+
+        printController.present(animated: true)
+    }
+
+    private func buildPrintHTML() -> String {
+        let tagsHTML = article.tags.map { "<span style='background:#e0e7ff;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;'>\($0)</span>" }.joined()
+        return """
+        <html><head><style>
+        body { font-family: -apple-system, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
+        h1 { font-size: 22px; margin-bottom: 4px; }
+        .meta { font-size: 13px; color: #666; margin-bottom: 16px; }
+        .content { font-size: 15px; white-space: pre-wrap; }
+        .tags { margin-top: 20px; }
+        </style></head><body>
+        <h1>\(article.title)</h1>
+        <div class='meta'>By \(article.authorName) &middot; \(article.formattedDate) &middot; \(article.readTimeLabel) &middot; \(article.category.rawValue)</div>
+        <div class='content'>\(article.content)</div>
+        <div class='tags'>\(tagsHTML)</div>
+        </body></html>
+        """
     }
 
     // MARK: - Title Section
@@ -132,7 +184,9 @@ struct ArticleDetailView: View {
                 actionButton(icon: SpendlyIcon.share.systemName, label: "Share") {
                     showShareSheet = true
                 }
-                actionButton(icon: "printer", label: "Print PDF")
+                actionButton(icon: "printer", label: "Print PDF") {
+                    printArticle()
+                }
                 actionButton(
                     icon: article.isBookmarked ? "bookmark.fill" : SpendlyIcon.bookmark.systemName,
                     label: article.isBookmarked ? "Bookmarked" : "Bookmark"

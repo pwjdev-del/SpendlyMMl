@@ -80,16 +80,16 @@ enum TeamChatMockData {
 
     // MARK: - Stable IDs
 
-    static let currentUserID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-    static let alexID         = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
-    static let sarahID        = UUID(uuidString: "00000000-0000-0000-0000-000000000003")!
-    static let marcusID       = UUID(uuidString: "00000000-0000-0000-0000-000000000004")!
-    static let jordanID       = UUID(uuidString: "00000000-0000-0000-0000-000000000005")!
-    static let elenaID        = UUID(uuidString: "00000000-0000-0000-0000-000000000006")!
+    static let currentUserID = UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID()
+    static let alexID         = UUID(uuidString: "00000000-0000-0000-0000-000000000002") ?? UUID()
+    static let sarahID        = UUID(uuidString: "00000000-0000-0000-0000-000000000003") ?? UUID()
+    static let marcusID       = UUID(uuidString: "00000000-0000-0000-0000-000000000004") ?? UUID()
+    static let jordanID       = UUID(uuidString: "00000000-0000-0000-0000-000000000005") ?? UUID()
+    static let elenaID        = UUID(uuidString: "00000000-0000-0000-0000-000000000006") ?? UUID()
 
-    static let roomTK98234    = UUID(uuidString: "10000000-0000-0000-0000-000000000001")!
-    static let roomTK44092    = UUID(uuidString: "10000000-0000-0000-0000-000000000002")!
-    static let roomTK44098    = UUID(uuidString: "10000000-0000-0000-0000-000000000003")!
+    static let roomTK98234    = UUID(uuidString: "10000000-0000-0000-0000-000000000001") ?? UUID()
+    static let roomTK44092    = UUID(uuidString: "10000000-0000-0000-0000-000000000002") ?? UUID()
+    static let roomTK44098    = UUID(uuidString: "10000000-0000-0000-0000-000000000003") ?? UUID()
 
     // MARK: - Date Helpers
 
@@ -237,6 +237,193 @@ enum TeamChatMockData {
             isRead: true,
             isOutgoing: false
         ),
+    ]
+
+    // MARK: - Ticket #TK-44092 Conversation (HVAC Maintenance)
+
+    static let tk44092Messages: [TeamChatMessage] = [
+        TeamChatMessage(
+            id: UUID(),
+            senderID: nil,
+            senderName: nil,
+            senderRole: nil,
+            senderInitials: nil,
+            senderAvatarURL: nil,
+            content: "System: Work Order Created",
+            kind: .system,
+            timestamp: daysAgo(1, hour: 8, minute: 0),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: jordanID,
+            senderName: "Jordan Smith",
+            senderRole: "HVAC Specialist",
+            senderInitials: "JS",
+            senderAvatarURL: nil,
+            content: "Heading to the site now. The client reported inconsistent cooling on the 3rd floor.",
+            kind: .text,
+            timestamp: daysAgo(1, hour: 8, minute: 15),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: currentUserID,
+            senderName: "You",
+            senderRole: "Service Manager",
+            senderInitials: "ME",
+            senderAvatarURL: nil,
+            content: "Thanks Jordan. Check the rooftop unit first -- last inspection flagged a refrigerant leak.",
+            kind: .text,
+            timestamp: daysAgo(1, hour: 8, minute: 22),
+            isRead: true,
+            isOutgoing: true
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: nil,
+            senderName: nil,
+            senderRole: nil,
+            senderInitials: nil,
+            senderAvatarURL: nil,
+            content: "Jordan Smith (On-Site) arrived",
+            kind: .system,
+            timestamp: daysAgo(1, hour: 9, minute: 5),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: jordanID,
+            senderName: "Jordan Smith",
+            senderRole: "HVAC Specialist",
+            senderInitials: "JS",
+            senderAvatarURL: nil,
+            content: "Confirmed -- refrigerant is low. Topping off now and replacing the filter bank while I'm up here.",
+            kind: .text,
+            timestamp: daysAgo(1, hour: 10, minute: 12),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: jordanID,
+            senderName: "Jordan Smith",
+            senderRole: "HVAC Specialist",
+            senderInitials: "JS",
+            senderAvatarURL: nil,
+            content: "Filter replacement is done. Running diagnostics now.",
+            kind: .text,
+            timestamp: daysAgo(1, hour: 14, minute: 22),
+            isRead: true,
+            isOutgoing: false
+        ),
+    ]
+
+    // MARK: - Ticket #TK-44098 Conversation (Plumbing Emergency)
+
+    static let tk44098Messages: [TeamChatMessage] = [
+        TeamChatMessage(
+            id: UUID(),
+            senderID: nil,
+            senderName: nil,
+            senderRole: nil,
+            senderInitials: nil,
+            senderAvatarURL: nil,
+            content: "System: Emergency Dispatch",
+            kind: .system,
+            timestamp: daysAgo(2, hour: 7, minute: 30),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: currentUserID,
+            senderName: "You",
+            senderRole: "Service Manager",
+            senderInitials: "ME",
+            senderAvatarURL: nil,
+            content: "We have a burst pipe at 442 Oak St, Suite B. Alex, can you respond?",
+            kind: .text,
+            timestamp: daysAgo(2, hour: 7, minute: 32),
+            isRead: true,
+            isOutgoing: true
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: alexID,
+            senderName: "Alex Rivera",
+            senderRole: "On-Site Lead",
+            senderInitials: "AR",
+            senderAvatarURL: nil,
+            content: "On my way. ETA 20 minutes.",
+            kind: .text,
+            timestamp: daysAgo(2, hour: 7, minute: 35),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: nil,
+            senderName: nil,
+            senderRole: nil,
+            senderInitials: nil,
+            senderAvatarURL: nil,
+            content: "Alex Rivera (On-Site) arrived",
+            kind: .system,
+            timestamp: daysAgo(2, hour: 7, minute: 58),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: alexID,
+            senderName: "Alex Rivera",
+            senderRole: "On-Site Lead",
+            senderInitials: "AR",
+            senderAvatarURL: nil,
+            content: "It's the main supply line under the slab. Pretty bad. Shutting off the water main now.",
+            kind: .image(imageName: "photo"),
+            timestamp: daysAgo(2, hour: 8, minute: 10),
+            isRead: true,
+            isOutgoing: false
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: currentUserID,
+            senderName: "You",
+            senderRole: "Service Manager",
+            senderInitials: "ME",
+            senderAvatarURL: nil,
+            content: "Good call. I'm ordering a 2-inch copper coupling and PEX transition fittings from the supplier now.",
+            kind: .text,
+            timestamp: daysAgo(2, hour: 8, minute: 25),
+            isRead: true,
+            isOutgoing: true
+        ),
+        TeamChatMessage(
+            id: UUID(),
+            senderID: alexID,
+            senderName: "Alex Rivera",
+            senderRole: "On-Site Lead",
+            senderInitials: "AR",
+            senderAvatarURL: nil,
+            content: "Water main shutoff complete. Awaiting parts delivery.",
+            kind: .text,
+            timestamp: daysAgo(2, hour: 11, minute: 5),
+            isRead: false,
+            isOutgoing: false
+        ),
+    ]
+
+    // MARK: - Messages Lookup by Room ID
+
+    static let messagesByRoomID: [UUID: [TeamChatMessage]] = [
+        roomTK98234: tk98234Messages,
+        roomTK44092: tk44092Messages,
+        roomTK44098: tk44098Messages,
     ]
 
     // MARK: - Chat Room Summaries

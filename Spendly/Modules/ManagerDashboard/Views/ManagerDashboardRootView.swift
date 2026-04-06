@@ -165,10 +165,9 @@ public struct ManagerDashboardRootView: View {
     // MARK: - Urgent Jobs + Resource Allocation Layout
 
     private var urgentJobsAndResourcesSection: some View {
-        // On compact widths (iPhone) this stacks vertically.
-        // On regular widths (iPad) it matches the Stitch 1:2 column split.
-        VStack(spacing: SpendlySpacing.xl) {
+        AdaptiveColumns(leadingRatio: 0.4) {
             urgentJobsSection
+        } trailing: {
             resourceAllocationSection
         }
     }
@@ -505,7 +504,7 @@ public struct ManagerDashboardRootView: View {
                     }
                 }
             }
-            .frame(width: min(UIScreen.main.bounds.width - 32, 360))
+            .frame(width: 360)
             .frame(maxHeight: 420)
             .background(SpendlyColors.surface(for: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: SpendlyRadius.large, style: .continuous))
