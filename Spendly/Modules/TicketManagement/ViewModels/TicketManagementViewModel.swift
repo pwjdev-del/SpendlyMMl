@@ -202,6 +202,20 @@ final class TicketManagementViewModel {
         allTickets.filter { $0.urgency == .critical || $0.urgency == .high }.count
     }
 
+    var slaBreachedCount: Int {
+        allTickets.filter { ticket in
+            guard let sla = ticket.sla else { return false }
+            return sla.isResponseBreached || sla.isResolutionBreached
+        }.count
+    }
+
+    var slaAtRiskCount: Int {
+        allTickets.filter { ticket in
+            guard let sla = ticket.sla else { return false }
+            return sla.isAtRisk && !sla.isResponseBreached && !sla.isResolutionBreached
+        }.count
+    }
+
     // MARK: - Status Tabs (with counts)
 
     var statusTabs: [(TicketDisplayStatus, Int)] {
@@ -322,7 +336,8 @@ final class TicketManagementViewModel {
                     performedBy: "Current User"
                 )
             ],
-            isSyncedOffline: old.isSyncedOffline
+            isSyncedOffline: old.isSyncedOffline,
+            sla: old.sla
         )
         allTickets[index] = updated
         persistTickets()

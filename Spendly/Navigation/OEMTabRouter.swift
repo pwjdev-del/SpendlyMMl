@@ -58,7 +58,9 @@ public struct OEMTabRouter: View {
                     Label("Customers", systemImage: "person.crop.rectangle").tag(10)
                     Label("Estimates", systemImage: "doc.text").tag(11)
                     Label("Invoicing", systemImage: "doc.plaintext").tag(12)
+                    Label("Parts & Inventory", systemImage: "shippingbox").tag(17)
                     Label("Knowledge Base", systemImage: "books.vertical").tag(13)
+                    Label("Customer Feedback", systemImage: "star.bubble").tag(18)
                     Label("Team Chat", systemImage: "message").tag(14)
                     Label("Analytics", systemImage: "chart.xyaxis.line").tag(15)
                     Label("Resources", systemImage: "person.2").tag(16)
@@ -97,6 +99,8 @@ public struct OEMTabRouter: View {
         case 14: TeamChatRootView()
         case 15: AnalyticsDashboardsRootView()
         case 16: ResourceManagementRootView()
+        case 17: PartsInventoryRootView()
+        case 18: CustomerFeedbackRootView()
         case 20: SettingsNotificationsRootView()
         case 21: PushNotificationsRootView()
         default: ManagerDashboardRootView()
@@ -152,9 +156,21 @@ public struct MoreMenuView: View {
                 }
 
                 NavigationLink {
+                    PartsInventoryRootView()
+                } label: {
+                    Label("Parts & Inventory", systemImage: "shippingbox")
+                }
+
+                NavigationLink {
                     KnowledgeBaseRootView()
                 } label: {
                     Label("Knowledge Base", systemImage: "books.vertical")
+                }
+
+                NavigationLink {
+                    CustomerFeedbackRootView()
+                } label: {
+                    Label("Customer Feedback", systemImage: "star.bubble")
                 }
 
                 NavigationLink {

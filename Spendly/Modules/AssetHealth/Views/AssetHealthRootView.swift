@@ -27,6 +27,9 @@ public struct AssetHealthRootView: View {
 
                     ServiceHistoryView(viewModel: viewModel)
                         .tag(AssetHealthTab.history)
+
+                    PMScheduleView()
+                        .tag(AssetHealthTab.pmSchedule)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }

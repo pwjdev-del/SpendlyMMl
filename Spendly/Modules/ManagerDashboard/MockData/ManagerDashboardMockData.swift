@@ -114,6 +114,7 @@ enum DashboardNotificationType {
     case jobEscalation
     case systemAlert
     case resourceWarning
+    case slaBreach
 
     var icon: String {
         switch self {
@@ -121,6 +122,7 @@ enum DashboardNotificationType {
         case .jobEscalation:    return "exclamationmark.triangle"
         case .systemAlert:      return "bell.badge"
         case .resourceWarning:  return "person.badge.clock"
+        case .slaBreach:        return "clock.badge.exclamationmark"
         }
     }
 
@@ -130,6 +132,7 @@ enum DashboardNotificationType {
         case .jobEscalation:    return .error
         case .systemAlert:      return .warning
         case .resourceWarning:  return .neutral
+        case .slaBreach:        return .error
         }
     }
 }
@@ -250,6 +253,22 @@ enum ManagerDashboardMockData {
             type: .approvalRequired,
             isRead: false,
             createdAt: Date().addingTimeInterval(-300)
+        ),
+        DashboardNotification(
+            id: UUID(),
+            title: "SLA Breach - TK-2026-001",
+            body: "Response SLA breached for Servo Drive Fault on CNC-900 (Critical). Response deadline exceeded by 2h 15m. Immediate action required.",
+            type: .slaBreach,
+            isRead: false,
+            createdAt: Date().addingTimeInterval(-600)
+        ),
+        DashboardNotification(
+            id: UUID(),
+            title: "SLA At Risk - TK-2026-003",
+            body: "Resolution SLA for Cylinder Pressure Drop is at risk. Only 45 minutes remaining before breach. Parts are backordered.",
+            type: .slaBreach,
+            isRead: false,
+            createdAt: Date().addingTimeInterval(-780)
         ),
         DashboardNotification(
             id: UUID(),

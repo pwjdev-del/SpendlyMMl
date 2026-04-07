@@ -131,6 +131,59 @@ struct TicketTimelineEvent: Identifiable, Hashable, Codable {
 
 // MARK: - Display Ticket
 
+// MARK: - SLA Display Info
+
+struct SLADisplayInfo: Hashable, Codable {
+    let policyName: String
+    let responseDeadline: Date
+    let resolutionDeadline: Date
+    let respondedAt: Date?
+    let isResponseBreached: Bool
+    let isResolutionBreached: Bool
+
+    var responseRemainingMinutes: Int {
+        if respondedAt != nil { return 0 }
+        return max(0, Int(responseDeadline.timeIntervalSince(Date()) / 60))
+    }
+
+    var resolutionRemainingMinutes: Int {
+        return max(0, Int(resolutionDeadline.timeIntervalSince(Date()) / 60))
+    }
+
+    var isAtRisk: Bool {
+        (!isResponseBreached && respondedAt == nil && responseRemainingMinutes < 30) ||
+        (!isResolutionBreached && resolutionRemainingMinutes < 60)
+    }
+
+    var slaStatusLabel: String {
+        if isResponseBreached || isResolutionBreached { return "Breached" }
+        if isAtRisk { return "At Risk" }
+        return "On Track"
+    }
+
+    var slaBadgeStyle: SPBadgeStyle {
+        if isResponseBreached || isResolutionBreached { return .error }
+        if isAtRisk { return .warning }
+        return .success
+    }
+
+    init(
+        policyName: String = "Standard SLA",
+        responseDeadline: Date,
+        resolutionDeadline: Date,
+        respondedAt: Date? = nil,
+        isResponseBreached: Bool = false,
+        isResolutionBreached: Bool = false
+    ) {
+        self.policyName = policyName
+        self.responseDeadline = responseDeadline
+        self.resolutionDeadline = resolutionDeadline
+        self.respondedAt = respondedAt
+        self.isResponseBreached = isResponseBreached
+        self.isResolutionBreached = isResolutionBreached
+    }
+}
+
 struct DisplayTicket: Identifiable, Hashable, Codable {
     let id: UUID
     let ticketNumber: String
@@ -151,6 +204,7 @@ struct DisplayTicket: Identifiable, Hashable, Codable {
     let photoCount: Int
     let timeline: [TicketTimelineEvent]
     let isSyncedOffline: Bool
+    let sla: SLADisplayInfo?
 
     init(
         id: UUID = UUID(),
@@ -171,7 +225,8 @@ struct DisplayTicket: Identifiable, Hashable, Codable {
         scheduledDate: Date? = nil,
         photoCount: Int = 0,
         timeline: [TicketTimelineEvent] = [],
-        isSyncedOffline: Bool = true
+        isSyncedOffline: Bool = true,
+        sla: SLADisplayInfo? = nil
     ) {
         self.id = id
         self.ticketNumber = ticketNumber
@@ -192,6 +247,7 @@ struct DisplayTicket: Identifiable, Hashable, Codable {
         self.photoCount = photoCount
         self.timeline = timeline
         self.isSyncedOffline = isSyncedOffline
+        self.sla = sla
     }
 }
 
@@ -231,7 +287,15 @@ enum TicketManagementMockData {
                     performedBy: "System (Call)"
                 ),
             ],
-            isSyncedOffline: true
+            isSyncedOffline: true,
+            sla: SLADisplayInfo(
+                policyName: "Critical SLA",
+                responseDeadline: date(2026, 4, 2, 15, 30),
+                resolutionDeadline: date(2026, 4, 3, 14, 30),
+                respondedAt: nil,
+                isResponseBreached: true,
+                isResolutionBreached: false
+            )
         ),
 
         // 2 - Mechanical, High, In Progress
@@ -282,7 +346,15 @@ enum TicketManagementMockData {
                     performedBy: "John D."
                 ),
             ],
-            isSyncedOffline: true
+            isSyncedOffline: true,
+            sla: SLADisplayInfo(
+                policyName: "High Priority SLA",
+                responseDeadline: date(2026, 3, 28, 13, 0),
+                resolutionDeadline: date(2026, 4, 4, 9, 0),
+                respondedAt: date(2026, 3, 28, 10, 30),
+                isResponseBreached: false,
+                isResolutionBreached: false
+            )
         ),
 
         // 3 - Pneumatic, Medium, On Hold
@@ -326,7 +398,15 @@ enum TicketManagementMockData {
                     performedBy: "Tom Brewer"
                 ),
             ],
-            isSyncedOffline: true
+            isSyncedOffline: true,
+            sla: SLADisplayInfo(
+                policyName: "Standard SLA",
+                responseDeadline: date(2026, 3, 25, 15, 0),
+                resolutionDeadline: date(2026, 4, 1, 11, 0),
+                respondedAt: date(2026, 3, 25, 12, 0),
+                isResponseBreached: false,
+                isResolutionBreached: true
+            )
         ),
 
         // 4 - Electrical, Low, Resolved

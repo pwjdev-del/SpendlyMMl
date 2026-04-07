@@ -306,6 +306,21 @@ private struct TicketListCard: View {
 
                         Spacer()
 
+                        // SLA indicator
+                        if let sla = ticket.sla {
+                            HStack(spacing: 2) {
+                                Image(systemName: "clock.badge.exclamationmark")
+                                    .font(.system(size: 10))
+                                Text(sla.slaStatusLabel)
+                                    .font(.system(size: 10, weight: .medium))
+                            }
+                            .foregroundStyle(
+                                sla.isResponseBreached || sla.isResolutionBreached
+                                    ? SpendlyColors.error
+                                    : (sla.isAtRisk ? SpendlyColors.warning : SpendlyColors.success)
+                            )
+                        }
+
                         // Sync indicator
                         if !ticket.isSyncedOffline {
                             HStack(spacing: 2) {

@@ -8,6 +8,7 @@ enum AssetHealthTab: String, CaseIterable {
     case overview = "Overview"
     case predictor = "Predictor"
     case history = "History"
+    case pmSchedule = "PM Schedule"
 }
 
 // MARK: - AssetHealthViewModel

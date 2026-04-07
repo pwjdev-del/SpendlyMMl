@@ -55,6 +55,9 @@ struct TicketDetailView: View {
                 ScrollView {
                     VStack(spacing: SpendlySpacing.xl) {
                         issueSummaryHeader
+                        if ticket.sla != nil {
+                            slaStatusSection
+                        }
                         quickActionBar
                         statusTimelineSection
                         ticketInfoSection
@@ -286,6 +289,83 @@ struct TicketDetailView: View {
     }
 
     // MARK: - Issue Summary Header
+
+    // MARK: - SLA Status Section
+
+    private var slaStatusSection: some View {
+        Group {
+            if let sla = ticket.sla {
+                SPCard(elevation: .medium) {
+                    VStack(alignment: .leading, spacing: SpendlySpacing.sm) {
+                        HStack {
+                            Image(systemName: "clock.badge.exclamationmark")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(sla.isResponseBreached || sla.isResolutionBreached ? SpendlyColors.error : SpendlyColors.primary)
+                            Text("SLA Tracking")
+                                .font(SpendlyFont.bodySemibold())
+                                .foregroundStyle(SpendlyColors.foreground(for: colorScheme))
+                            Spacer()
+                            SPBadge(text: sla.slaStatusLabel, style: sla.slaBadgeStyle)
+                        }
+
+                        SPDivider()
+
+                        // Response SLA
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Response SLA")
+                                    .font(SpendlyFont.caption(weight: .medium))
+                                    .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                                if let respondedAt = sla.respondedAt {
+                                    Text("Responded: \(shortDateFormatter.string(from: respondedAt))")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.success)
+                                } else if sla.isResponseBreached {
+                                    Text("BREACHED - Deadline: \(shortDateFormatter.string(from: sla.responseDeadline))")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.error)
+                                } else {
+                                    Text("\(sla.responseRemainingMinutes) min remaining")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(sla.responseRemainingMinutes < 30 ? SpendlyColors.warning : SpendlyColors.success)
+                                }
+                            }
+                            Spacer()
+                            Image(systemName: sla.respondedAt != nil ? "checkmark.circle.fill" : (sla.isResponseBreached ? "xmark.circle.fill" : "clock"))
+                                .foregroundStyle(sla.respondedAt != nil ? SpendlyColors.success : (sla.isResponseBreached ? SpendlyColors.error : SpendlyColors.warning))
+                        }
+
+                        // Resolution SLA
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Resolution SLA")
+                                    .font(SpendlyFont.caption(weight: .medium))
+                                    .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme))
+                                if sla.isResolutionBreached {
+                                    Text("BREACHED - Deadline: \(shortDateFormatter.string(from: sla.resolutionDeadline))")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(SpendlyColors.error)
+                                } else {
+                                    let hours = sla.resolutionRemainingMinutes / 60
+                                    let mins = sla.resolutionRemainingMinutes % 60
+                                    Text("\(hours)h \(mins)m remaining")
+                                        .font(SpendlyFont.caption())
+                                        .foregroundStyle(sla.resolutionRemainingMinutes < 60 ? SpendlyColors.warning : SpendlyColors.success)
+                                }
+                            }
+                            Spacer()
+                            Image(systemName: sla.isResolutionBreached ? "xmark.circle.fill" : "clock")
+                                .foregroundStyle(sla.isResolutionBreached ? SpendlyColors.error : (sla.resolutionRemainingMinutes < 60 ? SpendlyColors.warning : SpendlyColors.info))
+                        }
+
+                        Text(sla.policyName)
+                            .font(SpendlyFont.caption())
+                            .foregroundStyle(SpendlyColors.secondaryForeground(for: colorScheme).opacity(0.6))
+                    }
+                }
+            }
+        }
+    }
 
     private var issueSummaryHeader: some View {
         VStack(alignment: .leading, spacing: SpendlySpacing.md) {
